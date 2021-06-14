@@ -1,0 +1,9 @@
+# Example volume snapshot
+apiVersion: snapshot.storage.k8s.io/v1beta1
+kind: VolumeSnapshot
+metadata:
+  name: chain-data-westend-snap-2021-06-11
+spec:
+  volumeSnapshotClassName: snapshot
+  source:
+    persistentVolumeClaimName: chain-data-westend-test-node-0

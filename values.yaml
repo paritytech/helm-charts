@@ -1,0 +1,78 @@
+image:
+  repository: parity/polkadot
+  tag: latest
+  pullPolicy: Always
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+podAnnotations: {}
+
+ingress:
+  enabled: false
+  annotations: {}
+  # kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
+  #hosts:
+  #  - host: chart-example.local
+  #    paths: []
+  #tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+node:
+  #name: test-polkadot-node
+  replicas: 1
+  chain: "westend"
+  dbPath: "westend2" # unpack snapshot in /data/chains/$DB_PATH
+  dataVolumeSize: 200Gi
+  # download and load chain data from a snapshot archive
+  chainDataSnapshotUrl: "https://westend-chain-backups.s3.eu-central-1.amazonaws.com/westend_rocksdb_archive-20210603.tar"
+  # load chain data volume from a Kubernetes VolumeSnapshot
+  #chainDataKubernetesVolumeSnapshot: "chain-data-westend-snap-2021-06-11"
+  #chainSnapshotUrl: "https://polkadot-chain-backups.s3.eu-central-1.amazonaws.com/polkadot_rocksdb_pruned-20210412.tar"
+  # pass any node flags other than --name (set automatically from the helm release name), --base-path and --chain (both set with `node.chain`)
+  flags:
+    - "--pruning"
+    - "archive"
+    - "--prometheus-external"
+    - "--rpc-external"
+    - "--rpc-methods"
+    - "Unsafe"
+    - "--unsafe-ws-external"
+    - "--rpc-cors"
+    - "all"
+
+resources:
+  limits:
+    cpu: "2"
+    memory: "8Gi"
+
+nodeSelector: {}
+
+terminationGracePeriodSeconds: 60
+
+tolerations: {}
+#  - key: workload-type
+#    operator: Equal
+#    value: substrate-node
+
+affinity: {}
+
+storageClass: "ssd-csi"
