@@ -10,3 +10,6 @@ helm repo index \
   charts/
 # Copy new archive and updated index to bucket
 gsutil cp -r charts/* gs://parity-helm-charts
+
+# Cleanup
+rm -rf charts/ index.yaml
