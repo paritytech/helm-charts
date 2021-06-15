@@ -1,15 +1,19 @@
+{{ $fullname :=  include "chart.fullname" . }}
+{{ $metadataLabels :=  include "chart.labels" . }}
+{{ $selectorLabels :=  include "chart.selectorLabels" .  }}
+{{ $serviceAccountName :=  include "chart.serviceAccountName" . }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "chart.fullname" . }}
+  name: {{ $fullname }}
   labels:
-  {{- include "chart.labels" . | nindent 4 }}
+  {{- $metadataLabels | nindent 4 }}
 spec:
   selector:
     matchLabels:
-  {{- include "chart.selectorLabels" . | nindent 6 }}
+  {{- $selectorLabels | nindent 6 }}
   replicas: 1
-  serviceName: {{ include "chart.fullname" . }}
+  serviceName: {{ $fullname }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -17,7 +21,7 @@ spec:
       {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-    {{- include "chart.selectorLabels" . | nindent 8 }}
+    {{- $selectorLabels | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -101,7 +105,7 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: chain-data
-      serviceAccountName: {{ include "chart.serviceAccountName" . }}
+      serviceAccountName: {{ $serviceAccountName}}
       securityContext:
       {{- toYaml .Values.podSecurityContext | nindent 8 }}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}

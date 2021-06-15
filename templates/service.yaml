@@ -1,12 +1,14 @@
+{{ $fullname :=  include "chart.fullname" . }}
+{{ $selectorLabels :=  include "chart.selectorLabels" .  }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "chart.fullname" . }}
+  name: {{ $fullname }}
 spec:
   type: ClusterIP
   clusterIP: None
   selector:
-    app: polkadot-archive
+    {{- $selectorLabels | nindent 4 }}
   ports:
     - port: 8080
       name: api-sidecar
@@ -18,3 +20,26 @@ spec:
       name: prometheus
     - port: 30333
       name: p2p
+---
+{{range $i := until (.Values.node.replicas | int) }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullname }}-{{ $i }}
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    {{- $selectorLabels | nindent 4 }}
+    statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
+  ports:
+    - port: 9933
+      name: http-rpc
+    - port: 9944
+      name: websocket-rpc
+    - port: 9615
+      name: prometheus
+    - port: 30333
+      name: p2p
+---
+{{ end }}
