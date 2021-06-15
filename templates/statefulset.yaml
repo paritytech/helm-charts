@@ -26,7 +26,7 @@ spec:
       initContainers:
         {{- if .Values.node.chainDataSnapshotUrl }}
         - name: download-snapshot
-          image: alpine
+          image: {{ .Values.initContainer.image }}
           command: [ "/bin/sh" ]
           args:
             - -c
@@ -34,9 +34,14 @@ spec:
               if [[ -d "/data/chains/${DB_PATH}/db" ]]; then
                 echo "Database directory already exists, skipping snapshot download"
               else
-                wget -O /data/snapshot {{ .Values.node.chainDataSnapshotUrl }}
+                SNAPSHOT_URL="{{ .Values.node.chainDataSnapshotUrl }}"
+                wget -O /data/snapshot $SNAPSHOT_URL
                 mkdir -p /data/chains/${DB_PATH}/db/
-                tar xvf /data/snapshot --directory=/data/chains/${DB_PATH}/
+                if [[ $(expr match "$SNAPSHOT_URL" ".*7z") != 0 ]]; then
+                  7z x /data/snapshot -o/data/chains/${DB_PATH}/
+                else
+                  tar xvf /data/snapshot --directory=/data/chains/${DB_PATH}/
+                fi
                 rm /data/snapshot
               fi
           env:
@@ -45,7 +50,7 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: chain-data
-        {{- end }}
+      {{- end }}
       containers:
         - name: {{ .Values.node.chain }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
