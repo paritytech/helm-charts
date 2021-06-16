@@ -51,15 +51,20 @@ node:
     - "--rpc-external"
     - "--rpc-cors"
     - "all"
-  #resources:
-  #  limits:
-  #    cpu: "1"
-  #    memory: "4Gi"
+  resources: {}
   serviceMonitor:
     enabled: false
     #namespace: monitoring
     #interval: 10s
     # scrapeTimeout: 10s
+
+substrateApiSidecar:
+  enabled: false
+  image:
+    repository: parity/substrate-api-sidecar
+    tag: latest
+  env: {}
+  resources: {}
 
 podAnnotations: {}
 
