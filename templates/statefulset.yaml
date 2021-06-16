@@ -101,7 +101,7 @@ spec:
             successThreshold: 1
             timeoutSeconds: 1
           resources:
-          {{- toYaml .Values.resources | nindent 12 }}
+          {{- toYaml .Values.node.resources | nindent 12 }}
           volumeMounts:
             - mountPath: /data
               name: chain-data

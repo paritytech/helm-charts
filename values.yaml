@@ -24,8 +24,6 @@ podSecurityContext:
   runAsGroup: 1000
   fsGroup: 1000
 
-podAnnotations: {}
-
 ingress:
   enabled: false
   annotations: {}
@@ -40,43 +38,34 @@ ingress:
   #      - chart-example.local
 
 node:
-  replicas: 1
   chain: "polkadot"
-  #dbPath: "polkadot" # unpack snapshot in /data/chains/$DB_PATH
   dataVolumeSize: 100Gi
-  # download and load chain data from a snapshot archive
+  replicas: 1
   #chainDataSnapshotUrl: ""
-  # load chain data volume from a Kubernetes VolumeSnapshot
+  #dbPath: "polkadot"
   #chainDataKubernetesVolumeSnapshot: ""
-  # pass any node flags other than --name (set automatically from the helm release name), --base-path and --chain (both set with `node.chain`)
   flags:
     - "--prometheus-external"
     - "--rpc-external"
     - "--rpc-cors"
     - "all"
+  #resources:
+  #  limits:
+  #    cpu: "1"
+  #    memory: "4Gi"
+  serviceMonitor:
+    enabled: false
+    #namespace: monitoring
+    #interval: 10s
+    # scrapeTimeout: 10s
 
-resources:
-  limits:
-    cpu: "1"
-    memory: "4Gi"
-
-serviceMonitor:
-  enabled: false
-  ## Prometheus namespace
-  #namespace: monitoring
-  ## Prometheus scrape interval
-  #interval: 10s
-  ## Prometheus scrape timeout
-  # scrapeTimeout: 10s
+podAnnotations: {}
 
 nodeSelector: {}
 
 terminationGracePeriodSeconds: 60
 
-tolerations: {}
-#  - key: workload-type
-#    operator: Equal
-#    value: substrate-node
+tolerations: []
 
 affinity: {}
 
