@@ -43,7 +43,7 @@ node:
   replicas: 1
   chain: "polkadot"
   #dbPath: "polkadot" # unpack snapshot in /data/chains/$DB_PATH
-  dataVolumeSize: 200Gi
+  dataVolumeSize: 100Gi
   # download and load chain data from a snapshot archive
   #chainDataSnapshotUrl: ""
   # load chain data volume from a Kubernetes VolumeSnapshot
@@ -59,6 +59,15 @@ resources:
   limits:
     cpu: "1"
     memory: "4Gi"
+
+serviceMonitor:
+  enabled: false
+  ## Prometheus namespace
+  #namespace: monitoring
+  ## Prometheus scrape interval
+  #interval: 10s
+  ## Prometheus scrape timeout
+  # scrapeTimeout: 10s
 
 nodeSelector: {}
 
