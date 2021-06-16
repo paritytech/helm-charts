@@ -30,7 +30,7 @@ spec:
       initContainers:
         {{- if .Values.node.chainDataSnapshotUrl }}
         - name: download-snapshot
-          image: {{ .Values.initContainer.image }}
+          image: {{ .Values.initContainer.image.repository }}:{{ .Values.initContainer.image.tag }}
           command: [ "/bin/sh" ]
           args:
             - -c

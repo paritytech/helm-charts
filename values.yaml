@@ -4,7 +4,9 @@ image:
   pullPolicy: Always
 
 initContainer:
-  image: crazymax/7zip
+  image:
+    repository: crazymax/7zip
+    tag: latest
 
 imagePullSecrets: []
 nameOverride: ""
