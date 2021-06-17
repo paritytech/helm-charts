@@ -3,7 +3,7 @@
 ## Installing the chart
 
 ```console
-helm repo add parity https://parity-helm-charts.storage.googleapis.com
+helm repo add parity https://paritytech.github.io/helm-charts/
 helm install polkadot-node parity/node
 ```
 
