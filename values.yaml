@@ -1,5 +1,5 @@
 image:
-  repository: paritytech/polkadot
+  repository: parity/polkadot
   tag: latest
   pullPolicy: Always
 
@@ -7,6 +7,12 @@ initContainer:
   image:
     repository: crazymax/7zip
     tag: latest
+
+googleCloudSdk:
+  image:
+    repository: google/cloud-sdk
+    tag: slim # more lightweight than the full image and still contains gsutil
+  #serviceAccountKey: ""
 
 imagePullSecrets: []
 nameOverride: ""
@@ -46,6 +52,7 @@ node:
   #chainDataSnapshotUrl: ""
   #dbPath: "polkadot"
   #chainDataKubernetesVolumeSnapshot: ""
+  #chainDataGcsBucketUrl: ""
   flags:
     - "--prometheus-external"
     - "--rpc-external"

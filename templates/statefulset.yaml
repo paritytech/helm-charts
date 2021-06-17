@@ -29,7 +29,7 @@ spec:
       {{- end }}
       initContainers:
         {{- if .Values.node.chainDataSnapshotUrl }}
-        - name: download-snapshot
+        - name: download-chain-snapshot
           image: {{ .Values.initContainer.image.repository }}:{{ .Values.initContainer.image.tag }}
           command: [ "/bin/sh" ]
           args:
@@ -40,6 +40,10 @@ spec:
               else
                 SNAPSHOT_URL="{{ .Values.node.chainDataSnapshotUrl }}"
                 wget -O /data/snapshot $SNAPSHOT_URL
+                if [[ ! -f /data/snapshot ]]; then
+                  echo "Failed to download snapshot"
+                  exit 1
+                fi
                 mkdir -p /data/chains/${DB_PATH}/db/
                 if [[ $(expr match "$SNAPSHOT_URL" ".*7z") != 0 ]]; then
                   7z x /data/snapshot -o/data/chains/${DB_PATH}/
@@ -54,6 +58,40 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: chain-data
+        {{- end }}
+        {{- if .Values.node.chainDataGcsBucketUrl }}
+        - name: sync-chain-gcs
+          image: {{ .Values.googleCloudSdk.image.repository }}:{{ .Values.googleCloudSdk.image.tag }}
+          command: [ "/bin/sh" ]
+          args:
+            - -c
+            - |
+              {{- if .Values.googleCloudSdk.serviceAccountKey }}
+              gcloud auth activate-service-account --key-file /tmp/service-account-key.json
+              {{- end }}
+              if [ -d "/data/chains/${DB_PATH}/db" ]; then
+                echo "Database directory already exists, skipping GCS sync"
+              else
+                BUCKET_URL="{{ .Values.node.chainDataGcsBucketUrl }}"
+                LATEST=$(gsutil cat ${BUCKET_URL}/latest_version.meta.txt)
+                if [ -z "$LATEST" ]; then
+                  echo "Failed to retrieve latest_version metadata"
+                  exit 1
+                fi
+                mkdir -p /data/chains/${DB_PATH}/db/
+                gsutil -m -o "GSUtil:parallel_process_count=3" -o "GSUtil:parallel_thread_count=15" rsync -d -r ${BUCKET_URL}/${LATEST} /data/chains/${DB_PATH}/db/
+              fi
+          env:
+            - name: DB_PATH
+              value: {{ default .Values.node.chain .Values.node.dbPath }}
+          volumeMounts:
+            - mountPath: /data
+              name: chain-data
+            {{- if .Values.googleCloudSdk.serviceAccountKey }}
+            - name: service-account-key
+              mountPath: "/tmp"
+              readOnly: true
+            {{- end }}
       {{- end }}
       containers:
         - name: {{ .Values.node.chain }}
@@ -135,6 +173,12 @@ spec:
       {{- with .Values.tolerations }}
       tolerations:
       {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.googleCloudSdk.serviceAccountKey }}
+      volumes:
+        - name: service-account-key
+          secret:
+            secretName: chain-data-gcs-bucket-service-account-key
       {{- end }}
   volumeClaimTemplates:
     - apiVersion: v1
