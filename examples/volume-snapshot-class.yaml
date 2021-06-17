@@ -1,7 +1,0 @@
-# Example volume snapshot classs
-apiVersion: snapshot.storage.k8s.io/v1beta1
-kind: VolumeSnapshotClass
-metadata:
-  name: snapshot
-driver: pd.csi.storage.gke.io
-deletionPolicy: Delete
