@@ -30,11 +30,12 @@ This will deploy a single Polkadot node with the default configuration.
 |------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|--------------------------------|
 | `node.chain`                             | Network to connect the node to (ie `--chain`)                                                                             | `polkadot`                     |
 | `node.flags`                             | Node flags other than `--name` (set from the helm release name), `--base-path` and `--chain` (both set with `node.chain`) | `--prometheus-external --rpc-external --rpc-cors all` |
-| `node.dataVolumeSize`                    |                                                                                                         | `100Gi`                        |
+| `node.dataVolumeSize`                    | The size of the chain data PersistentVolume                                                                               | `100Gi`                        |
 | `node.replica`                           | Number of replica in the node StatefulSet                                                                                 | `1`                            |
 | `node.chainDataSnapshotUrl`              | Download and load chain data from a snapshot archive http URL                                                             | ``                             |
+| `node.chainDataSnapshotExtractionPath`   | The path at which the snapshot archive downloaded from a http URL will be extracted                                       | `/data/chains/${CHAIN_PATH}`      |
 | `node.chainDataGcsBucketUrl`             | Sync chain data files from a GCS bucket (eg. `gs://bucket-name/folder-name`)                                              | ``                             |
-| `node.dbPath`                            | Path at which the snapshot database files will be unpacked (`/data/chains/$dbPath`)                                       | ``                             |
+| `node.chainPath`                         | Path at which the chain database files are located (`/data/chains/${CHAIN_PATH}`)                                            | `nil` (if undefined, fallbacks to the value in `node.chain`) |
 | `node.chainDataKubernetesVolumeSnapshot` | Initialize the chain data volume from a Kubernetes VolumeSnapshot                                                         | ``                             |
 | `node.resources.limits`                  | The resources limits (cpu/memory) for nodes                                                                               | `{}`                           |
 | `node.resources.requests`                | The resources requests (cpu/memory) for nodes                                                                             | `{}`                           |

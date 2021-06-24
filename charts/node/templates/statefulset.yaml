@@ -35,7 +35,7 @@ spec:
           args:
             - -c
             - |
-              if [[ -d "/data/chains/${DB_PATH}/db" ]]; then
+              if [[ -d "/data/chains/${CHAIN_PATH}/db" ]]; then
                 echo "Database directory already exists, skipping snapshot download"
               else
                 SNAPSHOT_URL="{{ .Values.node.chainDataSnapshotUrl }}"
@@ -44,17 +44,17 @@ spec:
                   echo "Failed to download snapshot"
                   exit 1
                 fi
-                mkdir -p /data/chains/${DB_PATH}/db/
+                mkdir -p /data/chains/${CHAIN_PATH}/db/
                 if [[ $(expr match "$SNAPSHOT_URL" ".*7z") != 0 ]]; then
-                  7z x /data/snapshot -o/data/chains/${DB_PATH}/
+                  7z x /data/snapshot -o/data/chains/${CHAIN_PATH}/
                 else
-                  tar xvf /data/snapshot --directory=/data/chains/${DB_PATH}/
+                  tar xvf /data/snapshot --directory={{ .Values.node.chainDataSnapshotExtractionPath }}
                 fi
                 rm /data/snapshot
               fi
           env:
-            - name: DB_PATH
-              value: {{ default .Values.node.chain .Values.node.dbPath }}
+            - name: CHAIN_PATH
+              value: {{ default .Values.node.chain .Values.node.chainPath }}
           volumeMounts:
             - mountPath: /data
               name: chain-data
@@ -69,7 +69,7 @@ spec:
               {{- if .Values.googleCloudSdk.serviceAccountKey }}
               gcloud auth activate-service-account --key-file /tmp/service-account-key.json
               {{- end }}
-              if [ -d "/data/chains/${DB_PATH}/db" ]; then
+              if [ -d "/data/chains/${CHAIN_PATH}/db" ]; then
                 echo "Database directory already exists, skipping GCS sync"
               else
                 BUCKET_URL="{{ .Values.node.chainDataGcsBucketUrl }}"
@@ -78,12 +78,12 @@ spec:
                   echo "Failed to retrieve latest_version metadata"
                   exit 1
                 fi
-                mkdir -p /data/chains/${DB_PATH}/db/
-                gsutil -m -o "GSUtil:parallel_process_count=3" -o "GSUtil:parallel_thread_count=15" rsync -d -r ${BUCKET_URL}/${LATEST} /data/chains/${DB_PATH}/db/
+                mkdir -p /data/chains/${CHAIN_PATH}/db/
+                gsutil -m -o "GSUtil:parallel_process_count=3" -o "GSUtil:parallel_thread_count=15" rsync -d -r ${BUCKET_URL}/${LATEST} /data/chains/${CHAIN_PATH}/db/
               fi
           env:
-            - name: DB_PATH
-              value: {{ default .Values.node.chain .Values.node.dbPath }}
+            - name: CHAIN_PATH
+              value: {{ default .Values.node.chain .Values.node.chainPath }}
           volumeMounts:
             - mountPath: /data
               name: chain-data
