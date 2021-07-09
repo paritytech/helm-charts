@@ -16,7 +16,7 @@ This will deploy a single Polkadot node with the default configuration.
 | Parameter           | Description                                  | Default                        |
 |---------------------|----------------------------------------------|--------------------------------|
 | `nameOverride`      | String to partially override chart.fullname  | `nil`                          |
-| `fullnameOverride`  | String to fully override cassandra.fullname  | `nil`                          |
+| `fullnameOverride`  | String to fully override chart.fullname      | `nil`                          |
 | `imagePullSecrets`  | Labels to add to all deployed objects        | `[]`                           |
 | `podAnnotations`    | Annotations to add to pods                   | `{}` (evaluated as a template) |
 | `nodeSelector`      | Node labels for pod assignment               | `{}` (evaluated as a template) |
@@ -56,3 +56,7 @@ This will deploy a single Polkadot node with the default configuration.
 | `googleCloudSdk.image.repository`  | Sync-chain-gcs init container image name                                                               | `google/cloud-sdk` |
 | `googleCloudSdk.image.tag`         | Sync-chain-gcs init container image tag                                                                | `slim`             |
 | `googleCloudSdk.serviceAccountKey` | Service account key (JSON) to inject into the Sync-chain-gcs init container using a Kubernetes secret  | `nil`              |
+| `ingress.enabled`                  | If true, creates an ingress                                                                            | `false`            |
+| `ingress.annotations`              | Annotations to add to the ingress (key/value pairs)                                                    | `{}`               |
+| `ingress.rules`                    | Set rules on the ingress                                                                               | `[]`              |
+| `ingress.tls`                      | Set TLS configuration on the ingress                                                                   | `[]`              |

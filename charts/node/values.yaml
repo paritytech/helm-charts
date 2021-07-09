@@ -35,12 +35,14 @@ podSecurityContext:
 ingress:
   enabled: false
   annotations: {}
-  # kubernetes.io/ingress.class: nginx
-  # kubernetes.io/tls-acme: "true"
-  #hosts:
+  #  kubernetes.io/ingress.class: nginx
+  #  kubernetes.io/tls-acme: "true"
+  rules: []
   #  - host: chart-example.local
-  #    paths: []
-  #tls: []
+  #    paths:
+  #      - serviceName: node
+  #        servicePort: 9944
+  tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
