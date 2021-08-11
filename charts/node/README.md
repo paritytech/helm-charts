@@ -9,6 +9,19 @@ helm install polkadot-node parity/node
 
 This will deploy a single Polkadot node with the default configuration.
 
+### Deploying a node with data synced from a snapshot archive (eg. [Polkashot](https://polkashots.io/))
+
+Polkadot:
+```console
+helm install polkadot-node parity/node --set node.chainDataSnapshotUrl=https://dot-rocksdb.polkashots.io/snapshot
+```
+
+Kusama:
+```console
+helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm-rocksdb.polkashots.io/snapshot --set node.chainPath=ksmcc3
+```
+⚠️ For some chains where the local directory name is different from the chain ID, `node.chainPath` need to be set to a custom value.
+
 ## Parameters
 
 ### Common parameters
