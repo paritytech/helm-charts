@@ -13,14 +13,14 @@ This will deploy a single Polkadot node with the default configuration.
 
 Polkadot:
 ```console
-helm install polkadot-node parity/node --set node.chainDataSnapshotUrl=https://dot-rocksdb.polkashots.io/snapshot
+helm install polkadot-node parity/node --set node.chainDataSnapshotUrl=https://dot-rocksdb.polkashots.io/snapshot --set node.chainDataSnapshotFormat=7z
 ```
 
 Kusama:
 ```console
-helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm-rocksdb.polkashots.io/snapshot --set node.chainPath=ksmcc3
+helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm-rocksdb.polkashots.io/snapshot --set node.chainDataSnapshotFormat=7z --set node.chainPath=ksmcc3
 ```
-⚠️ For some chains where the local directory name is different from the chain ID, `node.chainPath` need to be set to a custom value.
+⚠️ For some chains where the local directory name is different from the chain ID, `node.chainPath` needs to be set to a custom value.
 
 ## Parameters
 
@@ -46,9 +46,10 @@ helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm
 | `node.dataVolumeSize`                    | The size of the chain data PersistentVolume                                                                               | `100Gi`                        |
 | `node.replica`                           | Number of replica in the node StatefulSet                                                                                 | `1`                            |
 | `node.chainDataSnapshotUrl`              | Download and load chain data from a snapshot archive http URL                                                             | ``                             |
-| `node.chainDataSnapshotExtractionPath`   | The path at which the snapshot archive downloaded from a http URL will be extracted                                       | `/data/chains/${CHAIN_PATH}`      |
+| `node.chainDataSnapshotExtractionPath`   | The path at which the snapshot archive downloaded from a http URL will be extracted                                       | `/data/chains/${CHAIN_PATH}`   |
+| `node.chainDataSnapshotFormat`           | The snapshot archive format (`tar` or `7z`)                                                                               | `tar`                          |
 | `node.chainDataGcsBucketUrl`             | Sync chain data files from a GCS bucket (eg. `gs://bucket-name/folder-name`)                                              | ``                             |
-| `node.chainPath`                         | Path at which the chain database files are located (`/data/chains/${CHAIN_PATH}`)                                            | `nil` (if undefined, fallbacks to the value in `node.chain`) |
+| `node.chainPath`                         | Path at which the chain database files are located (`/data/chains/${CHAIN_PATH}`)                                         | `nil` (if undefined, fallbacks to the value in `node.chain`) |
 | `node.chainDataKubernetesVolumeSnapshot` | Initialize the chain data volume from a Kubernetes VolumeSnapshot                                                         | ``                             |
 | `node.resources.limits`                  | The resources limits (cpu/memory) for nodes                                                                               | `{}`                           |
 | `node.resources.requests`                | The resources requests (cpu/memory) for nodes                                                                             | `{}`                           |

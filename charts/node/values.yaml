@@ -53,6 +53,7 @@ node:
   replicas: 1
   #chainDataSnapshotUrl: ""
   chainDataSnapshotExtractionPath: "/data/chains/${CHAIN_PATH}"
+  chainDataSnapshotFormat: tar
   #chainPath: ""
   #chainDataKubernetesVolumeSnapshot: ""
   #chainDataGcsBucketUrl: ""
