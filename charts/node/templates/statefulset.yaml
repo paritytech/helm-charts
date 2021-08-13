@@ -130,16 +130,30 @@ spec:
             - containerPort: 30333
               name: p2p
               protocol: TCP
+          {{- if .Values.node.enableStartupProbe }}
+          # On startup, retry the connection to the /health endpoint every 10s for 5 min before killing the container
+          startupProbe:
+            failureThreshold: 30
+            periodSeconds: 10
+            # Use an exec command as Substate's default configuration only allow local network access to the RPC endpoint
+            exec:
+              command:
+              - curl
+              - "http://127.0.0.1:9933/health"
+          {{- end }}
+          {{- if .Values.node.enableReadinessProbe }}
+          # Continuously retry the connection to the WS endpoint every 10s for 24h until success before marking the container as ready
+          # If the WS endpoint is still not reachable (ie. node not fully synced) after 24 hours have passed, the container will be stuck in 'Not Ready' state
           readinessProbe:
-            failureThreshold: 3
-            httpGet:
-              path: /health
-              port: http-rpc
-              scheme: HTTP
+            failureThreshold: 8640
             initialDelaySeconds: 10
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
+            # Important: the readiness probe will only work properly if the WS endpoint is exposed with --ws-external
+            tcpSocket:
+              port: websocket-rpc
+          {{- end }}
           resources:
           {{- toYaml .Values.node.resources | nindent 12 }}
           volumeMounts:
