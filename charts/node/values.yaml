@@ -57,11 +57,13 @@ node:
   #chainPath: ""
   #chainDataKubernetesVolumeSnapshot: ""
   #chainDataGcsBucketUrl: ""
+  enableStartupProbe: true
+  enableReadinessProbe: true
   flags:
     - "--prometheus-external"
     - "--rpc-external"
-    - "--rpc-cors"
-    - "all"
+    - "--ws-external"
+    - "--rpc-cors=all"
   resources: {}
   serviceMonitor:
     enabled: false
