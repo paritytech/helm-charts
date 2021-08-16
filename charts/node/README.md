@@ -43,8 +43,9 @@ helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm
 |------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|--------------------------------|
 | `node.chain`                             | Network to connect the node to (ie `--chain`)                                                                             | `polkadot`                     |
 | `node.flags`                             | Node flags other than `--name` (set from the helm release name), `--base-path` and `--chain` (both set with `node.chain`) | `--prometheus-external --rpc-external --ws-external --rpc-cors all` |
-| `node.enableStartupProbe`                | If true, enable the startup probe check                                                                           | `true`                         |
-| `node.enableReadinessProbe`              | If true, enable the readiness probe check                                                                         | `true`                         |
+| `node.keys`                              | The list of keys to inject on the node before startup (object{ type, scheme, seed })                                      | `{}`                           |
+| `node.enableStartupProbe`                | If true, enable the startup probe check                                                                                   | `true`                         |
+| `node.enableReadinessProbe`              | If true, enable the readiness probe check                                                                                 | `true`                         |
 | `node.dataVolumeSize`                    | The size of the chain data PersistentVolume                                                                               | `100Gi`                        |
 | `node.replica`                           | Number of replica in the node StatefulSet                                                                                 | `1`                            |
 | `node.chainDataSnapshotUrl`              | Download and load chain data from a snapshot archive http URL                                                             | ``                             |

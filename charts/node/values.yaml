@@ -64,6 +64,13 @@ node:
     - "--rpc-external"
     - "--ws-external"
     - "--rpc-cors=all"
+  keys: {}
+  #  - type: "gran"
+  #    scheme: "ed25519"
+  #    seed: "//Alice//gran"
+  #  - type: "babe"
+  #    scheme: "sr25519"
+  #    seed: "//Alice//babe"
   resources: {}
   serviceMonitor:
     enabled: false
