@@ -12,7 +12,7 @@ spec:
   selector:
     matchLabels:
   {{- $selectorLabels | nindent 6 }}
-  replicas: 1
+  replicas: {{ .Values.node.replicas | int }}
   serviceName: {{ $fullname }}
   template:
     metadata:
