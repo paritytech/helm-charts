@@ -2,29 +2,33 @@
 {{ $fullname :=  include "chart.fullname" . }}
 {{ $metadataLabels :=  include "chart.labels" . }}
 {{ $selectorLabels :=  include "chart.selectorLabels" .  }}
+{{range $i := until (.Values.node.replicas | int) }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ $fullname }}
-  {{- if .Values.node.serviceMonitor.namespace }}
-  namespace: {{ .Values.node.serviceMonitor.namespace }}
+  name: {{ $fullname }}-{{ $i }}
+  {{- if $.Values.node.serviceMonitor.namespace }}
+  namespace: {{ $.Values.node.serviceMonitor.namespace }}
   {{- else }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ $.Release.Namespace }}
   {{- end }}
   labels: {{- $metadataLabels | nindent 4 }}
 spec:
   selector:
     matchLabels:
-  {{- $selectorLabels | nindent 6 }}
+      {{- $selectorLabels | nindent 6 }}
+      statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
   endpoints:
     - port: prometheus
-      {{- if .Values.node.serviceMonitor.interval }}
-      interval: {{ .Values.node.serviceMonitor.interval }}
+      {{- if $.Values.node.serviceMonitor.interval }}
+      interval: {{ $.Values.node.serviceMonitor.interval }}
       {{- end }}
-      {{- if .Values.node.serviceMonitor.scrapeTimeout }}
-      scrapeTimeout: {{ .Values.node.serviceMonitor.scrapeTimeout }}
+      {{- if $.Values.node.serviceMonitor.scrapeTimeout }}
+      scrapeTimeout: {{ $.Values.node.serviceMonitor.scrapeTimeout }}
   {{- end }}
   namespaceSelector:
     matchNames:
-      - {{ .Release.Namespace }}
+      - {{ $.Release.Namespace }}
   {{- end }}
+---
+{{ end }}
