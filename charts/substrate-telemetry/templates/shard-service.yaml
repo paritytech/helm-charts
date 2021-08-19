@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: telemetry-shard
+  labels:
+    {{- include "substrate-telemetry.labels" . | nindent 4 }}
+    telemetry-component: shard
+  annotations:
+    {{- toYaml .Values.service.shard.annotations | nindent 4 }}
+
+spec:
+  type: {{ .Values.service.shard.type }}
+  ports:
+    - port: {{ .Values.service.shard.port }}
+      targetPort: {{ .Values.service.shard.targetPort }}
+      protocol: TCP
+      name: http
+{{- if (and (eq .Values.service.shard.type "NodePort") (not (empty .Values.service.shard.nodePort))) }}
+      nodePort: {{ .Values.service.shard.nodePort }}
+{{- end }}
+  selector:
+    {{- include "substrate-telemetry.selectorLabels" . | nindent 4 }}
+    telemetry-component: shard
