@@ -1,0 +1,160 @@
+# Default values for substrate-telemtry.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+
+replicaCount:
+  # NOTE: The core service is not scalable at the moment.
+  shard: 1
+  core: 1
+  frontend: 1
+
+image:
+  backend:
+    repository: docker.io/parity/substrate-telemetry-backend
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: latest
+  frontend:
+    repository: docker.io/parity/substrate-telemetry-frontend
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: latest
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+envVars:
+  shard: {}
+  core: {}
+  frontend:
+    # The frontend docker container makes this available to the UI,
+    # so that it knows where to look for feed information:
+    SUBSTRATE_TELEMETRY_URL: "wss://core-service-domain.com"
+
+serviceMonitor:
+  # Only core service has Prometheus metrics exposed at the moment.
+  core:
+    enabled: false
+    interval: ""
+    additionalLabels: {}
+    annotations: {}
+    # scrapeTimeout: 10s
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  shard:
+    type: ClusterIP
+    port: 80
+    targetPort: 8000
+    # nodePort: 31000
+    annotations: {}
+  core:
+    type: ClusterIP
+    port: 80
+    targetPort: 8000
+    # nodePort: 31000
+    annotations: {}
+  frontend:
+    type: ClusterIP
+    port: 80
+    targetPort: 8000
+    # nodePort: 31000
+    annotations: {}
+
+ingress:
+  shard:
+    enabled: false
+    className: ""
+    annotations: {}
+    hosts:
+      - host: chart-example.local
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - secretName: chart-example-tls
+        hosts:
+          - chart-example.local
+  core:
+    enabled: false
+    className: ""
+    annotations: {}
+    hosts:
+      - host: chart-example-1.local
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - secretName: chart-example-tls
+        hosts:
+          - chart-example-1.local
+  frontend:
+    enabled: false
+    className: ""
+    annotations:
+    hosts:
+      - host: chart-example-1.local
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - secretName: chart-example-tls
+        hosts:
+          - chart-example.local
+
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  # NOTE: The core service is not scalable at the moment.
+  shard:
+    enabled: false
+    minReplicas: 2
+    maxReplicas: 6
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  frontend:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 6
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  core:
+    enabled: false
+
+nodeSelector: {}
+affinity: {}
+tolerations: []
