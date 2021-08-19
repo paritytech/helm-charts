@@ -1,4 +1,4 @@
-Helm# Substrate Telemetry Helm Chart
+Substrate Telemetry Helm Chart
 
 The helm chart installs Telemetry-Core, Telemetry-Shard and Telemetry-Frontend services.  
 
