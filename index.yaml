@@ -74,6 +74,16 @@ entries:
   substrate-telemetry:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2021-08-20T06:00:23.74608387Z"
+    description: A Helm chart for Kubernetes
+    digest: 66d7914e2f4001b3f2a94dcf8d75e7f9159c64ba3c1a9ef06b61c66a590e1afe
+    name: substrate-telemetry
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/substrate-telemetry-2/substrate-telemetry-2.tgz
+    version: "2"
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2021-08-19T15:32:36.251739105Z"
     description: A Helm chart for Kubernetes
     digest: c2593d12bc0171ba57522231af02ed2b78cccce4aa19aba4465322a77f7d2170
@@ -82,4 +92,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/substrate-telemetry-0.1.0/substrate-telemetry-0.1.0.tgz
     version: 0.1.0
-generated: "2021-08-19T15:32:36.251767006Z"
+generated: "2021-08-20T06:00:23.746108871Z"
