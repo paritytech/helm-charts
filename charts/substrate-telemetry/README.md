@@ -22,4 +22,3 @@ By default, the type of Kubernetes service used for Telemetry-Core, Telemetry-Sh
 - All the services must be exposed over `HTTPS`.
 - The `Core` service could also be exposed using the `Frontend` Nginx service. The Nginx configuration should be tweaked for this purpose.
 - Consider setting `.Values.envVars.frontend.SUBSTRATE_TELEMETRY_URL` variable otherwise the web clients wouldn't be able to find the `Core` service address.
-
