@@ -77,6 +77,12 @@ node:
     #namespace: monitoring
     #interval: 10s
     # scrapeTimeout: 10s
+  perNodeServices:
+    createClusterIPService: true
+    createP2pNodePortService: false
+    p2pNodePortStartRange: "30000"
+    # Set to 0.0.0.0 to enable auto discovery of the IP address
+    listenAddressBase: "/ip4/0.0.0.0/tcp/"
 
 substrateApiSidecar:
   enabled: false

@@ -22,6 +22,7 @@ spec:
       name: p2p
 ---
 {{range $i := until (.Values.node.replicas | int) }}
+{{- if $.Values.node.perNodeServices.createClusterIPService }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -39,7 +40,23 @@ spec:
       name: websocket-rpc
     - port: 9615
       name: prometheus
-    - port: 30333
-      name: p2p
+{{- end }}
+---
+{{- if $.Values.node.perNodeServices.createP2pNodePortService }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullname }}-{{ $i }}-p2p
+spec:
+  type: NodePort
+  selector:
+    {{- $selectorLabels | nindent 4 }}
+    statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
+  ports:
+    - name: p2p
+      port: {{ add $.Values.node.perNodeServices.p2pNodePortStartRange $i }}
+      nodePort: {{ add $.Values.node.perNodeServices.p2pNodePortStartRange $i }}
+      targetPort: 30333
+{{- end }}
 ---
 {{ end }}

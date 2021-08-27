@@ -20,6 +20,7 @@ spec:
       statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
   endpoints:
     - port: prometheus
+      path: /metrics
       {{- if $.Values.node.serviceMonitor.interval }}
       interval: {{ $.Values.node.serviceMonitor.interval }}
       {{- end }}
