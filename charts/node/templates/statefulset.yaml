@@ -118,14 +118,27 @@ spec:
         - name: {{ .Values.node.chain }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.node.perNodeServices.createP2pNodePortService }}
+          command: [ "/bin/sh" ]
           args:
-            - "--name"
-            - "$(POD_NAME)"
-            - "--base-path"
-            - "/data/"
-            - "--chain"
-            - "$(CHAIN)"
-          {{- toYaml .Values.node.flags | nindent 12 }}
+            - -c
+            - >
+              POD_INDEX="${HOSTNAME##*-}";
+              P2P_PORT=$(({{ .Values.node.perNodeServices.p2pNodePortStartRange }}+POD_INDEX));
+              echo "P2P_PORT=${P2P_PORT}";
+              exec polkadot \
+                --name=${POD_NAME} \
+                --base-path=/data/ \
+                --chain=${CHAIN} \
+                --listen-addr={{ .Values.node.perNodeServices.listenAddressBase }}${P2P_PORT} \
+              {{- join " " .Values.node.flags | nindent 18 }}
+          {{- else }}
+          args:
+            - "--name=$(POD_NAME)"
+            - "--base-path=/data/"
+            - "--chain=$(CHAIN)"
+            {{- toYaml .Values.node.flags | nindent 12 }}
+          {{- end }}
           env:
             - name: CHAIN
               value: {{ .Values.node.chain }}
