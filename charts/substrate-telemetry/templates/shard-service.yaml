@@ -10,6 +10,24 @@ metadata:
 
 spec:
   type: {{ .Values.service.shard.type }}
+{{- if (and (eq .Values.service.shard.type "ClusterIP") (not (empty .Values.service.shard.clusterIP))) }}
+  clusterIP: {{ .Values.service.clusterIP }}
+{{- end }}
+{{- if (and (eq .Values.service.shard.type "LoadBalancer") (not (empty .Values.service.shard.loadBalancerIP))) }}
+  loadBalancerIP: {{ .Values.service.shard.loadBalancerIP }}
+{{- end }}
+{{- if (and (or (eq .Values.service.shard.type "LoadBalancer") (eq .Values.service.shard.type "NodePort")) (not (empty .Values.service.shard.externalTrafficPolicy))) }}
+  externalTrafficPolicy: {{ .Values.service.shard.externalTrafficPolicy }}
+{{- end }}
+{{- if (and (or (eq .Values.service.shard.type "LoadBalancer") (eq .Values.service.shard.type "NodePort")) (not (empty .Values.service.shard.sessionAffinity))) }}
+  sessionAffinity: {{ .Values.service.shard.sessionAffinity }}
+{{- end }}
+{{- if .Values.service.shard.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+  {{- range $cidr := .Values.service.shard.loadBalancerSourceRanges }}
+    - {{ $cidr }}
+  {{- end }}
+{{- end }}
   ports:
     - port: {{ .Values.service.shard.port }}
       targetPort: {{ .Values.service.shard.targetPort }}

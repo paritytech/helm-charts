@@ -69,20 +69,26 @@ service:
     type: ClusterIP
     port: 80
     targetPort: 8000
-    # nodePort: 31000
     annotations: {}
+    # nodePort: 31000
+    # externalTrafficPolicy: Cluster 
+    # sessionAffinity: None
   core:
     type: ClusterIP
     port: 80
     targetPort: 8000
-    # nodePort: 31000
     annotations: {}
+    # nodePort: 31000
+    # externalTrafficPolicy: Cluster 
+    # sessionAffinity: None
   frontend:
     type: ClusterIP
     port: 80
     targetPort: 8000
-    # nodePort: 31000
     annotations: {}
+    # nodePort: 31000
+    # externalTrafficPolicy: Cluster 
+    # sessionAffinity: None
 
 ingress:
   shard:
