@@ -9,6 +9,24 @@ metadata:
     {{- toYaml .Values.service.core.annotations | nindent 4 }}
 spec:
   type: {{ .Values.service.core.type }}
+{{- if (and (eq .Values.service.core.type "ClusterIP") (not (empty .Values.service.core.clusterIP))) }}
+  clusterIP: {{ .Values.service.clusterIP }}
+{{- end }}
+{{- if (and (eq .Values.service.core.type "LoadBalancer") (not (empty .Values.service.core.loadBalancerIP))) }}
+  loadBalancerIP: {{ .Values.service.core.loadBalancerIP }}
+{{- end }}
+{{- if (and (or (eq .Values.service.core.type "LoadBalancer") (eq .Values.service.core.type "NodePort")) (not (empty .Values.service.core.externalTrafficPolicy))) }}
+  externalTrafficPolicy: {{ .Values.service.core.externalTrafficPolicy }}
+{{- end }}
+{{- if (and (or (eq .Values.service.core.type "LoadBalancer") (eq .Values.service.core.type "NodePort")) (not (empty .Values.service.core.sessionAffinity))) }}
+  sessionAffinity: {{ .Values.service.core.sessionAffinity }}
+{{- end }}
+{{- if .Values.service.core.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+  {{- range $cidr := .Values.service.core.loadBalancerSourceRanges }}
+    - {{ $cidr }}
+  {{- end }}
+{{- end }}
   ports:
     - port: {{ .Values.service.core.port }}
       targetPort: {{ .Values.service.core.targetPort }}
