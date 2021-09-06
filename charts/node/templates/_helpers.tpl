@@ -51,6 +51,14 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
+Service labels
+*/}}
+{{- define "chart.serviceLabels" -}}
+chain: {{ .Values.node.chain }}
+release: {{ .Release.Name }}
+{{- end }}
+
+{{/*
 Create the name of the service account to use
 */}}
 {{- define "chart.serviceAccountName" -}}

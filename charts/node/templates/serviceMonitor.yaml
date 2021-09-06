@@ -1,7 +1,7 @@
 {{- if .Values.node.serviceMonitor.enabled }}
 {{ $fullname :=  include "chart.fullname" . }}
 {{ $metadataLabels :=  include "chart.labels" . }}
-{{ $selectorLabels :=  include "chart.selectorLabels" .  }}
+{{ $serviceLabels :=  include "chart.serviceLabels" .  }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
@@ -15,7 +15,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      {{- $selectorLabels | nindent 6 }}
+      {{- $serviceLabels | nindent 6 }}
   endpoints:
     - port: prometheus
       path: /metrics
@@ -28,4 +28,8 @@ spec:
   namespaceSelector:
     matchNames:
       - {{ $.Release.Namespace }}
+  targetLabels:
+    - chain
+    - release
+    - instance
 {{- end }}

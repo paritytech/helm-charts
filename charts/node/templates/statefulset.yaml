@@ -1,6 +1,7 @@
 {{ $fullname :=  include "chart.fullname" . }}
 {{ $metadataLabels :=  include "chart.labels" . }}
 {{ $selectorLabels :=  include "chart.selectorLabels" .  }}
+{{ $serviceLabels :=  include "chart.serviceLabels" .  }}
 {{ $serviceAccountName :=  include "chart.serviceAccountName" . }}
 apiVersion: apps/v1
 kind: StatefulSet
@@ -8,6 +9,7 @@ metadata:
   name: {{ $fullname }}
   labels:
   {{- $metadataLabels | nindent 4 }}
+  {{- $serviceLabels | nindent 4 }}
 spec:
   selector:
     matchLabels:
@@ -21,7 +23,8 @@ spec:
       {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-    {{- $selectorLabels | nindent 8 }}
+      {{- $selectorLabels | nindent 8 }}
+      {{- $serviceLabels | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
