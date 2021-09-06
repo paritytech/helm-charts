@@ -12,6 +12,7 @@ spec:
   selector:
     matchLabels:
   {{- $selectorLabels | nindent 6 }}
+  podManagementPolicy: {{ default "OrderedReady" .Values.node.podManagementPolicy }}
   replicas: {{ .Values.node.replicas | int }}
   serviceName: {{ $fullname }}
   template:

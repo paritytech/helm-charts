@@ -83,6 +83,7 @@ node:
     p2pNodePortStartRange: "30000"
     # Set to 0.0.0.0 to enable auto discovery of the IP address
     listenAddressBase: "/ip4/0.0.0.0/tcp/"
+  #podManagementPolicy: Parallel
 
 substrateApiSidecar:
   enabled: false
