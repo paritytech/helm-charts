@@ -2,11 +2,10 @@
 {{ $fullname :=  include "chart.fullname" . }}
 {{ $metadataLabels :=  include "chart.labels" . }}
 {{ $selectorLabels :=  include "chart.selectorLabels" .  }}
-{{range $i := until (.Values.node.replicas | int) }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ $fullname }}-{{ $i }}
+  name: {{ $fullname }}
   {{- if $.Values.node.serviceMonitor.namespace }}
   namespace: {{ $.Values.node.serviceMonitor.namespace }}
   {{- else }}
@@ -17,7 +16,6 @@ spec:
   selector:
     matchLabels:
       {{- $selectorLabels | nindent 6 }}
-      statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
   endpoints:
     - port: prometheus
       path: /metrics
@@ -30,6 +28,4 @@ spec:
   namespaceSelector:
     matchNames:
       - {{ $.Release.Namespace }}
-  {{- end }}
----
-{{ end }}
+{{- end }}
