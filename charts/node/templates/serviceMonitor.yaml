@@ -30,6 +30,5 @@ spec:
       - {{ $.Release.Namespace }}
   targetLabels:
     - chain
-    - release
     - instance
 {{- end }}
