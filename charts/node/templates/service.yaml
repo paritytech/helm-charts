@@ -28,7 +28,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ $fullname }}-{{ $i }}
-  labels: 
+  labels:
     {{- $serviceLabels | nindent 4 }}
     instance: {{ $fullname }}-{{ $i }}
 spec:
@@ -60,7 +60,6 @@ spec:
     - name: p2p
       port: {{ add $.Values.node.perNodeServices.p2pNodePortStartRange $i }}
       nodePort: {{ add $.Values.node.perNodeServices.p2pNodePortStartRange $i }}
-      targetPort: 30333
 {{- end }}
 ---
 {{ end }}
