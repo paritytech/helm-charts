@@ -51,6 +51,7 @@ metadata:
   name: {{ $fullname }}-{{ $i }}-p2p
 spec:
   type: NodePort
+  externalTrafficPolicy: Local
   selector:
     {{- $selectorLabels | nindent 4 }}
     statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
