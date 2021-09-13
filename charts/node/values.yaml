@@ -49,6 +49,7 @@ ingress:
 
 node:
   chain: "polkadot"
+  command: "polkadot"
   dataVolumeSize: 100Gi
   replicas: 1
   #chainDataSnapshotUrl: ""

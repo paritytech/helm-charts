@@ -108,7 +108,7 @@ spec:
           - |
             {{- range $index, $key := .Values.node.keys }}
             echo {{ $key.seed }} > /dev/shm/{{ $index }}.key
-            polkadot key insert --base-path /data --chain ${CHAIN} --key-type {{ $key.type }} --scheme {{ $key.scheme }} --suri /dev/shm/{{ $index }}.key
+            {{ .Values.node.command }} key insert --base-path /data --chain ${CHAIN} --key-type {{ $key.type }} --scheme {{ $key.scheme }} --suri /dev/shm/{{ $index }}.key
             rm /dev/shm/{{ $index }}.key
             {{- end }}
         env:
@@ -130,7 +130,7 @@ spec:
               POD_INDEX="${HOSTNAME##*-}";
               P2P_PORT=$(({{ .Values.node.perNodeServices.p2pNodePortStartRange }}+POD_INDEX));
               echo "P2P_PORT=${P2P_PORT}";
-              exec polkadot \
+              exec {{ .Values.node.command }} \
                 --name=${POD_NAME} \
                 --base-path=/data/ \
                 --chain=${CHAIN} \
