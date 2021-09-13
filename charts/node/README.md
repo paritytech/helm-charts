@@ -45,6 +45,7 @@ helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm
 | `node.command`                           | Command to be invoked to launch the node binary                                                                           | `polkadot`                     |
 | `node.flags`                             | Node flags other than `--name` (set from the helm release name), `--base-path` and `--chain` (both set with `node.chain`) | `--prometheus-external --rpc-external --ws-external --rpc-cors all` |
 | `node.keys`                              | The list of keys to inject on the node before startup (object{ type, scheme, seed })                                      | `{}`                           |
+| `node.persistGeneratedNodeKey`           | Persist the auto-generated node key inside the data volume (at /data/node-key)                                            | `false`                           |
 | `node.enableStartupProbe`                | If true, enable the startup probe check                                                                                   | `true`                         |
 | `node.enableReadinessProbe`              | If true, enable the readiness probe check                                                                                 | `true`                         |
 | `node.dataVolumeSize`                    | The size of the chain data PersistentVolume                                                                               | `100Gi`                        |

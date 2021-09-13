@@ -135,12 +135,18 @@ spec:
                 --base-path=/data/ \
                 --chain=${CHAIN} \
                 --listen-addr={{ .Values.node.perNodeServices.listenAddressBase }}${P2P_PORT} \
+                {{- if .Values.node.persistGeneratedNodeKey }}
+                --node-key-file /data/node-key" \
+                {{- end }}
               {{- join " " .Values.node.flags | nindent 18 }}
           {{- else }}
           args:
-            - "--name=$(POD_NAME)"
-            - "--base-path=/data/"
-            - "--chain=$(CHAIN)"
+            - --name=$(POD_NAME)
+            - --base-path=/data/
+            - --chain=$(CHAIN)
+            {{- if .Values.node.persistGeneratedNodeKey }}
+            - --node-key-file=/data/node-key
+            {{- end }}
             {{- toYaml .Values.node.flags | nindent 12 }}
           {{- end }}
           env:
