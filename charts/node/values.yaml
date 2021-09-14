@@ -52,6 +52,7 @@ node:
   command: "polkadot"
   dataVolumeSize: 100Gi
   replicas: 1
+  role: full
   #chainDataSnapshotUrl: ""
   chainDataSnapshotExtractionPath: "/data/chains/${CHAIN_PATH}"
   chainDataSnapshotFormat: tar

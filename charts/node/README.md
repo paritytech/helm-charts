@@ -50,6 +50,7 @@ helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm
 | `node.enableReadinessProbe`              | If true, enable the readiness probe check                                                                                 | `true`                         |
 | `node.dataVolumeSize`                    | The size of the chain data PersistentVolume                                                                               | `100Gi`                        |
 | `node.replica`                           | Number of replica in the node StatefulSet                                                                                 | `1`                            |
+| `node.role`                              | Set the role of the node: `full`, `authority` (for validators) or `light`                                                 | `full`                            |
 | `node.chainDataSnapshotUrl`              | Download and load chain data from a snapshot archive http URL                                                             | ``                             |
 | `node.chainDataSnapshotExtractionPath`   | The path at which the snapshot archive downloaded from a http URL will be extracted                                       | `/data/chains/${CHAIN_PATH}`   |
 | `node.chainDataSnapshotFormat`           | The snapshot archive format (`tar` or `7z`)                                                                               | `tar`                          |

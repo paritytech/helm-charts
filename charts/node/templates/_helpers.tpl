@@ -56,6 +56,7 @@ Service labels
 {{- define "chart.serviceLabels" -}}
 chain: {{ .Values.node.chain }}
 release: {{ .Release.Name }}
+role: {{ .Values.node.role }}
 {{- end }}
 
 {{/*

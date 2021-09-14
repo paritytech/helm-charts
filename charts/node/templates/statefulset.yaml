@@ -134,16 +134,28 @@ spec:
                 --name=${POD_NAME} \
                 --base-path=/data/ \
                 --chain=${CHAIN} \
+                {{- if eq .Values.node.role "authority" }}
+                --validator \
+                {{- end }}
+                {{- if eq .Values.node.role "light" }}
+                --light \
+                {{- end }}
                 --listen-addr={{ .Values.node.perNodeServices.listenAddressBase }}${P2P_PORT} \
                 {{- if .Values.node.persistGeneratedNodeKey }}
-                --node-key-file /data/node-key" \
+                --node-key-file /data/node-key \
                 {{- end }}
-              {{- join " " .Values.node.flags | nindent 18 }}
+                {{- join " " .Values.node.flags | nindent 16 }}
           {{- else }}
           args:
             - --name=$(POD_NAME)
             - --base-path=/data/
             - --chain=$(CHAIN)
+            {{- if eq .Values.node.role "authority" }}
+            - --validator
+            {{- end }}
+            {{- if eq .Values.node.role "light" }}
+            - --light \
+            {{- end }}
             {{- if .Values.node.persistGeneratedNodeKey }}
             - --node-key-file=/data/node-key
             {{- end }}
