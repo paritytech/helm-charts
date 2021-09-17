@@ -61,7 +61,7 @@ spec:
               path: /health
               port: http
           resources:
-            {{- toYaml .Values.core.resources | nindent 12 }}
+            {{- toYaml .Values.resources.core | nindent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

@@ -63,7 +63,7 @@ spec:
               path: /health
               port: http
           resources:
-            {{- toYaml .Values.shard.resources | nindent 12 }}
+            {{- toYaml .Values.resources.shard | nindent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
