@@ -29,12 +29,12 @@ spec:
   {{- end }}
   rules:
   {{- with .Values.ingress.frontend.rules }}
-  {{- toYaml . | nindent 2 }}
+  {{- toYaml . | nindent 6 }}
   {{- end }}
   {{- if .Values.ingress.frontend.tls }}
   tls:
   {{- with .Values.ingress.frontend.tls }}
-  {{- toYaml . | nindent 2 }}
+  {{- toYaml . | nindent 6 }}
   {{- end }}
   {{- end }}
 {{- end }}
