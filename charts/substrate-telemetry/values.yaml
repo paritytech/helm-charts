@@ -100,17 +100,13 @@ ingress:
         http:
           paths:
           - backend:
-              service:
-                name: telemetry-shard
-                port:
-                  number: 80
+              serviceName: telemetry-shard
+              Serviceport: 80
             path: /submit
             pathType: Exact
           - backend:
-              service:
-                name: telemetry-shard
-                port:
-                  number: 80
+              serviceName: telemetry-shard
+              Serviceport: 80
             path: /submit/
             pathType: Exact
     tls:
@@ -126,17 +122,13 @@ ingress:
         http:
           paths:
           - backend:
-              service:
-                name: telemetry-core
-                port:
-                  number: 80
+              serviceName: telemetry-core
+              Serviceport: 80
             path: /feed
             pathType: Exact
           - backend:
-              service:
-                name: telemetry-core
-                port:
-                  number: 80
+              serviceName: telemetry-core
+              Serviceport: 80
             path: /feed/
             pathType: Exact
     tls:
