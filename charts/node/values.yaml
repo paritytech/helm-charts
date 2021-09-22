@@ -87,6 +87,7 @@ node:
     # Set to 0.0.0.0 to enable auto discovery of the IP address
     listenAddressBase: "/ip4/0.0.0.0/tcp/"
   #podManagementPolicy: Parallel
+  #customChainspecUrl:
 
 substrateApiSidecar:
   enabled: false
