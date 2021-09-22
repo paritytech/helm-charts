@@ -31,8 +31,10 @@ spec:
   {{- with .Values.ingress.frontend.rules }}
   {{- toYaml . | nindent 2 }}
   {{- end }}
+  {{- if .Values.ingress.frontend.tls }}
   tls:
   {{- with .Values.ingress.frontend.tls }}
   {{- toYaml . | nindent 2 }}
+  {{- end }}
   {{- end }}
 {{- end }}

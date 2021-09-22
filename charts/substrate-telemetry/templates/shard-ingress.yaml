@@ -31,8 +31,10 @@ spec:
   {{- with .Values.ingress.shard.rules }}
   {{- toYaml . | nindent 2 }}
   {{- end }}
+  {{- if .Values.ingress.shard.tls }}
   tls:
   {{- with .Values.ingress.shard.tls }}
   {{- toYaml . | nindent 2 }}
+  {{- end }}
   {{- end }}
 {{- end }}
