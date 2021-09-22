@@ -95,41 +95,73 @@ ingress:
     enabled: false
     className: ""
     annotations: {}
-    hosts:
-      - host: chart-example.local
-        paths:
-          - path: /
-            pathType: ImplementationSpecific
+    rules:
+      - host: shard.example.local
+        http:
+          paths:
+          - backend:
+              service:
+                name: telemetry-shard
+                port:
+                  number: 80
+            path: /submit
+            pathType: Exact
+          - backend:
+              service:
+                name: telemetry-shard
+                port:
+                  number: 80
+            path: /submit/
+            pathType: Exact
     tls:
-      - secretName: chart-example-tls
+      - secretName: shard.example.local
         hosts:
-          - chart-example.local
+          - shard.example.local
   core:
     enabled: false
     className: ""
     annotations: {}
-    hosts:
-      - host: chart-example-1.local
-        paths:
-          - path: /
-            pathType: ImplementationSpecific
+    rules:
+      - host: feed.example.local
+        http:
+          paths:
+          - backend:
+              service:
+                name: telemetry-core
+                port:
+                  number: 80
+            path: /feed
+            pathType: Exact
+          - backend:
+              service:
+                name: telemetry-core
+                port:
+                  number: 80
+            path: /feed/
+            pathType: Exact
     tls:
-      - secretName: chart-example-tls
+      - secretName: feed.example.local
         hosts:
-          - chart-example-1.local
+          - feed.example.local
   frontend:
     enabled: false
     className: ""
     annotations:
-    hosts:
-      - host: chart-example-1.local
-        paths:
-          - path: /
-            pathType: ImplementationSpecific
+    rules:
+      - host: example.local
+        http:
+          paths:
+          - backend:
+              service:
+                name: telemetry-frontend
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
     tls:
-      - secretName: chart-example-tls
+      - secretName: example.local
         hosts:
-          - chart-example.local
+          - example.local
 
 
 resources:

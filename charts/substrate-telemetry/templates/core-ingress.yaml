@@ -27,36 +27,14 @@ spec:
   {{- if and .Values.ingress.core.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
   ingressClassName: {{ .Values.ingress.core.className }}
   {{- end }}
+  rules:
+  {{- with .Values.ingress.core.rules }}
+  {{- toYaml . | nindent 2 }}
+  {{- end }}
   {{- if .Values.ingress.core.tls }}
   tls:
-    {{- range .Values.ingress.core.tls }}
-    - hosts:
-        {{- range .hosts }}
-        - {{ . | quote }}
-        {{- end }}
-      secretName: {{ .secretName }}
-    {{- end }}
+  {{- with .Values.ingress.core.tls }}
+  {{- toYaml . | nindent 2 }}
   {{- end }}
-  rules:
-    {{- range .Values.ingress.core.hosts }}
-    - host: {{ .host | quote }}
-      http:
-        paths:
-          {{- range .paths }}
-          - path: {{ .path }}
-            {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
-            pathType: {{ .pathType }}
-            {{- end }}
-            backend:
-              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
-              service:
-                name: telemetry-core
-                port:
-                  number: {{ $svcPort }}
-              {{- else }}
-              serviceName: telemetry-core
-              servicePort: {{ $svcPort }}
-              {{- end }}
-          {{- end }}
-    {{- end }}
+  {{- end }}
 {{- end }}
