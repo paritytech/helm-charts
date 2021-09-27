@@ -95,10 +95,24 @@ spec:
               name: chain-data
             {{- if .Values.googleCloudSdk.serviceAccountKey }}
             - name: service-account-key
-              mountPath: "/tmp"
+              mountPath: /tmp
               readOnly: true
             {{- end }}
-      {{- end }}
+        {{- end }}
+        {{- if .Values.node.customChainspecUrl }}
+        - name: download-chainspec
+          image: {{ .Values.initContainer.image.repository }}:{{ .Values.initContainer.image.tag }}
+          command: [ "/bin/sh" ]
+          args:
+            - -c
+            - |
+              if [ ! -f /data/chainspec.json ]; then
+                wget -O /data/chainspec.json {{ .Values.node.customChainspecUrl }}
+              fi
+          volumeMounts:
+            - mountPath: /data
+              name: chain-data
+        {{- end }}
       {{- if .Values.node.keys }}
       - name: inject-keys
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -126,14 +140,14 @@ spec:
           command: [ "/bin/sh" ]
           args:
             - -c
-            - >
-              POD_INDEX="${HOSTNAME##*-}";
-              P2P_PORT=$(({{ .Values.node.perNodeServices.p2pNodePortStartRange }}+POD_INDEX));
-              echo "P2P_PORT=${P2P_PORT}";
+            - |
+              POD_INDEX="${HOSTNAME##*-}"
+              P2P_PORT=$(({{ .Values.node.perNodeServices.p2pNodePortStartRange }}+POD_INDEX))
+              echo "P2P_PORT=${P2P_PORT}"
               exec {{ .Values.node.command }} \
                 --name=${POD_NAME} \
                 --base-path=/data/ \
-                --chain=${CHAIN} \
+                --chain={{ if .Values.node.customChainspecUrl }}/data/chainspec.json{{ else }}${CHAIN}{{ end }} \
                 {{- if eq .Values.node.role "authority" }}
                 --validator \
                 {{- end }}
@@ -149,7 +163,7 @@ spec:
           args:
             - --name=$(POD_NAME)
             - --base-path=/data/
-            - --chain=$(CHAIN)
+            - --chain={{ if .Values.node.customChainspecUrl }}/data/chainspec.json{{ else }}${CHAIN}{{ end }}
             {{- if eq .Values.node.role "authority" }}
             - --validator
             {{- end }}
@@ -244,8 +258,8 @@ spec:
       tolerations:
       {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if .Values.googleCloudSdk.serviceAccountKey }}
       volumes:
+      {{- if .Values.googleCloudSdk.serviceAccountKey }}
         - name: service-account-key
           secret:
             secretName: chain-data-gcs-bucket-service-account-key
