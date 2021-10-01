@@ -163,7 +163,7 @@ spec:
           args:
             - --name=$(POD_NAME)
             - --base-path=/data/
-            - --chain={{ if .Values.node.customChainspecUrl }}/data/chainspec.json{{ else }}${CHAIN}{{ end }}
+            - --chain={{ if .Values.node.customChainspecUrl }}/data/chainspec.json{{ else }}$(CHAIN){{ end }}
             {{- if eq .Values.node.role "authority" }}
             - --validator
             {{- end }}
