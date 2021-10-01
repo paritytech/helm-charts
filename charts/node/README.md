@@ -82,3 +82,4 @@ helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm
 | `ingress.annotations`              | Annotations to add to the ingress (key/value pairs)                                                    | `{}`               |
 | `ingress.rules`                    | Set rules on the ingress                                                                               | `[]`              |
 | `ingress.tls`                      | Set TLS configuration on the ingress                                                                   | `[]`              |
+| `podSecurityContext`               | Set the pod security context for the substrate node container                                          | `{ runAsUser: 1000, runAsGroup: 1000, fsGroup: 1000 }`|
