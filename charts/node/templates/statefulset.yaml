@@ -203,11 +203,9 @@ spec:
           startupProbe:
             failureThreshold: 30
             periodSeconds: 10
-            # Use an exec command as Substate's default configuration only allow local network access to the RPC endpoint
-            exec:
-              command:
-              - curl
-              - "http://127.0.0.1:9933/health"
+            httpGet:
+              path: /health
+              port: http-rpc
           {{- end }}
           {{- if .Values.node.enableReadinessProbe }}
           # Continuously retry the connection to the WS endpoint every 10s for 24h until success before marking the container as ready
