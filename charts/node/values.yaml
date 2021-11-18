@@ -89,13 +89,32 @@ node:
   #podManagementPolicy: Parallel
   #customChainspecUrl:
 
-substrateApiSidecar:
-  enabled: false
-  image:
-    repository: parity/substrate-api-sidecar
-    tag: latest
-  env: {}
-  resources: {}
+sidecar:
+  substrateApi:
+    enabled: false
+    image:
+      repository: parity/substrate-api-sidecar
+      tag: latest
+    env: {}
+    resources: {}
+  jaegerAgent:
+    enabled: false
+    image:
+      repository: jaegertracing/jaeger-agent
+      tag: 1.28.0
+    ports:
+      # accept jaeger.thrift over compact thrift protocol
+      compactPort: 6831
+      # accept jaeger.thrift over binary thrift protocol
+      binaryPort: 6832
+      # (HTTP) serve configs, sampling strategies
+      samplingPort: 5778
+    collector:
+      url: null
+      # Jaeger Default GRPC port is 14250
+      port: 14250
+    env: {}
+    resources: {}      
 
 podAnnotations: {}
 

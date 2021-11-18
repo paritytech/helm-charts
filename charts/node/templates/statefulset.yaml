@@ -158,6 +158,9 @@ spec:
                 {{- if .Values.node.persistGeneratedNodeKey }}
                 --node-key-file /data/node-key \
                 {{- end }}
+                {{- if .Values.sidecar.jaegerAgent.enabled }}
+                --jaeger-agent=127.0.0.1:{{ .Values.sidecar.jaegerAgent.ports.compactPort }} \
+                {{- end }}
                 {{- join " " .Values.node.flags | nindent 16 }}
           {{- else }}
           args:
@@ -172,6 +175,9 @@ spec:
             {{- end }}
             {{- if .Values.node.persistGeneratedNodeKey }}
             - --node-key-file=/data/node-key
+            {{- end }} 
+            {{- if .Values.sidecar.jaegerAgent.enabled }}
+            - --jaeger-agent=127.0.0.1:{{ .Values.sidecar.jaegerAgent.ports.compactPort }}
             {{- end }}
             {{- toYaml .Values.node.flags | nindent 12 }}
           {{- end }}
@@ -225,20 +231,54 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: chain-data
-        {{- if .Values.substrateApiSidecar.enabled }}
+        {{- if .Values.sidecar.substrateApi.enabled }}
         - name: substrate-api-sidecar
-          image: {{ .Values.substrateApiSidecar.image.repository }}:{{ .Values.substrateApiSidecar.image.tag }}
+          image: {{ .Values.sidecar.substrateApi.image.repository }}:{{ .Values.sidecar.substrateApi.image.tag }}
           env:
-            {{- range $key, $val := .Values.substrateApiSidecar.env }}
+            {{- range $key, $val := .Values.sidecar.substrateApi.env }}
             - name: {{ $key }}
               value: {{ $val }}
             {{- end }}
           resources:
-          {{- toYaml .Values.substrateApiSidecar.resources | nindent 12 }}
+          {{- toYaml .Values.sidecar.substrateApi.resources | nindent 12 }}
           ports:
             - containerPort: 8080
               name: api-sidecar
               protocol: TCP
+        {{- end}}
+        {{- if .Values.sidecar.jaegerAgent.enabled }}
+        - name: jaeger-agent-sidecar
+          image: {{ .Values.sidecar.jaegerAgent.image.repository }}:{{ .Values.sidecar.jaegerAgent.image.tag }}
+          args:
+            - --reporter.grpc.host-port={{ .Values.sidecar.jaegerAgent.collector.url }}:{{ .Values.sidecar.jaegerAgent.collector.port }}
+          env: 
+            {{- range $key, $val := .Values.sidecar.jaegerAgent.env }}
+            - name: {{ $key }}
+              value: {{ $val }}
+            {{- end }}
+          resources:
+          {{- toYaml .Values.sidecar.jaegerAgent.resources | nindent 12 }}
+          ports:
+            - name: jaeger-compact
+              containerPort: {{ .Values.sidecar.jaegerAgent.ports.compactPort }}
+              protocol: UDP
+            - name: jaeger-binary
+              containerPort: {{ .Values.sidecar.jaegerAgent.ports.binaryPort }}
+              protocol: UDP
+            - name: http
+              containerPort: {{ .Values.sidecar.jaegerAgent.ports.samplingPort }}
+              protocol: TCP
+            - name: admin
+              containerPort: 14271
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: admin
+          readinessProbe:
+            httpGet:
+              path: /
+              port: admin
         {{- end}}
       serviceAccountName: {{ $serviceAccountName}}
       securityContext:
