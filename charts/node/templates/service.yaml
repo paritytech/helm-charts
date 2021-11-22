@@ -11,7 +11,7 @@ spec:
   selector:
     {{- $selectorLabels | nindent 4 }}
   ports:
-    {{- if $.Values.substrateApiSidecar.enabled }}
+    {{- if $.Values.node.substrateApiSidecar.enabled }}
     - port: 8080
       name: api-sidecar
     {{- end }}

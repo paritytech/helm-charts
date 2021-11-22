@@ -2,5 +2,5 @@ apiVersion: v2
 name: node
 description: A Helm chart to deploy Substrate/Polkadot nodes
 type: application
-version: 0.15.0
+version: 0.16.0
 appVersion: "0.0.1"
