@@ -94,11 +94,11 @@ node:
     enabled: false
 
   # Enables Sustrate API as a sidecar 
-  substrateApi:
+  substrateApiSidecar:
     enabled: false
 
 # https://github.com/paritytech/substrate-api-sidecar
-substrateApi:
+substrateApiSidecar:
   image:
     repository: parity/substrate-api-sidecar
     tag: latest
@@ -109,7 +109,7 @@ substrateApi:
 jaegerAgent:
   image:
     repository: jaegertracing/jaeger-agent
-    tag: 1.28.0
+    tag: latest
   ports:
     # accept jaeger.thrift over compact thrift protocol
     compactPort: 6831

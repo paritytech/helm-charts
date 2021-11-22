@@ -231,16 +231,16 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: chain-data
-        {{- if .Values.node.substrateApi.enabled }}
+        {{- if .Values.node.substrateApiSidecar.enabled }}
         - name: substrate-api-sidecar
-          image: {{ .Values.substrateApi.image.repository }}:{{ .Values.substrateApi.image.tag }}
+          image: {{ .Values.substrateApiSidecar.image.repository }}:{{ .Values.substrateApiSidecar.image.tag }}
           env:
-            {{- range $key, $val := .Values.substrateApi.env }}
+            {{- range $key, $val := .Values.substrateApiSidecar.env }}
             - name: {{ $key }}
               value: {{ $val }}
             {{- end }}
           resources:
-          {{- toYaml .Values.substrateApi.resources | nindent 12 }}
+          {{- toYaml .Values.substrateApiSidecar.resources | nindent 12 }}
           ports:
             - containerPort: 8080
               name: api-sidecar

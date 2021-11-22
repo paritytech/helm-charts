@@ -66,7 +66,7 @@ helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm
 | `node.serviceMonitor.internal`           | Prometheus scrape interval                                                                                                | `nil`                          |
 | `node.serviceMonitor.scrapeTimeout`      | Prometheus scrape timeout                                                                                                 | `nil`                          |
 | `node.tracing.enabled`                   | If true, creates a jaeger agent sidecar                                                                                   | `false`                        |
-| `node.subtrateApi.enabled`               | If true, creates a substrate api sidecar                                                                                  | `false`                        |
+| `node.subtrateApiSiecar.enabled`         | If true, creates a substrate api sidecar                                                                                  | `false`                        |
 
 ### Other parameters
 
