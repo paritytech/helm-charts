@@ -48,7 +48,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ $fullname }}-{{ $i }}-p2p
+  name: {{ $fullname }}-{{ $i }}-relay-chain-p2p
 spec:
   type: NodePort
   externalTrafficPolicy: Local
@@ -57,8 +57,8 @@ spec:
     statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
   ports:
     - name: p2p
-      port: {{ add $.Values.node.perNodeServices.p2pNodePortStartRange $i }}
-      nodePort: {{ add $.Values.node.perNodeServices.p2pNodePortStartRange $i }}
+      port: 30333
+      targetPort: 30333
 {{- end }}
 ---
 {{ end }}

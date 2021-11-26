@@ -113,37 +113,57 @@ spec:
             - mountPath: /data
               name: chain-data
         {{- end }}
-      {{- if .Values.node.keys }}
-      - name: inject-keys
-        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-        command: [ "/bin/sh" ]
-        args:
-          - -c
-          - |
-            {{- range $index, $key := .Values.node.keys }}
-            echo {{ $key.seed }} > /dev/shm/{{ $index }}.key
-            {{ .Values.node.command }} key insert --base-path /data --chain ${CHAIN} --key-type {{ $key.type }} --scheme {{ $key.scheme }} --suri /dev/shm/{{ $index }}.key
-            rm /dev/shm/{{ $index }}.key
-            {{- end }}
-        env:
-          - name: CHAIN
-            value: {{ .Values.node.chain }}
-        volumeMounts:
-          - mountPath: /data
-            name: chain-data
-      {{- end }}
-      containers:
-        - name: {{ .Values.node.chain }}
+        {{- if .Values.node.keys }}
+        - name: inject-keys
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- if .Values.node.perNodeServices.createP2pNodePortService }}
           command: [ "/bin/sh" ]
           args:
             - -c
             - |
+              {{- range $index, $key := .Values.node.keys }}
+              echo {{ $key.seed }} > /dev/shm/{{ $index }}.key
+              {{ .Values.node.command }} key insert --base-path /data --chain ${CHAIN} --key-type {{ $key.type }} --scheme {{ $key.scheme }} --suri /dev/shm/{{ $index }}.key
+              rm /dev/shm/{{ $index }}.key
+              {{- end }}
+          env:
+            - name: CHAIN
+              value: {{ .Values.node.chain }}
+          volumeMounts:
+            - mountPath: /data
+              name: chain-data
+        {{- end }}
+        {{- if .Values.node.perNodeServices.createP2pNodePortService }}
+        - name: retrieve-node-port
+          image: {{ .Values.kubectl.image.repository }}:{{ .Values.kubectl.image.tag }}
+          command: [ "/bin/sh" ]
+          args:
+            - -c
+            - |
+              EXTERNAL_IP=$(curl {{ .Values.kubectl.ipRetrievalServiceUrl }})
+              echo "${EXTERNAL_IP}" > /data/node_external_ip
+              echo "Retrieved external IP from {{ .Values.kubectl.ipRetrievalServiceUrl }}, saved ${EXTERNAL_IP} to /data/node_external_ip"
               POD_INDEX="${HOSTNAME##*-}"
-              P2P_PORT=$(({{ .Values.node.perNodeServices.p2pNodePortStartRange }}+POD_INDEX))
-              echo "P2P_PORT=${P2P_PORT}"
+              RELAY_CHAIN_P2P_PORT="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-relay-chain-p2p -o jsonpath='{.spec.ports[*].nodePort}')"
+              echo "${RELAY_CHAIN_P2P_PORT}" > /data/relay_chain_p2p_port
+              echo "Retrieved Kubernetes service node port from {{ $fullname }}-${POD_INDEX}-relay-chain-p2p, saved ${RELAY_CHAIN_P2P_PORT} to /data/relay_chain_p2p_port"
+          volumeMounts:
+            - mountPath: /data
+              name: chain-data
+        {{- end }}
+      containers:
+        - name: {{ .Values.node.chain }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: [ "/bin/sh" ]
+          args:
+            - -c
+            - |
+              {{- if .Values.node.perNodeServices.createP2pNodePortService }}
+              EXTERNAL_IP="$(cat /data/node_external_ip)"
+              echo "EXTERNAL_IP=${EXTERNAL_IP}"
+              RELAY_CHAIN_P2P_PORT="$(cat /data/relay_chain_p2p_port)"
+              echo "RELAY_CHAIN_P2P_PORT=${RELAY_CHAIN_P2P_PORT}"
+              {{- end }}
               exec {{ .Values.node.command }} \
                 --name=${POD_NAME} \
                 --base-path=/data/ \
@@ -154,7 +174,10 @@ spec:
                 {{- if eq .Values.node.role "light" }}
                 --light \
                 {{- end }}
-                --listen-addr={{ .Values.node.perNodeServices.listenAddressBase }}${P2P_PORT} \
+                {{- if .Values.node.perNodeServices.createP2pNodePortService }}
+                --public-addr=/ip4/${EXTERNAL_IP}/tcp/${RELAY_CHAIN_P2P_PORT} \
+                {{- end }}
+                --listen-addr=/ip4/0.0.0.0/tcp/30333 \
                 {{- if .Values.node.persistGeneratedNodeKey }}
                 --node-key-file /data/node-key \
                 {{- end }}
@@ -162,25 +185,6 @@ spec:
                 --jaeger-agent=127.0.0.1:{{ .Values.jaegerAgent.ports.compactPort }} \
                 {{- end }}
                 {{- join " " .Values.node.flags | nindent 16 }}
-          {{- else }}
-          args:
-            - --name=$(POD_NAME)
-            - --base-path=/data/
-            - --chain={{ if .Values.node.customChainspecUrl }}/data/chainspec.json{{ else }}$(CHAIN){{ end }}
-            {{- if eq .Values.node.role "authority" }}
-            - --validator
-            {{- end }}
-            {{- if eq .Values.node.role "light" }}
-            - --light \
-            {{- end }}
-            {{- if .Values.node.persistGeneratedNodeKey }}
-            - --node-key-file=/data/node-key
-            {{- end }} 
-            {{- if .Values.node.tracing.enabled }}
-            - --jaeger-agent=127.0.0.1:{{ .Values.jaegerAgent.ports.compactPort }}
-            {{- end }}
-            {{- toYaml .Values.node.flags | nindent 12 }}
-          {{- end }}
           env:
             - name: CHAIN
               value: {{ .Values.node.chain }}
@@ -251,7 +255,7 @@ spec:
           image: {{ .Values.jaegerAgent.image.repository }}:{{ .Values.jaegerAgent.image.tag }}
           args:
             - --reporter.grpc.host-port={{ .Values.jaegerAgent.collector.url }}:{{ .Values.jaegerAgent.collector.port }}
-          env: 
+          env:
             {{- range $key, $val := .Values.jaegerAgent.env }}
             - name: {{ $key }}
               value: {{ $val }}
@@ -280,7 +284,7 @@ spec:
               path: /
               port: admin
         {{- end}}
-      serviceAccountName: {{ $serviceAccountName}}
+      serviceAccountName: {{ $serviceAccountName }}
       securityContext:
       {{- toYaml .Values.podSecurityContext | nindent 8 }}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
