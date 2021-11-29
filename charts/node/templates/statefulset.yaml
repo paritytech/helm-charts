@@ -139,9 +139,9 @@ spec:
           args:
             - -c
             - |
-              EXTERNAL_IP=$(curl {{ .Values.kubectl.ipRetrievalServiceUrl }})
+              EXTERNAL_IP=$(curl {{ .Values.node.perNodeServices.ipRetrievalServiceUrl }})
               echo "${EXTERNAL_IP}" > /data/node_external_ip
-              echo "Retrieved external IP from {{ .Values.kubectl.ipRetrievalServiceUrl }}, saved ${EXTERNAL_IP} to /data/node_external_ip"
+              echo "Retrieved external IP from {{ .Values.node.perNodeServices.ipRetrievalServiceUrl }}, saved ${EXTERNAL_IP} to /data/node_external_ip"
               POD_INDEX="${HOSTNAME##*-}"
               RELAY_CHAIN_P2P_PORT="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-relay-chain-p2p -o jsonpath='{.spec.ports[*].nodePort}')"
               echo "${RELAY_CHAIN_P2P_PORT}" > /data/relay_chain_p2p_port

@@ -12,7 +12,6 @@ kubectl:
   image:
     repository: bitnami/kubectl
     tag: latest
-  ipRetrievalServiceUrl: https://ifconfig.io
 
 googleCloudSdk:
   image:
@@ -89,6 +88,7 @@ node:
   perNodeServices:
     createClusterIPService: true
     createP2pNodePortService: false
+    ipRetrievalServiceUrl: https://ifconfig.io
   #podManagementPolicy: Parallel
   #customChainspecUrl:
 
