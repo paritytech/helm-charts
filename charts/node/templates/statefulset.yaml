@@ -139,13 +139,15 @@ spec:
           args:
             - -c
             - |
-              EXTERNAL_IP=$(curl {{ .Values.node.perNodeServices.ipRetrievalServiceUrl }})
-              echo "${EXTERNAL_IP}" > /data/node_external_ip
-              echo "Retrieved external IP from {{ .Values.node.perNodeServices.ipRetrievalServiceUrl }}, saved ${EXTERNAL_IP} to /data/node_external_ip"
               POD_INDEX="${HOSTNAME##*-}"
               RELAY_CHAIN_P2P_PORT="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-relay-chain-p2p -o jsonpath='{.spec.ports[*].nodePort}')"
               echo "${RELAY_CHAIN_P2P_PORT}" > /data/relay_chain_p2p_port
               echo "Retrieved Kubernetes service node port from {{ $fullname }}-${POD_INDEX}-relay-chain-p2p, saved ${RELAY_CHAIN_P2P_PORT} to /data/relay_chain_p2p_port"
+              {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
+              EXTERNAL_IP=$(curl {{ .Values.node.perNodeServices.setPublicAddressToExternalIp.ipRetrievalServiceUrl }})
+              echo "${EXTERNAL_IP}" > /data/node_external_ip
+              echo "Retrieved external IP from {{ .Values.node.perNodeServices.ipRetrievalServiceUrl }}, saved ${EXTERNAL_IP} to /data/node_external_ip"
+              {{- end }}
           volumeMounts:
             - mountPath: /data
               name: chain-data
@@ -159,8 +161,10 @@ spec:
             - -c
             - |
               {{- if .Values.node.perNodeServices.createP2pNodePortService }}
+              {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
               EXTERNAL_IP="$(cat /data/node_external_ip)"
               echo "EXTERNAL_IP=${EXTERNAL_IP}"
+              {{- end }}
               RELAY_CHAIN_P2P_PORT="$(cat /data/relay_chain_p2p_port)"
               echo "RELAY_CHAIN_P2P_PORT=${RELAY_CHAIN_P2P_PORT}"
               {{- end }}
@@ -175,9 +179,11 @@ spec:
                 --light \
                 {{- end }}
                 {{- if .Values.node.perNodeServices.createP2pNodePortService }}
+                {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
                 --public-addr=/ip4/${EXTERNAL_IP}/tcp/${RELAY_CHAIN_P2P_PORT} \
                 {{- end }}
-                --listen-addr=/ip4/0.0.0.0/tcp/30333 \
+                --listen-addr=/ip4/0.0.0.0/tcp/${RELAY_CHAIN_P2P_PORT} \
+                {{- end }}
                 {{- if .Values.node.persistGeneratedNodeKey }}
                 --node-key-file /data/node-key \
                 {{- end }}

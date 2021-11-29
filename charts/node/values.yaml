@@ -88,7 +88,9 @@ node:
   perNodeServices:
     createClusterIPService: true
     createP2pNodePortService: false
-    ipRetrievalServiceUrl: https://ifconfig.io
+    setPublicAddressToExternalIp:
+      enabled: false
+      ipRetrievalServiceUrl: https://ifconfig.io
   #podManagementPolicy: Parallel
   #customChainspecUrl:
 
