@@ -184,6 +184,7 @@ spec:
                 {{- end }}
                 --listen-addr=/ip4/0.0.0.0/tcp/${RELAY_CHAIN_P2P_PORT} \
                 {{- end }}
+                --listen-addr=/ip4/0.0.0.0/tcp/30333 \
                 {{- if .Values.node.persistGeneratedNodeKey }}
                 --node-key-file /data/node-key \
                 {{- end }}
