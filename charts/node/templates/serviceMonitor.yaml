@@ -1,6 +1,5 @@
 {{- if .Values.node.serviceMonitor.enabled }}
 {{ $fullname :=  include "chart.fullname" . }}
-{{ $metadataLabels :=  include "chart.labels" . }}
 {{ $serviceLabels :=  include "chart.serviceLabels" .  }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
@@ -11,7 +10,8 @@ metadata:
   {{- else }}
   namespace: {{ $.Release.Namespace }}
   {{- end }}
-  labels: {{- $metadataLabels | nindent 4 }}
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:

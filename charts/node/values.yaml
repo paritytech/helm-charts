@@ -52,6 +52,9 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
+#extraLabels:
+#  type: rpc
+
 node:
   chain: "polkadot"
   command: "polkadot"
