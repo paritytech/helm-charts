@@ -36,10 +36,14 @@ Common labels
 {{- define "chart.labels" -}}
 helm.sh/chart: {{ include "chart.chart" . }}
 {{ include "chart.selectorLabels" . }}
+{{ include "chart.serviceLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- with .Values.extraLabels }}
+{{ toYaml . }}
+{{- end }}
 {{- end }}
 
 {{/*

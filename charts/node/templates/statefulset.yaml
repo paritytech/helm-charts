@@ -1,5 +1,4 @@
 {{ $fullname :=  include "chart.fullname" . }}
-{{ $metadataLabels :=  include "chart.labels" . }}
 {{ $selectorLabels :=  include "chart.selectorLabels" .  }}
 {{ $serviceLabels :=  include "chart.serviceLabels" .  }}
 {{ $serviceAccountName :=  include "chart.serviceAccountName" . }}
@@ -8,8 +7,7 @@ kind: StatefulSet
 metadata:
   name: {{ $fullname }}
   labels:
-  {{- $metadataLabels | nindent 4 }}
-  {{- $serviceLabels | nindent 4 }}
+    {{- include "chart.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
