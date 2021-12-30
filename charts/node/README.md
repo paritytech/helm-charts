@@ -52,7 +52,6 @@ helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm
 | `node.replica`                           | Number of replica in the node StatefulSet                                                                                 | `1`                            |
 | `node.role`                              | Set the role of the node: `full`, `authority` (for validators) or `light`                                                 | `full`                            |
 | `node.chainDataSnapshotUrl`              | Download and load chain data from a snapshot archive http URL                                                             | ``                             |
-| `node.chainDataSnapshotExtractionPath`   | The path at which the snapshot archive downloaded from a http URL will be extracted                                       | `/data/chains/${CHAIN_PATH}`   |
 | `node.chainDataSnapshotFormat`           | The snapshot archive format (`tar` or `7z`)                                                                               | `tar`                          |
 | `node.chainDataGcsBucketUrl`             | Sync chain data files from a GCS bucket (eg. `gs://bucket-name/folder-name`)                                              | ``                             |
 | `node.chainPath`                         | Path at which the chain database files are located (`/data/chains/${CHAIN_PATH}`)                                         | `nil` (if undefined, fallbacks to the value in `node.chain`) |

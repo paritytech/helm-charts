@@ -45,11 +45,11 @@ spec:
                   echo "Failed to download snapshot"
                   exit 1
                 fi
-                mkdir -p /data/chains/${CHAIN_PATH}/db/
+                mkdir -p /data/chains/${CHAIN_PATH}/
                 if [ "${SNAPSHOT_FORMAT}" == "7z" ]; then
                   7z x /data/snapshot -o/data/chains/${CHAIN_PATH}/
                 else
-                  tar xvf /data/snapshot --directory={{ .Values.node.chainDataSnapshotExtractionPath }}
+                  tar xvf /data/snapshot --directory=/data/chains/${CHAIN_PATH}/db/full/
                 fi
                 rm /data/snapshot
               fi

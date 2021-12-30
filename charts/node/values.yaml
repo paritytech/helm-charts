@@ -63,7 +63,6 @@ node:
   role: full
   #chainDataSnapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
   #chainDataSnapshotFormat: 7z
-  chainDataSnapshotExtractionPath: "/data/chains/${CHAIN_PATH}"
   #chainPath: ""
   #chainDataKubernetesVolumeSnapshot: ""
   #chainDataGcsBucketUrl: ""
