@@ -63,4 +63,21 @@ spec:
       targetPort: 30333
 {{- end }}
 ---
+{{- if and $.Values.node.collator.isParachain $.Values.node.perNodeServices.createP2pNodePortService }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullname }}-{{ $i }}-para-chain-p2p
+spec:
+  type: NodePort
+  externalTrafficPolicy: Local
+  selector:
+    {{- $selectorLabels | nindent 4 }}
+    statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
+  ports:
+    - name: p2p
+      port: 30334
+      targetPort: 30334
+{{- end }}
+---
 {{ end }}
