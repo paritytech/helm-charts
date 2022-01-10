@@ -61,16 +61,25 @@ node:
   dataVolumeSize: 100Gi
   replicas: 1
   role: full
+  #customChainspecUrl:
   #chainDataSnapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
   #chainDataSnapshotFormat: 7z
-  chainDataSnapshotExtractionPath: "/data/chains/${CHAIN_PATH}"
   #chainPath: ""
   #chainDataKubernetesVolumeSnapshot: ""
   #chainDataGcsBucketUrl: ""
+  collator:
+     isParachain: false
+     relayChain: polkadot
+  #  relayChainCustomChainspecUrl: ""
+  #  relayChainDataSnapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
+  #  relayChainDataSnapshotFormat: 7z
+  #  relayChainPath: ""
+  #  relayChainDataKubernetesVolumeSnapshot: ""
+  #  relayChainDataGcsBucketUrl: ""
+  #  relayChainFlags:
   enableStartupProbe: true
   enableReadinessProbe: true
   flags:
-    - "--pruning=1000"
     - "--rpc-external"
     - "--ws-external"
     - "--rpc-methods=safe"
@@ -97,7 +106,6 @@ node:
       enabled: false
       ipRetrievalServiceUrl: https://ifconfig.io
   #podManagementPolicy: Parallel
-  #customChainspecUrl:
 
   # Enables Jaeger Agent as a sidecar
   tracing:
