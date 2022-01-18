@@ -93,6 +93,7 @@ node:
   #    scheme: "sr25519"
   #    seed: "//Alice//babe"
   persistGeneratedNodeKey: false
+  #customNodeKey: ""
   resources: {}
   serviceMonitor:
     enabled: false
