@@ -346,7 +346,8 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: chain-data
-          {{- if .Values.node.customNodeKey }}
+          {{- if .Values.node.persistGeneratedNodeKey }}
+          {{- else if .Values.node.customNodeKey }}
             - mountPath: /tmp/
               name: custom-node-key
               readOnly: true
@@ -422,7 +423,8 @@ spec:
           secret:
             secretName: chain-data-gcs-bucket-service-account-key
       {{- end }}
-      {{- if .Values.node.customNodeKey }}
+      {{- if .Values.node.persistGeneratedNodeKey }}
+      {{- else if .Values.node.customNodeKey }}
         - name: custom-node-key
           secret:
             secretName: custom-node-key
