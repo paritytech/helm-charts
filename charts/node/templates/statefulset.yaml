@@ -427,7 +427,7 @@ spec:
       {{- else if .Values.node.customNodeKey }}
         - name: custom-node-key
           secret:
-            secretName: custom-node-key
+            secretName: {{ $fullname }}-custom-node-key
       {{- end }}
   volumeClaimTemplates:
     - apiVersion: v1
