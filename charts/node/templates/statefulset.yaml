@@ -274,6 +274,8 @@ spec:
                 {{- end }}
                 {{- if .Values.node.persistGeneratedNodeKey }}
                 --node-key-file /data/node-key \
+                {{- else if .Values.node.customNodeKey }}
+                --node-key $(cat /tmp/custom-node-key) \
                 {{- end }}
                 {{- if .Values.node.tracing.enabled }}
                 --jaeger-agent=127.0.0.1:{{ .Values.jaegerAgent.ports.compactPort }} \
@@ -344,6 +346,12 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: chain-data
+          {{- if .Values.node.persistGeneratedNodeKey }}
+          {{- else if .Values.node.customNodeKey }}
+            - mountPath: /tmp/
+              name: custom-node-key
+              readOnly: true
+          {{- end }}
         {{- if .Values.node.substrateApiSidecar.enabled }}
         - name: substrate-api-sidecar
           image: {{ .Values.substrateApiSidecar.image.repository }}:{{ .Values.substrateApiSidecar.image.tag }}
@@ -414,6 +422,12 @@ spec:
         - name: service-account-key
           secret:
             secretName: chain-data-gcs-bucket-service-account-key
+      {{- end }}
+      {{- if .Values.node.persistGeneratedNodeKey }}
+      {{- else if .Values.node.customNodeKey }}
+        - name: custom-node-key
+          secret:
+            secretName: {{ $fullname }}-custom-node-key
       {{- end }}
   volumeClaimTemplates:
     - apiVersion: v1
