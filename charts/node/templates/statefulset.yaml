@@ -1,5 +1,5 @@
 {{ $fullname :=  include "chart.fullname" . }}
-{{ $selectorLabels :=  include "chart.selectorLabels" .  }}
+{{ $selectorLabels :=  include "chart.selectorLabels" . }}
 {{ $serviceLabels :=  include "chart.serviceLabels" .  }}
 {{ $serviceAccountName :=  include "chart.serviceAccountName" . }}
 apiVersion: apps/v1
@@ -193,10 +193,14 @@ spec:
           args:
             - -c
             - |
-              {{- range $index, $key := .Values.node.keys }}
-              echo {{ $key.seed }} > /dev/shm/{{ $index }}.key
-              {{ $.Values.node.command }} key insert --base-path /data --chain ${CHAIN} --key-type {{ $key.type }} --scheme {{ $key.scheme }} --suri /dev/shm/{{ $index }}.key
-              rm /dev/shm/{{ $index }}.key
+              {{- range $keys := .Values.node.keys }}
+              {{ $.Values.node.command }} key insert --base-path /data \
+              --chain ${CHAIN} \
+              --key-type $(cat /var/run/secrets/{{ .type }}/type) \
+              --scheme $(cat /var/run/secrets/{{ .type }}/scheme) \
+              --suri /var/run/secrets/{{ .type }}/seed \
+              && echo "Inserted key {{ .type }} into Keystore" \
+              || echo "Failed to insert key {{ .type}} into Keystore."
               {{- end }}
           env:
             - name: CHAIN
@@ -204,6 +208,10 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: chain-data
+          {{- range $keys := .Values.node.keys }}
+            - mountPath: /var/run/secrets/{{ .type }}
+              name: {{ .type }}
+          {{- end }}
         {{- end }}
         {{- if .Values.node.perNodeServices.createP2pNodePortService }}
         - name: retrieve-node-port
@@ -428,6 +436,12 @@ spec:
         - name: custom-node-key
           secret:
             secretName: {{ $fullname }}-custom-node-key
+      {{- end }}
+      {{- range $keys := .Values.node.keys }}
+        - name: {{ .type }}
+          secret:
+            secretName: {{ $fullname }}-{{ .type }}
+            defaultMode: 0400
       {{- end }}
   volumeClaimTemplates:
     - apiVersion: v1
