@@ -194,7 +194,13 @@ spec:
             - -c
             - |
               {{- range $keys := .Values.node.keys }}
-              {{ $.Values.node.command }} key insert --base-path /data --chain ${CHAIN} --key-type $(cat /var/run/secrets/{{ .type }}/type) --scheme $(cat /var/run/secrets/{{ .type }}/scheme) --suri /var/run/secrets/{{ .type }}/seed && echo "Inserted key {{ .type }} into Keystore" || echo "Failed to insert key {{ .type}} into Keystore."
+              {{ $.Values.node.command }} key insert --base-path /data \
+              --chain ${CHAIN} \
+              --key-type $(cat /var/run/secrets/{{ .type }}/type) \
+              --scheme $(cat /var/run/secrets/{{ .type }}/scheme) \
+              --suri /var/run/secrets/{{ .type }}/seed \
+              && echo "Inserted key {{ .type }} into Keystore" \
+              || echo "Failed to insert key {{ .type}} into Keystore."
               {{- end }}
           env:
             - name: CHAIN
