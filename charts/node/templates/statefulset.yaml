@@ -288,7 +288,7 @@ spec:
                 {{- if .Values.node.tracing.enabled }}
                 --jaeger-agent=127.0.0.1:{{ .Values.jaegerAgent.ports.compactPort }} \
                 {{- end }}
-                {{- join " " .Values.node.flags | nindent 16 }}
+                {{- join " " .Values.node.flags | nindent 16 }} \
                 {{- if .Values.node.collator.isParachain }} \
                 -- \
                 --base-path=/data/relay/ \
