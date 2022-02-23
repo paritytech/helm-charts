@@ -173,13 +173,13 @@ spec:
             - -c
             - |
               {{- if .Values.node.customChainspecUrl }}
-              if [ ! -f /data/chainspec.json ]; then
-                wget -O /data/chainspec.json {{ .Values.node.customChainspecUrl }}
+              if [ ! -f {{ .Values.node.customChainspecPath }} ]; then
+                wget -O {{ .Values.node.customChainspecPath }} {{ .Values.node.customChainspecUrl }}
               fi
               {{- end }}
               {{- if .Values.node.collator.relayChainCustomChainspecUrl }}
-              if [ ! -f /data/relay_chain_chainspec.json ]; then
-                wget -O /data/relay_chain_chainspec.json {{ .Values.node.collator.relayChainCustomChainspecUrl }}
+              if [ ! -f {{ .Values.node.relayChainCustomChainspecPath }} ]; then
+                wget -O {{ .Values.node.relayChainCustomChainspecPath }} {{ .Values.node.collator.relayChainCustomChainspecUrl }}
               fi
               {{- end }}
           volumeMounts:
@@ -261,7 +261,7 @@ spec:
               exec {{ .Values.node.command }} \
                 --name=${POD_NAME} \
                 --base-path=/data/ \
-                --chain={{ if .Values.node.customChainspecUrl }}/data/chainspec.json{{ else }}${CHAIN}{{ end }} \
+                --chain={{ if .Values.node.customChainspecUrl }}{{ .Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
                 {{- if or (eq .Values.node.role "authority") (eq .Values.node.role "validator") }}
                 --validator \
                 {{- end }}
@@ -294,7 +294,7 @@ spec:
                 --base-path=/data/relay/ \
                 {{- end }}
                 {{- if .Values.node.collator.relayChainCustomChainspecUrl }}
-                --chain=/data/relay_chain_chainspec.json \
+                --chain={{ .Values.node.relayChainCustomChainspecPath }} \
                 {{- end }}
                 {{- if .Values.node.perNodeServices.createP2pNodePortService }}
                 {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
