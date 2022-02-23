@@ -3,6 +3,16 @@ entries:
   node:
   - apiVersion: v2
     appVersion: 0.0.1
+    created: "2022-02-23T11:23:14.941560232Z"
+    description: A Helm chart to deploy Substrate/Polkadot nodes
+    digest: 297683bd9c8e910dda9f34ca53b037e1542c2c9206a574a21af7afb7add5142e
+    name: node
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/node-0.24.1/node-0.24.1.tgz
+    version: 0.24.1
+  - apiVersion: v2
+    appVersion: 0.0.1
     created: "2022-02-21T17:58:16.59376843Z"
     description: A Helm chart to deploy Substrate/Polkadot nodes
     digest: f6faab21e03d23284ea00919f381858d95146be2081f43dfda0b157accd4d12b
@@ -322,4 +332,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/substrate-telemetry-0.1.0/substrate-telemetry-0.1.0.tgz
     version: 0.1.0
-generated: "2022-02-21T17:58:16.593994436Z"
+generated: "2022-02-23T11:23:14.942248476Z"
