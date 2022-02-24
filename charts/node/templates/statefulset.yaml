@@ -1,13 +1,13 @@
-{{ $fullname :=  include "chart.fullname" . }}
-{{ $selectorLabels :=  include "chart.selectorLabels" . }}
-{{ $serviceLabels :=  include "chart.serviceLabels" .  }}
-{{ $serviceAccountName :=  include "chart.serviceAccountName" . }}
+{{ $fullname :=  include "node.fullname" . }}
+{{ $selectorLabels :=  include "node.selectorLabels" . }}
+{{ $serviceLabels :=  include "node.serviceLabels" .  }}
+{{ $serviceAccountName :=  include "node.serviceAccountName" . }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ $fullname }}
   labels:
-    {{- include "chart.labels" . | nindent 4 }}
+    {{- include "node.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
@@ -22,7 +22,7 @@ spec:
       {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-      {{- include "chart.labels" . | nindent 8 }}
+      {{- include "node.labels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

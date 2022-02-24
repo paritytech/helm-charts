@@ -1,4 +1,4 @@
-{{ $fullname :=  include "chart.fullname" . }}
+{{ $fullname :=  include "node.fullname" . }}
 {{- range $keys := .Values.node.keys }}
 ---
 apiVersion: v1
