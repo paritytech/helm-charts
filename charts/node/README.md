@@ -28,8 +28,8 @@ helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm
 
 | Parameter           | Description                                  | Default                        |
 |---------------------|----------------------------------------------|--------------------------------|
-| `nameOverride`      | String to partially override chart.fullname  | `nil`                          |
-| `fullnameOverride`  | String to fully override chart.fullname      | `nil`                          |
+| `nameOverride`      | String to partially override node.fullname   | `nil`                          |
+| `fullnameOverride`  | String to fully override node.fullname       | `nil`                          |
 | `imagePullSecrets`  | Labels to add to all deployed objects        | `[]`                           |
 | `podAnnotations`    | Annotations to add to pods                   | `{}` (evaluated as a template) |
 | `nodeSelector`      | Node labels for pod assignment               | `{}` (evaluated as a template) |

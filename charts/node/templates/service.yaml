@@ -1,12 +1,12 @@
-{{ $fullname :=  include "chart.fullname" . }}
-{{ $selectorLabels :=  include "chart.selectorLabels" .  }}
-{{ $serviceLabels :=  include "chart.serviceLabels" .  }}
+{{ $fullname :=  include "node.fullname" . }}
+{{ $selectorLabels :=  include "node.selectorLabels" .  }}
+{{ $serviceLabels :=  include "node.serviceLabels" .  }}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ $fullname }}
   labels:
-    {{- include "chart.labels" . | nindent 4 }}
+    {{- include "node.labels" . | nindent 4 }}
 spec:
   type: ClusterIP
   clusterIP: None
