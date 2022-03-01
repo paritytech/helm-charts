@@ -107,6 +107,8 @@ node:
   perNodeServices:
     createClusterIPService: true
     createP2pNodePortService: false
+    relayServiceAnnotations: {}
+    paraServiceAnnotations: {}
     setPublicAddressToExternalIp:
       enabled: false
       ipRetrievalServiceUrl: https://ifconfig.io
