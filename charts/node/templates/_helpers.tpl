@@ -41,6 +41,8 @@ helm.sh/chart: {{ include "node.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+chain: {{ .Values.node.chain }}
+role: {{ .Values.node.role }}
 {{- with .Values.extraLabels }}
 {{ toYaml . }}
 {{- end }}
