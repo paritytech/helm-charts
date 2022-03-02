@@ -409,6 +409,9 @@ spec:
               path: /
               port: admin
         {{- end}}
+        {{- with .Values.extraContainers }}
+        {{ tpl . $ | nindent 8 }}
+        {{- end}}
       serviceAccountName: {{ $serviceAccountName }}
       securityContext:
       {{- toYaml .Values.podSecurityContext | nindent 8 }}
