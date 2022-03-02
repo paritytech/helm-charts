@@ -161,4 +161,4 @@ affinity: {}
 
 storageClass: "default"
 
-extraContainers: |
+extraContainers: []

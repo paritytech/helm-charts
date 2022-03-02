@@ -106,4 +106,4 @@ helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm
 | `jaegerAgent.ports.samplingPort`   | Port for HTTP sampling strategies                                                                      | `5778`              |
 | `jaegerAgent.collector.url`        | The URL which jaeger agent sends data                                                                  | `nil`               |
 | `jaegerAgent.collector.port   `    | The port which jaeger agent sends data                                                                 | `14250`             |    
-| `extraContainers   `               | Sidecar containers to add to the node                                                                  | `""`                |   
+| `extraContainers   `               | Sidecar containers to add to the node                                                                  | `[]`                |   
