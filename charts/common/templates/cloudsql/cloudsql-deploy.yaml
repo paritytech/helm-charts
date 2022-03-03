@@ -4,21 +4,21 @@ kind: Deployment
 metadata:
   name: cloudsql
   labels:
-    {{- include "gitspiegel.selectorLabels" . | nindent 4 }}
+    {{- include "common.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: {{ .Values.cloudsql.service.name }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "gitspiegel.selectorLabels" . | nindent 6 }}
+      {{- include "common.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: {{ .Values.cloudsql.service.name }}
   template:
     metadata:
       labels:
-        {{- include "gitspiegel.selectorLabels" . | nindent 8 }}
+        {{- include "common.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: {{ .Values.cloudsql.service.name }}
     spec:
-      serviceAccountName: {{ include "gitspiegel.serviceAccountName" . }}
+      serviceAccountName: {{ include "common.serviceAccountName" . }}
       containers:
       - name: cloudsql-proxy
         image: gcr.io/cloudsql-docker/gce-proxy:1.28.1
