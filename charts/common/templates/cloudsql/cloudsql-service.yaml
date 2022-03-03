@@ -1,0 +1,18 @@
+{{ if .Values.cloudsql.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.cloudsql.service.name }}
+  labels:
+    {{- include "gitspiegel.labels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ .Values.cloudsql.service.name }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.cloudsql.service.port }}
+      targetPort: {{ .Values.cloudsql.service.targetPort }}
+      protocol: TCP
+  selector:
+    {{- include "gitspiegel.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: {{ .Values.cloudsql.service.name }}
+{{- end }}
