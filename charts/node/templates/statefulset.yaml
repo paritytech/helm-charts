@@ -17,9 +17,30 @@ spec:
   serviceName: {{ $fullname }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- if or .Values.podAnnotations .Values.node.vault.keys .Values.node.vault.nodeKey }}
       annotations:
+      {{- with .Values.podAnnotations }}
       {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- range $keys := .Values.node.vault.keys }}
+        vault.hashicorp.com/agent-inject-secret-{{ .name }}: {{ .vaultPath | squote }}
+        vault.hashicorp.com/agent-inject-template-{{ .name }}: |
+          {{`{{ with secret "`}}{{ .vaultPath }}{{`" }}{{- range $k, $v := .Data.data }}
+          {{ $k }}: {{ $v }}
+          {{- end }}{{ end }}`}}
+      {{- end }}
+      {{- if or .Values.node.vault.keys .Values.node.vault.nodeKey }}
+      {{- if .Values.node.vault.nodeKey }}
+        vault.hashicorp.com/agent-inject-secret-{{ .Values.node.vault.nodeKey.name }}: {{ .Values.node.vault.nodeKey.vaultPath | squote }}
+        vault.hashicorp.com/agent-inject-template-{{ .Values.node.vault.nodeKey.name }}: |
+          {{`{{ with secret "`}}{{ .Values.node.vault.nodeKey.vaultPath }}{{`" }}{{- range $k, $v := .Data.data }}
+          {{ $k }}: {{ $v }}
+          {{- end }}{{ end }}`}}
+      {{- end }}
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-init-first: 'true'
+        vault.hashicorp.com/role: {{ include "node.serviceAccountName" . | squote }}
+      {{- end }}
       {{- end }}
       labels:
       {{- include "node.labels" . | nindent 8 }}
@@ -212,6 +233,29 @@ spec:
             - mountPath: /var/run/secrets/{{ .type }}
               name: {{ .type }}
           {{- end }}
+        {{ else if .Values.node.vault.keys }}
+        - name: inject-vault-keys
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          command: [ "/bin/sh" ]
+          args:
+            - -c
+            - |
+              {{- range $keys := .Values.node.vault.keys }}
+              cat /vault/secrets/{{ .name }}
+              {{ $.Values.node.command }} key insert --base-path /data \
+              --chain ${CHAIN} \
+              --key-type $(awk '/{{ .typeTarget }}/ {print $2}' /vault/secrets/{{ .name }}) \
+              --scheme $(awk '/{{ .schemeTarget }}/ {print $2}' /vault/secrets/{{ .name }}) \
+              --suri "$(awk '/{{ .seedTarget }}/ { $1=""; print}' /vault/secrets/{{ .name }} | cut -c 2-)" \
+              && echo "Inserted key {{ .name }} into Keystore" \
+              || echo "Failed to insert key {{ .name}} into Keystore."
+              {{- end }}
+          env:
+            - name: CHAIN
+              value: {{ .Values.node.chain }}
+          volumeMounts:
+            - mountPath: /data
+              name: chain-data
         {{- end }}
         {{- if .Values.node.perNodeServices.createP2pNodePortService }}
         - name: retrieve-node-port
@@ -284,6 +328,8 @@ spec:
                 --node-key-file /data/node-key \
                 {{- else if .Values.node.customNodeKey }}
                 --node-key $(cat /tmp/custom-node-key) \
+                {{- else if .Values.node.vault.nodeKey }}
+                --node-key $(awk '/{{ .Values.node.vault.nodeKey.keyTarget }}/ {print $2}' /vault/secrets/{{ .Values.node.vault.nodeKey.name }}) \
                 {{- end }}
                 {{- if .Values.node.tracing.enabled }}
                 --jaeger-agent=127.0.0.1:{{ .Values.jaegerAgent.ports.compactPort }} \

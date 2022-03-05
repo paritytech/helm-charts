@@ -96,6 +96,22 @@ node:
   #  - type: "babe"
   #    scheme: "sr25519"
   #    seed: "//Alice//babe"
+  vault:
+    keys: {}
+      # - name: grankey
+      #   vaultPath: secret/grankey
+      #   typeTarget: type
+      #   schemeTarget: scheme
+      #   seedTarget: seed
+      # - name: babekey
+      #   vaultPath: secrets/babeKey
+      #   typeTarget: type
+      #   schemeTarget: scheme
+      #   seedTarget: seed
+    nodeKey: {}
+      # name: nodekey
+      # vaultPath: secret/nodekey
+      # keyTarget: key
   persistGeneratedNodeKey: false
   #customNodeKey: ""
   resources: {}

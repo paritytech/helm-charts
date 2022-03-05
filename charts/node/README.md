@@ -22,6 +22,14 @@ helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm
 ```
 ⚠️ For some chains where the local directory name is different from the chain ID, `node.chainPath` needs to be set to a custom value.
 
+### Vault prerequisities
+
+- Vault agent injector [installed](https://www.vaultproject.io/docs/platform/k8s/injector/installation) on the cluster
+- Kubernetes [auth enabled](https://learn.hashicorp.com/tutorials/vault/kubernetes-sidecar#configure-kubernetes-authentication) in your vault instance
+- Secrets for either the keys or the nodeKey created in your vault using kv-2
+- A policy for each of your secrets configured in your vault
+- an authentication role crated in your vault instance (should match the serviceAccount name for this chart) with policies for accessing your keys attached
+
 ## Parameters
 
 ### Common parameters
@@ -35,7 +43,7 @@ helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm
 | `nodeSelector`      | Node labels for pod assignment               | `{}` (evaluated as a template) |
 | `tolerations`       | Tolerations for pod assignment               | `[]` (evaluated as a template) |
 | `affinity`          | Affinity for pod assignment                  | `{}` (evaluated as a template) |
-| `storaceClass`      | The storage class to use for volumes         | `default`                      |
+| `storageClass`      | The storage class to use for volumes         | `default`                      |
 
 ### Node parameters
 
@@ -44,9 +52,11 @@ helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm
 | `node.chain`                                           | Network to connect the node to (ie `--chain`)                                                                                                                                                                                                       | `polkadot`                     |
 | `node.command`                                         | Command to be invoked to launch the node binary                                                                                                                                                                                                     | `polkadot`                     |
 | `node.flags`                                           | Node flags other than `--name` (set from the helm release name), `--base-path` and `--chain` (both set with `node.chain`)                                                                                                                           | `--prometheus-external --rpc-external --ws-external --rpc-cors all` |
-| `node.keys`                                            | The list of keys to inject on the node before startup (object{ type, scheme, seed })                                                                                                                                                                | `{}`                           |
+| `node.keys`                                            | The list of keys to inject on the node before startup (object{ type, scheme, seed }), supercedes `node.vault.keys`                                                                                                                                                                | `{}`                           |
+| `node.vault.keys`                                      | The list of vault secrets to inject on the node before startup (object{ name, vaultPath, typeTarget, schemeTarget, seedTarget})                                                  | `{}`                           |
+| `node.vault.nodeKey`                                   | The vault secret to inject as a custom nodeKey (the secrets value must be 64 byte hex) (object {name, vaultPath, keyTarget})                 | `{}`                  |
 | `node.persistGeneratedNodeKey`                         | Persist the auto-generated node key inside the data volume (at /data/node-key)                                                                                                                                                                      | `false`                           |
-| `node.customNodeKey`                         | Use a custom node-key, if `node.persistGeneratedNodeKey` is true then this will not be used.  (Must be 64 byte hex key)                                                                                                                                                                      | `nil`                           |
+| `node.customNodeKey`                         | Use a custom node-key, if `node.persistGeneratedNodeKey` is true then this will not be used.  (Must be 64 byte hex key), supercedes `node.vault.nodeKey`                                                                                                                                                                     | `nil`                           |
 | `node.enableStartupProbe`                              | If true, enable the startup probe check                                                                                                                                                                                                             | `true`                         |
 | `node.enableReadinessProbe`                            | If true, enable the readiness probe check                                                                                                                                                                                                           | `true`                         |
 | `node.dataVolumeSize`                                  | The size of the chain data PersistentVolume                                                                                                                                                                                                         | `100Gi`                        |
