@@ -241,7 +241,6 @@ spec:
             - -c
             - |
               {{- range $keys := .Values.node.vault.keys }}
-              cat /vault/secrets/{{ .name }}
               {{ $.Values.node.command }} key insert --base-path /data \
               --chain ${CHAIN} \
               --key-type $(awk '/{{ .typeTarget }}/ {print $2}' /vault/secrets/{{ .name }}) \
