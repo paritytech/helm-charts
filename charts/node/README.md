@@ -22,8 +22,8 @@ helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm
 ```
 ⚠️ For some chains where the local directory name is different from the chain ID, `node.chainPath` needs to be set to a custom value.
 
-### Vault prerequisities
-
+### Optional Vault Integration
+To integrate this chart with vault:
 - Vault agent injector [installed](https://www.vaultproject.io/docs/platform/k8s/injector/installation) on the cluster
 - Kubernetes [auth enabled](https://learn.hashicorp.com/tutorials/vault/kubernetes-sidecar#configure-kubernetes-authentication) in your vault instance
 - Secrets for either the keys or the nodeKey created in your vault using kv-2
