@@ -43,6 +43,12 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 chain: {{ .Values.node.chain }}
 role: {{ .Values.node.role }}
+{{- if .Values.node.pruning }}
+pruning: {{ .Values.node.pruning }}
+{{- if or (eq .Values.node.role "authority") (eq .Values.node.role "validator") }}
+unsafe-pruning: true
+{{- end }}
+{{- end }}
 {{- with .Values.extraLabels }}
 {{ toYaml . }}
 {{- end }}

@@ -264,6 +264,13 @@ spec:
                 --chain={{ if .Values.node.customChainspecUrl }}{{ .Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
                 {{- if or (eq .Values.node.role "authority") (eq .Values.node.role "validator") }}
                 --validator \
+                {{- if .Values.node.pruning }}
+                --unsafe-pruning \
+                --pruning {{ .Values.node.pruning }} \
+                {{- end }}
+                {{- end }}
+                {{- if and (eq .Values.node.role "full") .Values.node.pruning }}
+                --pruning {{ .Values.node.pruning }} \
                 {{- end }}
                 {{- if eq .Values.node.role "collator" }}
                 --collator \
