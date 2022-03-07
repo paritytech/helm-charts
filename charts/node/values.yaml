@@ -118,8 +118,11 @@ node:
   serviceMonitor:
     enabled: false
     #namespace: monitoring
-    #interval: 10s
-    # scrapeTimeout: 10s
+    interval: 1m
+    scrapeTimeout: 30s
+    targetLabels:
+      - chain
+      - instance
   perNodeServices:
     createClusterIPService: true
     createP2pNodePortService: false
