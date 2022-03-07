@@ -106,7 +106,7 @@ node:
     scrapeTimeout: 30s
     targetLabels:
       - chain
-      - instance
+      - node
   perNodeServices:
     createClusterIPService: true
     createP2pNodePortService: false
