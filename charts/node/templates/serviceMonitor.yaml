@@ -28,7 +28,8 @@ spec:
   namespaceSelector:
     matchNames:
       - {{ $.Release.Namespace }}
+  {{- with $.Values.node.serviceMonitor.targetLabels }}
   targetLabels:
-    - chain
-    - instance
+  {{ toYaml .| nindent 4 }}
+  {{- end}}
 {{- end }}
