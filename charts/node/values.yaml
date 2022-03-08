@@ -121,7 +121,6 @@ node:
     interval: 1m
     scrapeTimeout: 30s
     targetLabels:
-      - chain
       - node
   perNodeServices:
     createClusterIPService: true

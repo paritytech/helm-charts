@@ -24,6 +24,7 @@ spec:
       {{- end }}
       {{- if $.Values.node.serviceMonitor.scrapeTimeout }}
       scrapeTimeout: {{ $.Values.node.serviceMonitor.scrapeTimeout }}
+      honorLabels: true
   {{- end }}
   namespaceSelector:
     matchNames:
