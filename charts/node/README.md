@@ -41,6 +41,10 @@ node:
         vaultPath: kv/secret/polkadot-node # path at which the secret is located in Vault
         vaultKey: aura # key under which the secret value is stored in Vault
         extraDerivation: "//${HOSTNAME}//aura" # allows to have unique derived keys for each pod of the statefulset
+    nodeKey:
+      name: nodekey
+      vaultPath: kv/secret/polkadot-node
+      vaultKey: nodekey
 ```
 
 ## Parameters
@@ -71,7 +75,7 @@ node:
 | `node.vault.authType`                                                     | Set the vault-agent authentication type (defaults to `kubernetes` when not set)                                                                                                                                                                      | `nil`                                                               |
 | `node.vault.authConfigType`                                               | Set the vault-agent authentication additional `type` parameter                                                                                                                                                                                       | `nil`                                                               |
 | `node.vault.authConfigServiceAccount`                                     | Set the vault-agent authentication additional `service-account` parameter                                                                                                                                                                            | `nil`                                                               |
-| `node.vault.keys`                                                         | The list of vault secrets to inject on the node before startup (object{name, vaultPath, vaultKey, scheme, type, extraDerivation})                                                                                                                    | `{}`                                                                |
+| `node.vault.keys`                                                         | The list of vault secrets to inject on the node before startup (object{name, vaultPath, vaultKey, scheme, type, extraDerivation}). Note that the vaultKey must be alphanumeric.                                                                      | `{}`                                                                |
 | `node.vault.nodeKey`                                                      | The vault secret to inject as a custom nodeKey (the secrets value must be 64 byte hex) (object {name, vaultPath, vaultKey})                                                                                                                          | `{}`                                                                |
 | `node.persistGeneratedNodeKey`                                            | Persist the auto-generated node key inside the data volume (at /data/node-key)                                                                                                                                                                       | `false`                                                             |
 | `node.customNodeKey`                                                      | Use a custom node-key, if `node.persistGeneratedNodeKey` is true then this will not be used.  (Must be 64 byte hex key), supercedes `node.vault.nodeKey`                                                                                             | `nil`                                                               |
