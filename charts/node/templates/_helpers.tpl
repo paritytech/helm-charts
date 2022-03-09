@@ -43,10 +43,10 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 chain: {{ .Values.node.chain }}
 role: {{ .Values.node.role }}
-{{- if or .Values.node.pruning (eq ( .Values.node.pruning | int64 ) 0 ) }}
-{{- if ge ( .Values.node.pruning | int64 ) 1 }}
-pruning: {{ ( .Values.node.pruning | int64 ) }}
-{{- else if eq ( .Values.node.pruning | int64 ) 0 }}
+{{- if or .Values.node.pruning ( not ( kindIs "invalid" .Values.node.pruning ) ) }}
+{{- if ge ( int .Values.node.pruning ) 1 }}
+pruning: {{ ( int .Values.node.pruning ) }}
+{{- else if and ( not ( kindIs "invalid" .Values.node.pruning ) ) ( eq 0 ( int .Values.node.pruning ) ) }}
 pruning: archive
 {{- end }}
 unsafe-pruning: true

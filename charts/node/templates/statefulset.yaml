@@ -265,10 +265,10 @@ spec:
                 {{- if or (eq .Values.node.role "authority") (eq .Values.node.role "validator") }}
                 --validator \
                 {{- end }}
-                {{- if ge ( .Values.node.pruning | int64 ) 1 }}
+                {{- if ge ( int .Values.node.pruning ) 1 }}
                 --unsafe-pruning \
                 --pruning={{ .Values.node.pruning }} \
-                {{- else if eq ( .Values.node.pruning | int64 ) 0 }}
+                {{- else if and ( not ( kindIs "invalid" .Values.node.pruning ) ) ( eq 0 ( int .Values.node.pruning ) ) }}
                 --unsafe-pruning \
                 --pruning=archive \
                 {{- end }}
