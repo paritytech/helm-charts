@@ -332,6 +332,17 @@ entries:
     urls:
     - https://github.com/paritytech/node-helm-chart/releases/download/node-0.1.0/node-0.1.0.tgz
     version: 0.1.0
+  polkadot-introspector:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2022-03-09T18:37:45.384795487Z"
+    description: A Helm chart to deploy polkadot-introspector
+    digest: 9dafd636d352d7465d5e1dc0ee2bc52d2bbbbc6d2ff2a4efd471df94b931f342
+    name: polkadot-introspector
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/polkadot-introspector-0.1.0/polkadot-introspector-0.1.0.tgz
+    version: 0.1.0
   substrate-telemetry:
   - apiVersion: v2
     appVersion: 1.16.0
@@ -413,4 +424,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/substrate-telemetry-0.1.0/substrate-telemetry-0.1.0.tgz
     version: 0.1.0
-generated: "2022-03-09T12:31:00.543796184Z"
+generated: "2022-03-09T18:37:45.385189787Z"
