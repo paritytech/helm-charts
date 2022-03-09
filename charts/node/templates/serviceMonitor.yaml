@@ -24,11 +24,13 @@ spec:
       {{- end }}
       {{- if $.Values.node.serviceMonitor.scrapeTimeout }}
       scrapeTimeout: {{ $.Values.node.serviceMonitor.scrapeTimeout }}
+      honorLabels: true
   {{- end }}
   namespaceSelector:
     matchNames:
       - {{ $.Release.Namespace }}
+  {{- with $.Values.node.serviceMonitor.targetLabels }}
   targetLabels:
-    - chain
-    - instance
+  {{ toYaml .| nindent 4 }}
+  {{- end}}
 {{- end }}
