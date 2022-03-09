@@ -39,7 +39,20 @@ spec:
       {{- end }}
         vault.hashicorp.com/agent-inject: 'true'
         vault.hashicorp.com/agent-init-first: 'true'
-        vault.hashicorp.com/role: {{ include "node.serviceAccountName" . | squote }}
+        vault.hashicorp.com/agent-pre-populate-only: 'true'
+        vault.hashicorp.com/role: {{ .Values.node.vault.authRole | default (include "node.serviceAccountName" .) | squote }}
+      {{- end }}
+      {{- if .Values.node.vault.authType }}
+        vault.hashicorp.com/auth-type: {{ .Values.node.vault.authType | squote }}
+      {{- end }}
+      {{- if .Values.node.vault.authPath }}
+        vault.hashicorp.com/auth-path: {{ .Values.node.vault.authPath | squote }}
+      {{- end }}
+      {{- if .Values.node.vault.authConfigType }}
+        vault.hashicorp.com/auth-config-type: {{ .Values.node.vault.authConfigType | squote }}
+      {{- end }}
+      {{- if .Values.node.vault.authConfigServiceAccount }}
+        vault.hashicorp.com/auth-config-service-account: {{ .Values.node.vault.authConfigServiceAccount | squote }}
       {{- end }}
       {{- end }}
       labels:

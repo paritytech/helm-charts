@@ -97,6 +97,11 @@ node:
   #    scheme: "sr25519"
   #    seed: "//Alice//babe"
   vault:
+    #authPath: ""
+    #authRole: ""
+    #authType: ""
+    #authConfigType: ""
+    #authConfigServiceAccount: ""
     keys: {}
       # - name: grankey
       #   vaultPath: secret/grankey
