@@ -1,0 +1,72 @@
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: lazam/introspector #To be replaced once public image is available
+  pullPolicy: Always
+  tag: latest
+
+imagePullSecrets: []
+
+replicas: 1
+
+introspector:
+  role: block-time-monitor
+  rpcNodes: "wss://rpc.polkadot.io:443,wss://kusama-rpc.polkadot.io:443"
+  prometheusPort: 9615
+
+serviceAccount:
+  create: true
+#  annotations: {}
+#  name: ""
+
+extraLabels: []
+
+podAnnotations: {}
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 9615
+
+serviceMonitor:
+  enabled: false
+  interval: 1m
+  scrapeTimeout: 30s
+  targetLabels: []
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
