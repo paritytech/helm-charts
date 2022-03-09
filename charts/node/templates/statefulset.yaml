@@ -229,7 +229,7 @@ spec:
             - |
               {{- range $keys := .Values.node.keys }}
               {{ $.Values.node.command }} key insert --base-path /data \
-              --chain ${CHAIN} \
+                --chain {{ if $.Values.node.customChainspecUrl }}{{ $.Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
               --key-type $(cat /var/run/secrets/{{ .type }}/type) \
               --scheme $(cat /var/run/secrets/{{ .type }}/scheme) \
               --suri /var/run/secrets/{{ .type }}/seed \
@@ -255,7 +255,7 @@ spec:
             - |
               {{- range $keys := .Values.node.vault.keys }}
               {{ $.Values.node.command }} key insert --base-path /data \
-              --chain ${CHAIN} \
+              --chain {{ if $.Values.node.customChainspecUrl }}{{ $.Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
               --key-type {{ .type }} \
               --scheme {{ .scheme }} \
               --suri "/vault/secrets/{{ .name }}" \

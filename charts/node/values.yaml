@@ -108,6 +108,7 @@ node:
       #   scheme: scheme
       #   vaultPath: secret/grankey
       #   vaultKey: gran
+      #   extraDerivation: //
       # - name: babekey
       #   type: type
       #   scheme: scheme
