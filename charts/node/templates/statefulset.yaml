@@ -33,9 +33,9 @@ spec:
       {{- if .Values.node.vault.nodeKey }}
         vault.hashicorp.com/agent-inject-secret-{{ .Values.node.vault.nodeKey.name }}: {{ .Values.node.vault.nodeKey.vaultPath | squote }}
         vault.hashicorp.com/agent-inject-template-{{ .Values.node.vault.nodeKey.name }}: |
-          {{`{{ with secret "`}}{{ .Values.node.vault.nodeKey.vaultPath }}{{`" }}{{- range $k, $v := .Data.data }}
-          {{ $k }}: {{ $v }}
-          {{- end }}{{ end }}`}}
+          {{`{{- with secret "`}}{{ .Values.node.vault.nodeKey.vaultPath }}{{`" }}
+          {{ index .Data.data.`}}{{ .Values.node.vault.nodeKey.keyTarget }}{{` }}
+          {{- end }}`}}
       {{- end }}
         vault.hashicorp.com/agent-inject: 'true'
         vault.hashicorp.com/agent-init-first: 'true'
@@ -341,7 +341,7 @@ spec:
                 {{- else if .Values.node.customNodeKey }}
                 --node-key $(cat /tmp/custom-node-key) \
                 {{- else if .Values.node.vault.nodeKey }}
-                --node-key $(awk '/{{ .Values.node.vault.nodeKey.keyTarget }}/ {print $2}' /vault/secrets/{{ .Values.node.vault.nodeKey.name }}) \
+                --node-key $(cat /vault/secrets/{{ .Values.node.vault.nodeKey.name }}) \
                 {{- end }}
                 {{- if .Values.node.tracing.enabled }}
                 --jaeger-agent=127.0.0.1:{{ .Values.jaegerAgent.ports.compactPort }} \

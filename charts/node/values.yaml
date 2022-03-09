@@ -116,6 +116,7 @@ node:
     nodeKey: {}
       # name: nodekey
       # vaultPath: secret/nodekey
+      # remark: keyTarget cannot contain dashes ('-'), only alphanumeric characters due to a limitation in the go templating
       # keyTarget: key
   persistGeneratedNodeKey: false
   #customNodeKey: ""
