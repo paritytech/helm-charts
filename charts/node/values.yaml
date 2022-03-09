@@ -106,17 +106,17 @@ node:
       # - name: grankey
       #   type: type
       #   scheme: scheme
-      #   vaultPath: secret/grankey
+      #   vaultPath: kv/secret/grankey
       #   vaultKey: gran
       #   extraDerivation: //
       # - name: babekey
       #   type: type
       #   scheme: scheme
-      #   vaultPath: secrets/babeKey
+      #   vaultPath: kv/secrets/babeKey
       #   vaultKey: babe
     nodeKey: {}
       # name: nodekey
-      # vaultPath: secret/nodekey
+      # vaultPath: kv/secret/nodekey
       # remark: vaultKey cannot contain dashes ('-'), only alphanumeric characters due to a limitation in the go templating
       # vaultKey: key
   persistGeneratedNodeKey: false

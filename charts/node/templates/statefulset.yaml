@@ -254,7 +254,11 @@ spec:
               --chain {{ if $.Values.node.customChainspecUrl }}{{ $.Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
               --key-type {{ .type }} \
               --scheme {{ .scheme }} \
+              {{- if .extraDerivation }}
+              --suri "$(cat /vault/secrets/{{ .name }}){{ .extraDerivation }}" \
+              {{ else }}
               --suri "/vault/secrets/{{ .name }}" \
+              {{- end }}
               && echo "Inserted key {{ .name }} (type={{ .type }}, scheme={{ .scheme }}) into Keystore" \
               || echo "Failed to insert key {{ .name }} (type={{ .type }}, scheme={{ .scheme }}) into Keystore."
               {{- end }}
