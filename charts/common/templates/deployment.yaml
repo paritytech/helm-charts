@@ -38,14 +38,14 @@ spec:
             - name: http
               containerPort: {{ .Values.service.containerPort }} 
               protocol: TCP
+          {{- with .Values.livenessProbe }}
           livenessProbe:
-            httpGet:
-              path: /ping
-              port: http
+            {{- toYaml . | trim | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
           readinessProbe:
-            httpGet:
-              path: /ping
-              port: http
+            {{- toYaml . | trim | nindent 12 }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:

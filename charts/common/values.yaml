@@ -102,6 +102,26 @@ tolerations: []
 
 affinity: {}
 
+## Controller Container liveness/readiness probe configuration
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+livenessProbe: {}
+  # failureThreshold: 3
+  # successThreshold: 1
+  # initialDelaySeconds: 0
+  # timeoutSeconds: 1
+  # tcpSocket:
+  #   port: 80
+  # periodSeconds: 10
+
+readinessProbe: {}
+  # failureThreshold: 3
+  # successThreshold: 1
+  # initialDelaySeconds: 0
+  # timeoutSeconds: 1
+  # tcpSocket:
+  #   port: 80
+  # periodSeconds: 10
+
 persistence:
   enabled: false
   accessModes:
