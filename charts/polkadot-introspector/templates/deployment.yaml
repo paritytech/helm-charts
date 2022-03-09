@@ -38,7 +38,7 @@ spec:
               exec polkadot-introspector \
               {{-  if eq .Values.introspector.role "block-time-monitor"}}
               block-time-monitor \
-              --ws {{ .Values.introspector.rpcNodes }} \
+              --ws {{ join "," .Values.introspector.rpcNodes }} \
               prometheus --port {{ .Values.introspector.prometheusPort }}
               {{- end }}
           ports:
