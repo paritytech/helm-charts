@@ -25,17 +25,13 @@ spec:
       {{- range $keys := .Values.node.vault.keys }}
         vault.hashicorp.com/agent-inject-secret-{{ .name }}: {{ .vaultPath | squote }}
         vault.hashicorp.com/agent-inject-template-{{ .name }}: |
-          {{`{{- with secret "`}}{{ .vaultPath }}{{`" }}
-          {{ .Data.data.`}}{{ .vaultKey }}{{` }}
-          {{- end }}`}}
+          {{`{{ with secret "`}}{{ .vaultPath }}{{`" }}{{ .Data.data.`}}{{ .vaultKey }}{{` }}{{ end }}`}}
       {{- end }}
       {{- if or .Values.node.vault.keys .Values.node.vault.nodeKey }}
       {{- if .Values.node.vault.nodeKey }}
         vault.hashicorp.com/agent-inject-secret-{{ .Values.node.vault.nodeKey.name }}: {{ .Values.node.vault.nodeKey.vaultPath | squote }}
         vault.hashicorp.com/agent-inject-template-{{ .Values.node.vault.nodeKey.name }}: |
-          {{`{{- with secret "`}}{{ .Values.node.vault.nodeKey.vaultPath }}{{`" }}
-          {{ .Data.data.`}}{{ .Values.node.vault.nodeKey.vaultKey }}{{` }}
-          {{- end }}`}}
+          {{`{{ with secret "`}}{{ .Values.node.vault.nodeKey.vaultPath }}{{`" }}{{ .Data.data.`}}{{ .Values.node.vault.nodeKey.vaultKey }}{{` }}{{ end }}`}}
       {{- end }}
         vault.hashicorp.com/agent-inject: 'true'
         vault.hashicorp.com/agent-init-first: 'true'
@@ -229,7 +225,7 @@ spec:
             - |
               {{- range $keys := .Values.node.keys }}
               {{ $.Values.node.command }} key insert --base-path /data \
-                --chain {{ if $.Values.node.customChainspecUrl }}{{ $.Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
+              --chain {{ if $.Values.node.customChainspecUrl }}{{ $.Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
               --key-type $(cat /var/run/secrets/{{ .type }}/type) \
               --scheme $(cat /var/run/secrets/{{ .type }}/scheme) \
               --suri /var/run/secrets/{{ .type }}/seed \
