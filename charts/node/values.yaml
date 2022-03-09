@@ -104,20 +104,20 @@ node:
     #authConfigServiceAccount: ""
     keys: {}
       # - name: grankey
+      #   type: type
+      #   scheme: scheme
       #   vaultPath: secret/grankey
-      #   typeTarget: type
-      #   schemeTarget: scheme
-      #   seedTarget: seed
+      #   vaultKey: gran
       # - name: babekey
+      #   type: type
+      #   scheme: scheme
       #   vaultPath: secrets/babeKey
-      #   typeTarget: type
-      #   schemeTarget: scheme
-      #   seedTarget: seed
+      #   vaultKey: babe
     nodeKey: {}
       # name: nodekey
       # vaultPath: secret/nodekey
-      # remark: keyTarget cannot contain dashes ('-'), only alphanumeric characters due to a limitation in the go templating
-      # keyTarget: key
+      # remark: vaultKey cannot contain dashes ('-'), only alphanumeric characters due to a limitation in the go templating
+      # vaultKey: key
   persistGeneratedNodeKey: false
   #customNodeKey: ""
   resources: {}

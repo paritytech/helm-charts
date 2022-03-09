@@ -25,16 +25,16 @@ spec:
       {{- range $keys := .Values.node.vault.keys }}
         vault.hashicorp.com/agent-inject-secret-{{ .name }}: {{ .vaultPath | squote }}
         vault.hashicorp.com/agent-inject-template-{{ .name }}: |
-          {{`{{ with secret "`}}{{ .vaultPath }}{{`" }}{{- range $k, $v := .Data.data }}
-          {{ $k }}: {{ $v }}
-          {{- end }}{{ end }}`}}
+          {{`{{- with secret "`}}{{ .vaultPath }}{{`" }}
+          {{ .Data.data.`}}{{ .vaultKey }}{{` }}
+          {{- end }}`}}
       {{- end }}
       {{- if or .Values.node.vault.keys .Values.node.vault.nodeKey }}
       {{- if .Values.node.vault.nodeKey }}
         vault.hashicorp.com/agent-inject-secret-{{ .Values.node.vault.nodeKey.name }}: {{ .Values.node.vault.nodeKey.vaultPath | squote }}
         vault.hashicorp.com/agent-inject-template-{{ .Values.node.vault.nodeKey.name }}: |
           {{`{{- with secret "`}}{{ .Values.node.vault.nodeKey.vaultPath }}{{`" }}
-          {{ index .Data.data.`}}{{ .Values.node.vault.nodeKey.keyTarget }}{{` }}
+          {{ .Data.data.`}}{{ .Values.node.vault.nodeKey.vaultKey }}{{` }}
           {{- end }}`}}
       {{- end }}
         vault.hashicorp.com/agent-inject: 'true'
@@ -256,11 +256,11 @@ spec:
               {{- range $keys := .Values.node.vault.keys }}
               {{ $.Values.node.command }} key insert --base-path /data \
               --chain ${CHAIN} \
-              --key-type $(awk '/{{ .typeTarget }}/ {print $2}' /vault/secrets/{{ .name }}) \
-              --scheme $(awk '/{{ .schemeTarget }}/ {print $2}' /vault/secrets/{{ .name }}) \
-              --suri "$(awk '/{{ .seedTarget }}/ { $1=""; print}' /vault/secrets/{{ .name }} | cut -c 2-)" \
-              && echo "Inserted key {{ .name }} into Keystore" \
-              || echo "Failed to insert key {{ .name}} into Keystore."
+              --key-type {{ .type }} \
+              --scheme {{ .scheme }} \
+              --suri "/vault/secrets/{{ .name }}" \
+              && echo "Inserted key {{ .name }} (type={{ .type }}, scheme={{ .scheme }}) into Keystore" \
+              || echo "Failed to insert key {{ .name }} (type={{ .type }}, scheme={{ .scheme }}) into Keystore."
               {{- end }}
           env:
             - name: CHAIN
