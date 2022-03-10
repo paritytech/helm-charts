@@ -46,10 +46,11 @@ role: {{ .Values.node.role }}
 {{- if or .Values.node.pruning ( not ( kindIs "invalid" .Values.node.pruning ) ) }}
 {{- if ge ( int .Values.node.pruning ) 1 }}
 pruning: {{ ( int .Values.node.pruning ) }}
+unsafe-pruning: true
 {{- else if and ( not ( kindIs "invalid" .Values.node.pruning ) ) ( eq 0 ( int .Values.node.pruning ) ) }}
 pruning: archive
+unsafe-pruning: false
 {{- end }}
-unsafe-pruning: true
 {{- end }}
 {{- with .Values.extraLabels }}
 {{ toYaml . }}

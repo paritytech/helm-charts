@@ -269,7 +269,6 @@ spec:
                 --unsafe-pruning \
                 --pruning={{ .Values.node.pruning }} \
                 {{- else if and ( not ( kindIs "invalid" .Values.node.pruning ) ) ( eq 0 ( int .Values.node.pruning ) ) }}
-                --unsafe-pruning \
                 --pruning=archive \
                 {{- end }}
                 {{- if eq .Values.node.role "collator" }}
