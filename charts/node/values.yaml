@@ -121,6 +121,7 @@ node:
       # vaultKey: key
   persistGeneratedNodeKey: false
   #customNodeKey: ""
+  #  pruning: 1000
   resources: {}
   serviceMonitor:
     enabled: false

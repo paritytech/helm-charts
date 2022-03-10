@@ -2,4 +2,5 @@
 
 add templates for:
 - configmaps
-- liveness and readiness probes
+- serviceMonitor
+- prometheusRules

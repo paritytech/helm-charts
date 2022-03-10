@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "node.name" -}}
+{{- define "polkadot-introspector.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "node.fullname" -}}
+{{- define "polkadot-introspector.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,32 +26,20 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "node.chart" -}}
+{{- define "polkadot-introspector.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "node.labels" -}}
-helm.sh/chart: {{ include "node.chart" . }}
-{{ include "node.selectorLabels" . }}
-{{ include "node.serviceLabels" . }}
+{{- define "polkadot-introspector.labels" -}}
+helm.sh/chart: {{ include "polkadot-introspector.chart" . }}
+{{ include "polkadot-introspector.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-chain: {{ .Values.node.chain }}
-role: {{ .Values.node.role }}
-{{- if or .Values.node.pruning ( not ( kindIs "invalid" .Values.node.pruning ) ) }}
-{{- if ge ( int .Values.node.pruning ) 1 }}
-pruning: {{ ( int .Values.node.pruning ) }}
-unsafe-pruning: true
-{{- else if and ( not ( kindIs "invalid" .Values.node.pruning ) ) ( eq 0 ( int .Values.node.pruning ) ) }}
-pruning: archive
-unsafe-pruning: false
-{{- end }}
-{{- end }}
 {{- with .Values.extraLabels }}
 {{ toYaml . }}
 {{- end }}
@@ -60,26 +48,17 @@ unsafe-pruning: false
 {{/*
 Selector labels
 */}}
-{{- define "node.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "node.name" . }}
+{{- define "polkadot-introspector.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "polkadot-introspector.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end }}
-
-{{/*
-Service labels
-*/}}
-{{- define "node.serviceLabels" -}}
-chain: {{ .Values.node.chain }}
-release: {{ .Release.Name }}
-role: {{ .Values.node.role }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "node.serviceAccountName" -}}
+{{- define "polkadot-introspector.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "node.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "polkadot-introspector.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
