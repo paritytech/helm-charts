@@ -265,6 +265,12 @@ spec:
                 {{- if or (eq .Values.node.role "authority") (eq .Values.node.role "validator") }}
                 --validator \
                 {{- end }}
+                {{- if ge ( int .Values.node.pruning ) 1 }}
+                --unsafe-pruning \
+                --pruning={{ .Values.node.pruning }} \
+                {{- else if and ( not ( kindIs "invalid" .Values.node.pruning ) ) ( eq 0 ( int .Values.node.pruning ) ) }}
+                --pruning=archive \
+                {{- end }}
                 {{- if eq .Values.node.role "collator" }}
                 --collator \
                 {{- end }}

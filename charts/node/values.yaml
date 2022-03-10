@@ -98,6 +98,7 @@ node:
   #    seed: "//Alice//babe"
   persistGeneratedNodeKey: false
   #customNodeKey: ""
+  #  pruning: 1000
   resources: {}
   serviceMonitor:
     enabled: false
