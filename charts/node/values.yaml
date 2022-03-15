@@ -96,6 +96,29 @@ node:
   #  - type: "babe"
   #    scheme: "sr25519"
   #    seed: "//Alice//babe"
+  vault:
+    #authPath: ""
+    #authRole: ""
+    #authType: ""
+    #authConfigType: ""
+    #authConfigServiceAccount: ""
+    keys: {}
+      # - name: grankey
+      #   type: type
+      #   scheme: scheme
+      #   vaultPath: kv/secret/grankey
+      #   vaultKey: gran
+      #   extraDerivation: //
+      # - name: babekey
+      #   type: type
+      #   scheme: scheme
+      #   vaultPath: kv/secrets/babeKey
+      #   vaultKey: babe
+    nodeKey: {}
+      # name: nodekey
+      # vaultPath: kv/secret/nodekey
+      # remark: vaultKey cannot contain dashes ('-'), only alphanumeric characters due to a limitation in the go templating
+      # vaultKey: key
   persistGeneratedNodeKey: false
   #customNodeKey: ""
   #  pruning: 1000
