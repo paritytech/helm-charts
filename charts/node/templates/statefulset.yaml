@@ -256,7 +256,7 @@ spec:
               --scheme {{ .scheme }} \
               {{- if .extraDerivation }}
               --suri "$(cat /vault/secrets/{{ .name }}){{ .extraDerivation }}" \
-              {{ else }}
+              {{- else }}
               --suri "/vault/secrets/{{ .name }}" \
               {{- end }}
               && echo "Inserted key {{ .name }} (type={{ .type }}, scheme={{ .scheme }}) into Keystore" \

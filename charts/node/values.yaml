@@ -26,6 +26,8 @@ fullnameOverride: ""
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
+  # Specifies whether a RoleBinding should be created for service account
+  createRoleBinding: true
   # Annotations to add to the service account
   annotations: {}
   # The name of the service account to use.
