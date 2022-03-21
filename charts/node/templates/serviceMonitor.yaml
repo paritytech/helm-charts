@@ -19,13 +19,21 @@ spec:
   endpoints:
     - port: prometheus
       path: /metrics
-      {{- if $.Values.node.serviceMonitor.interval }}
+    {{- if $.Values.node.serviceMonitor.interval }}
       interval: {{ $.Values.node.serviceMonitor.interval }}
-      {{- end }}
-      {{- if $.Values.node.serviceMonitor.scrapeTimeout }}
+    {{- end }}
+    {{- if $.Values.node.serviceMonitor.scrapeTimeout }}
       scrapeTimeout: {{ $.Values.node.serviceMonitor.scrapeTimeout }}
       honorLabels: true
-  {{- end }}
+    {{- end }}
+    {{- with .Values.node.serviceMonitor.relabelings }}
+      relabelings:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.node.serviceMonitor.metricRelabelings }}
+      metricRelabelings:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
   namespaceSelector:
     matchNames:
       - {{ $.Release.Namespace }}
