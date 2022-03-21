@@ -54,6 +54,7 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
+# Add extra labels on pods and services
 #extraLabels:
 #  type: rpc
 

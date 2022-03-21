@@ -52,9 +52,6 @@ pruning: archive
 unsafe-pruning: false
 {{- end }}
 {{- end }}
-{{- with .Values.extraLabels }}
-{{ toYaml . }}
-{{- end }}
 {{- end }}
 
 {{/*
@@ -72,6 +69,9 @@ Service labels
 chain: {{ .Values.node.chain }}
 release: {{ .Release.Name }}
 role: {{ .Values.node.role }}
+{{- with .Values.extraLabels }}
+{{ toYaml . }}
+{{- end }}
 {{- end }}
 
 {{/*
