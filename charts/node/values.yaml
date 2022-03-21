@@ -132,6 +132,8 @@ node:
     scrapeTimeout: 30s
     targetLabels:
       - node
+    relabelings: []
+    metricRelabelings: []
   perNodeServices:
     createClusterIPService: true
     createP2pNodePortService: false
