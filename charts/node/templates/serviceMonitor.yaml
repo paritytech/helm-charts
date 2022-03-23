@@ -39,6 +39,6 @@ spec:
       - {{ $.Release.Namespace }}
   {{- with $.Values.node.serviceMonitor.targetLabels }}
   targetLabels:
-  {{ toYaml .| nindent 4 }}
+  {{- toYaml .| nindent 4 }}
   {{- end}}
 {{- end }}

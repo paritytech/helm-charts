@@ -136,10 +136,14 @@ node:
     relabelings: []
     metricRelabelings: []
   perNodeServices:
-    createClusterIPService: true
-    createP2pNodePortService: false
+    #createClusterIPService: true # Deprecated to be removed in next version, use instead createApiService
+    createApiService: true # Create a ClusterIP API service
+    #createP2pNodePortService: false # Deprecated to be removed in next version, use instead createP2pService
+    createP2pService: false
+    p2pServiceType: NodePort  # ClusterIP, NodePort or LoadBalancer
     relayServiceAnnotations: {}
     paraServiceAnnotations: {}
+    apiServiceAnnotations: {}
     setPublicAddressToExternalIp:
       enabled: false
       ipRetrievalServiceUrl: https://ifconfig.io

@@ -23,7 +23,7 @@ spec:
       name: websocket-rpc
 ---
 {{range $i := until (.Values.node.replicas | int) }}
-{{- if $.Values.node.perNodeServices.createClusterIPService }}
+{{- if or $.Values.node.perNodeServices.createApiService $.Values.node.perNodeServices.createClusterIPService }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -31,6 +31,11 @@ metadata:
   labels:
     {{- $serviceLabels | nindent 4 }}
     node: {{ $fullname }}-{{ $i }}
+    instance: {{ $fullname }}-{{ $i }}
+{{- with $.Values.node.perNodeServices.apiServiceAnnotations }}
+  annotations:
+{{ toYaml . | indent 4}}
+{{- end }}
 spec:
   type: ClusterIP
   clusterIP: None
@@ -46,7 +51,7 @@ spec:
       name: prometheus
 {{- end }}
 ---
-{{- if $.Values.node.perNodeServices.createP2pNodePortService }}
+{{- if or $.Values.node.perNodeServices.createP2pService $.Values.node.perNodeServices.createP2pNodePortService }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -56,8 +61,14 @@ metadata:
 {{ toYaml . | indent 4}}
 {{- end }}
 spec:
+  {{- if eq $.Values.node.perNodeServices.p2pServiceType "NodePort" }}
   type: NodePort
   externalTrafficPolicy: Local
+  {{- else if eq $.Values.node.perNodeServices.p2pServiceType "ClusterIP" }}
+  type: ClusterIP
+  {{- else if eq $.Values.node.perNodeServices.p2pServiceType "LoadBalancer" }}
+  type: LoadBalancer
+  {{- end }}
   selector:
     {{- $selectorLabels | nindent 4 }}
     statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
@@ -67,7 +78,7 @@ spec:
       targetPort: 30333
 {{- end }}
 ---
-{{- if and $.Values.node.collator.isParachain $.Values.node.perNodeServices.createP2pNodePortService }}
+{{- if and $.Values.node.collator.isParachain (or $.Values.node.perNodeServices.createP2pService $.Values.node.perNodeServices.createP2pNodePortService) }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -77,8 +88,14 @@ metadata:
 {{ toYaml . | indent 4}}
 {{- end }}
 spec:
+  {{- if eq $.Values.node.perNodeServices.p2pServiceType "NodePort" }}
   type: NodePort
   externalTrafficPolicy: Local
+  {{- else if eq $.Values.node.perNodeServices.p2pServiceType "ClusterIP" }}
+  type: ClusterIP
+  {{- else if eq $.Values.node.perNodeServices.p2pServiceType "LoadBalancer" }}
+  type: LoadBalancer
+  {{- end }}
   selector:
     {{- $selectorLabels | nindent 4 }}
     statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
