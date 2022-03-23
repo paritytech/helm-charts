@@ -30,7 +30,7 @@ metadata:
   name: {{ $fullname }}-{{ $i }}
   labels:
     {{- $serviceLabels | nindent 4 }}
-    instance: {{ $fullname }}-{{ $i }}
+    node: {{ $fullname }}-{{ $i }}
 spec:
   type: ClusterIP
   clusterIP: None
