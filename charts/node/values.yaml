@@ -129,8 +129,8 @@ node:
   serviceMonitor:
     enabled: false
     #namespace: monitoring
-    interval: 1m
-    scrapeTimeout: 30s
+    interval: 30s
+    scrapeTimeout: 10s
     targetLabels:
       - node
     relabelings: []
