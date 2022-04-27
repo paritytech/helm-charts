@@ -68,14 +68,15 @@ node:
   ## Node may require custom name for chainspec file. Example: moonbeam https://github.com/PureStake/moonbeam/issues/1104#issuecomment-996787548
   ## Note: path should start with /data/ since this folder mount in init container download-chainspec.
   customChainspecPath: "/data/chainspec.json"
+  forceDownloadChainspec: false
   #chainDataSnapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
   #chainDataSnapshotFormat: 7z
   #chainPath: ""
   #chainDataKubernetesVolumeSnapshot: ""
   #chainDataGcsBucketUrl: ""
   collator:
-     isParachain: false
-     relayChain: polkadot
+    isParachain: false
+    relayChain: polkadot
   #  relayChainCustomChainspecUrl: ""
   relayChainCustomChainspecPath: "/data/relay_chain_chainspec.json"
   #  relayChainDataSnapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"

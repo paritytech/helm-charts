@@ -203,14 +203,22 @@ spec:
             - -c
             - |
               {{- if .Values.node.customChainspecUrl }}
+              {{- if not .Values.node.forceDownloadChainspec }}
               if [ ! -f {{ .Values.node.customChainspecPath }} ]; then
+              {{- end }}
                 wget -O {{ .Values.node.customChainspecPath }} {{ .Values.node.customChainspecUrl }}
+              {{- if not .Values.node.forceDownloadChainspec }}
               fi
               {{- end }}
+              {{- end }}
               {{- if .Values.node.collator.relayChainCustomChainspecUrl }}
+              {{- if not .Values.node.forceDownloadChainspec }}
               if [ ! -f {{ .Values.node.relayChainCustomChainspecPath }} ]; then
+              {{- end }}
                 wget -O {{ .Values.node.relayChainCustomChainspecPath }} {{ .Values.node.collator.relayChainCustomChainspecUrl }}
+              {{- if not .Values.node.forceDownloadChainspec }}
               fi
+              {{- end }}
               {{- end }}
           volumeMounts:
             - mountPath: /data
