@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "common.fullname" . }}
+  name: {{ template "common.fullname" . }}
   labels:
     {{- include "common.labels" . | nindent 4 }}
 spec:
