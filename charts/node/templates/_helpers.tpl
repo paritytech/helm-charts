@@ -37,9 +37,7 @@ Common labels
 helm.sh/chart: {{ include "node.chart" . }}
 {{ include "node.selectorLabels" . }}
 {{ include "node.serviceLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
+app.kubernetes.io/version: {{ .Values.image.tag | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 chain: {{ .Values.node.chain }}
 role: {{ .Values.node.role }}
