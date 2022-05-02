@@ -277,7 +277,7 @@ spec:
             - mountPath: /data
               name: chain-data
         {{- end }}
-        {{- if or .Values.node.perNodeServices.createP2pService .Values.node.perNodeServices.createP2pNodePortService }}
+        {{- if or $.Values.node.perNodeServices.relayP2pService.enabled $.Values.node.perNodeServices.paraP2pService.enabled }}
         - name: retrieve-node-port
           image: {{ .Values.kubectl.image.repository }}:{{ .Values.kubectl.image.tag }}
           command: [ "/bin/sh" ]
@@ -310,7 +310,7 @@ spec:
           args:
             - -c
             - |
-              {{- if or .Values.node.perNodeServices.createP2pService .Values.node.perNodeServices.createP2pNodePortService }}
+              {{- if or $.Values.node.perNodeServices.relayP2pService.enabled $.Values.node.perNodeServices.paraP2pService.enabled }}
               {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
               EXTERNAL_IP="$(cat /data/node_external_ip)"
               echo "EXTERNAL_IP=${EXTERNAL_IP}"
@@ -342,7 +342,7 @@ spec:
                 --light \
                 {{- end }}
                 {{- if .Values.node.collator.isParachain }}
-                {{- if or .Values.node.perNodeServices.createP2pService .Values.node.perNodeServices.createP2pNodePortService }}
+                {{- if (or $.Values.node.perNodeServices.paraP2pService.enabled) }}
                 {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
                 --public-addr=/ip4/${EXTERNAL_IP}/tcp/${PARA_CHAIN_P2P_PORT} \
                 {{- end }}
@@ -368,7 +368,7 @@ spec:
                 {{- if .Values.node.collator.relayChainCustomChainspecUrl }}
                 --chain={{ .Values.node.relayChainCustomChainspecPath }} \
                 {{- end }}
-                {{- if or .Values.node.perNodeServices.createP2pService .Values.node.perNodeServices.createP2pNodePortService }}
+                {{- if (or $.Values.node.perNodeServices.relayP2pService.enabled ) }}
                 {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
                 --public-addr=/ip4/${EXTERNAL_IP}/tcp/${RELAY_CHAIN_P2P_PORT} \
                 {{- end }}
