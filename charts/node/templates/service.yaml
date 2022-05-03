@@ -23,7 +23,7 @@ spec:
       name: websocket-rpc
 ---
 {{range $i := until (.Values.node.replicas | int) }}
-{{- if or $.Values.node.perNodeServices.createApiService $.Values.node.perNodeServices.createClusterIPService }}
+{{- if $.Values.node.perNodeServices.apiService.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -32,41 +32,56 @@ metadata:
     {{- $serviceLabels | nindent 4 }}
     node: {{ $fullname }}-{{ $i }}
     instance: {{ $fullname }}-{{ $i }}
-{{- with $.Values.node.perNodeServices.apiServiceAnnotations }}
   annotations:
+{{- if $.Values.node.perNodeServices.apiService.externalDns.enabled }}
+    external-dns.alpha.kubernetes.io/hostname: {{ $fullname }}-{{ $i }}.{{ $.Values.node.perNodeServices.apiService.externalDns.hostname }}
+    external-dns.alpha.kubernetes.io/ttl: {{ $.Values.node.perNodeServices.apiService.externalDns.ttl | squote }}
+{{- end }}
+{{- with $.Values.node.perNodeServices.apiService.annotations }}
 {{ toYaml . | indent 4}}
 {{- end }}
 spec:
+  {{- if eq $.Values.node.perNodeServices.apiService.type "NodePort" }}
+  type: NodePort
+  externalTrafficPolicy: Local
+  {{- else if eq $.Values.node.perNodeServices.apiService.type "ClusterIP" }}
   type: ClusterIP
   clusterIP: None
+  {{- else if eq $.Values.node.perNodeServices.apiService.type "LoadBalancer" }}
+  type: LoadBalancer
+  {{- end }}
   selector:
     {{- $selectorLabels | nindent 4 }}
     statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
   ports:
-    - port: 9933
+    - port: {{ $.Values.node.perNodeServices.apiService.httpPort }}
       name: http-rpc
-    - port: 9944
+    - port: {{ $.Values.node.perNodeServices.apiService.wsPort }}
       name: websocket-rpc
-    - port: 9615
+    - port: {{ $.Values.node.perNodeServices.apiService.prometheusPort }}
       name: prometheus
 {{- end }}
 ---
-{{- if or $.Values.node.perNodeServices.createP2pService $.Values.node.perNodeServices.createP2pNodePortService }}
+{{- if $.Values.node.perNodeServices.relayP2pService.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ $fullname }}-{{ $i }}-relay-chain-p2p
-{{- with $.Values.node.perNodeServices.relayServiceAnnotations }}
   annotations:
+{{- if $.Values.node.perNodeServices.relayP2pService.externalDns.enabled }}
+    external-dns.alpha.kubernetes.io/hostname: {{ $fullname }}-{{ $i }}.{{ $.Values.node.perNodeServices.relayP2pService.externalDns.hostname }}
+    external-dns.alpha.kubernetes.io/ttl: {{ $.Values.node.perNodeServices.relayP2pService.externalDns.ttl | squote }}
+{{- end }}
+{{- with merge $.Values.node.perNodeServices.relayP2pService.annotations $.Values.node.perNodeServices.paraP2pService.annotations }}
 {{ toYaml . | indent 4}}
 {{- end }}
 spec:
-  {{- if eq $.Values.node.perNodeServices.p2pServiceType "NodePort" }}
+  {{- if eq $.Values.node.perNodeServices.relayP2pService.type "NodePort" }}
   type: NodePort
   externalTrafficPolicy: Local
-  {{- else if eq $.Values.node.perNodeServices.p2pServiceType "ClusterIP" }}
+  {{- else if eq $.Values.node.perNodeServices.relayP2pService.type "ClusterIP" }}
   type: ClusterIP
-  {{- else if eq $.Values.node.perNodeServices.p2pServiceType "LoadBalancer" }}
+  {{- else if eq $.Values.node.perNodeServices.relayP2pService.type "LoadBalancer" }}
   type: LoadBalancer
   {{- end }}
   selector:
@@ -74,26 +89,30 @@ spec:
     statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
   ports:
     - name: p2p
-      port: 30333
+      port: {{ $.Values.node.perNodeServices.relayP2pService.port }}
       targetPort: 30333
 {{- end }}
 ---
-{{- if and $.Values.node.collator.isParachain (or $.Values.node.perNodeServices.createP2pService $.Values.node.perNodeServices.createP2pNodePortService) }}
+{{- if and $.Values.node.collator.isParachain $.Values.node.perNodeServices.paraP2pService.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ $fullname }}-{{ $i }}-para-chain-p2p
-{{- with $.Values.node.perNodeServices.paraServiceAnnotations }}
   annotations:
+{{- if $.Values.node.perNodeServices.paraP2pService.externalDns.enabled }}
+    external-dns.alpha.kubernetes.io/hostname: {{ $fullname }}-{{ $i }}.{{ $.Values.node.perNodeServices.paraP2pService.externalDns.hostname }}
+    external-dns.alpha.kubernetes.io/ttl: {{ $.Values.node.perNodeServices.paraP2pService.externalDns.ttl | squote }}
+{{- end }}
+{{- with merge $.Values.node.perNodeServices.relayP2pService.annotations $.Values.node.perNodeServices.paraP2pService.annotations }}
 {{ toYaml . | indent 4}}
 {{- end }}
 spec:
-  {{- if eq $.Values.node.perNodeServices.p2pServiceType "NodePort" }}
+  {{- if eq $.Values.node.perNodeServices.paraP2pService.type "NodePort" }}
   type: NodePort
   externalTrafficPolicy: Local
-  {{- else if eq $.Values.node.perNodeServices.p2pServiceType "ClusterIP" }}
+  {{- else if eq $.Values.node.perNodeServices.paraP2pService.type "ClusterIP" }}
   type: ClusterIP
-  {{- else if eq $.Values.node.perNodeServices.p2pServiceType "LoadBalancer" }}
+  {{- else if eq $.Values.node.perNodeServices.paraP2pService.type "LoadBalancer" }}
   type: LoadBalancer
   {{- end }}
   selector:
@@ -101,7 +120,7 @@ spec:
     statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
   ports:
     - name: p2p
-      port: 30334
+      port: {{ $.Values.node.perNodeServices.paraP2pService.port }}
       targetPort: 30334
 {{- end }}
 ---

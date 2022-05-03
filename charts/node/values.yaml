@@ -121,8 +121,9 @@ node:
     nodeKey: {}
       # name: nodekey
       # vaultPath: kv/secret/nodekey
-      # remark: vaultKey cannot contain dashes ('-'), only alphanumeric characters due to a limitation in the go templating
+      # Remark; vaultKey cannot contain dashes ('-'), only alphanumeric characters due to a limitation in the go templating
       # vaultKey: key
+      # vaultKeyAppendPodIndex: false
   persistGeneratedNodeKey: false
   #customNodeKey: ""
   #  pruning: 1000
@@ -137,14 +138,35 @@ node:
     relabelings: []
     metricRelabelings: []
   perNodeServices:
-    #createClusterIPService: true # Deprecated to be removed in next version, use instead createApiService
-    createApiService: true # Create a ClusterIP API service
-    #createP2pNodePortService: false # Deprecated to be removed in next version, use instead createP2pService
-    createP2pService: false
-    p2pServiceType: NodePort  # ClusterIP, NodePort or LoadBalancer
-    relayServiceAnnotations: {}
-    paraServiceAnnotations: {}
-    apiServiceAnnotations: {}
+    apiService:
+      enabled: true
+      type: ClusterIP # or NodePort, LoadBalancer
+      annotations: {}
+      httpPort: 9933
+      wsPort: 9944
+      prometheusPort: 9615
+      externalDns:
+        enabled: false
+        hostname: example.com
+        ttl: 300
+    relayP2pService:
+      enabled: false
+      type: NodePort # or ClusterIP or LoadBalancer
+      port: 30333
+      annotations: {}
+      externalDns:
+        enabled: false
+        hostname: example.com
+        ttl: 300
+    paraP2pService:
+      enabled: false
+      type: NodePort # or ClusterIP, LoadBalancer
+      port: 30334
+      annotations: {}
+      externalDns:
+        enabled: false
+        hostname: example.com
+        ttl: 300
     setPublicAddressToExternalIp:
       enabled: false
       ipRetrievalServiceUrl: https://ifconfig.io
