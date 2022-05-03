@@ -89,7 +89,7 @@ spec:
     statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
   ports:
     - name: p2p
-      port: 30333
+      port: {{ $.Values.node.perNodeServices.relayP2pService.port }}
       targetPort: 30333
 {{- end }}
 ---
@@ -120,7 +120,7 @@ spec:
     statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
   ports:
     - name: p2p
-      port: 30334
+      port: {{ $.Values.node.perNodeServices.paraP2pService.port }}
       targetPort: 30334
 {{- end }}
 ---
