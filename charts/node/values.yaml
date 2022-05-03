@@ -121,8 +121,9 @@ node:
     nodeKey: {}
       # name: nodekey
       # vaultPath: kv/secret/nodekey
-      # remark: vaultKey cannot contain dashes ('-'), only alphanumeric characters due to a limitation in the go templating
+      # Remark; vaultKey cannot contain dashes ('-'), only alphanumeric characters due to a limitation in the go templating
       # vaultKey: key
+      # vaultKeyAppendPodIndex: false
   persistGeneratedNodeKey: false
   #customNodeKey: ""
   #  pruning: 1000

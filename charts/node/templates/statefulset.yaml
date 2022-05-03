@@ -27,8 +27,14 @@ spec:
         vault.hashicorp.com/agent-inject-template-{{ .name }}: |
           {{`{{ with secret "`}}{{ .vaultPath }}{{`" }}{{ .Data.data.`}}{{ .vaultKey }}{{` }}{{ end }}`}}
       {{- end }}
-      {{- if or .Values.node.vault.keys .Values.node.vault.nodeKey }}
       {{- if .Values.node.vault.nodeKey }}
+      {{- if .Values.node.vault.nodeKey.vaultKeyAppendPodIndex }}
+        {{- range $index := until (.Values.node.replicas | int) }}
+        vault.hashicorp.com/agent-inject-secret-{{ $.Values.node.vault.nodeKey.name }}-{{ $index }}: {{ $.Values.node.vault.nodeKey.vaultPath | squote }}
+        vault.hashicorp.com/agent-inject-template-{{ $.Values.node.vault.nodeKey.name }}-{{ $index }}: |
+            {{`{{ with secret "`}}{{ $.Values.node.vault.nodeKey.vaultPath }}{{`" }}{{ .Data.data.`}}{{ printf "%s_%s" $.Values.node.vault.nodeKey.vaultKey ($index | toString) }}{{` }}{{ end }}`}}
+        {{- end }}
+      {{- else }}
         vault.hashicorp.com/agent-inject-secret-{{ .Values.node.vault.nodeKey.name }}: {{ .Values.node.vault.nodeKey.vaultPath | squote }}
         vault.hashicorp.com/agent-inject-template-{{ .Values.node.vault.nodeKey.name }}: |
           {{`{{ with secret "`}}{{ .Values.node.vault.nodeKey.vaultPath }}{{`" }}{{ .Data.data.`}}{{ .Values.node.vault.nodeKey.vaultKey }}{{` }}{{ end }}`}}
@@ -310,6 +316,7 @@ spec:
           args:
             - -c
             - |
+              POD_INDEX="${HOSTNAME##*-}"
               {{- if or $.Values.node.perNodeServices.relayP2pService.enabled $.Values.node.perNodeServices.paraP2pService.enabled }}
               {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
               EXTERNAL_IP="$(cat /data/node_external_ip)"
@@ -355,7 +362,7 @@ spec:
                 {{- else if .Values.node.customNodeKey }}
                 --node-key $(cat /tmp/custom-node-key) \
                 {{- else if .Values.node.vault.nodeKey }}
-                --node-key $(cat /vault/secrets/{{ .Values.node.vault.nodeKey.name }}) \
+                --node-key $(cat /vault/secrets/{{ .Values.node.vault.nodeKey.name }}{{ if .Values.node.vault.nodeKey.vaultKeyAppendPodIndex }}-${POD_INDEX}{{ end }}) \
                 {{- end }}
                 {{- if .Values.node.tracing.enabled }}
                 --jaeger-agent=127.0.0.1:{{ .Values.jaegerAgent.ports.compactPort }} \
