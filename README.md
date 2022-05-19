@@ -7,4 +7,5 @@ Parity's [Kubernetes Helm](https://helm.sh/) charts collection.
 - [Common](charts/common/README.md): a generic helm chart for kubernetes
 - [Node](charts/node/README.md): deploy Substrate/Polkadot nodes
 - [Substrate telemetry](charts/substrate-telemetry/README.md): deploy Substrate Telemetry for the nodes
+- [Substrate faucet](charts/substrate-faucet/README.md): deploy Substrate Faucet
 - [Introspector](charts/introspector/README.md): deploy introspector for the nodes

@@ -1,0 +1,72 @@
+# Default values for faucetbot.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+chain:
+  name: substrate
+
+replicaCount: 1
+
+server:
+  image:
+    repository: paritytech/faucet-server
+    tag: latest
+    pullPolicy: Always
+
+  secret:
+    SMF_BACKEND_FAUCET_ACCOUNT_MNEMONIC: "this is a fake mnemonic"
+
+  config:
+    SMF_BACKEND_RPC_ENDPOINT: "https://example.com/"
+    SMF_BACKEND_NETWORK_DECIMALS: 12
+    SMF_BACKEND_INJECTED_TYPES: '{}'
+    SMF_BACKEND_PORT: 5555
+
+bot:
+  image:
+    repository: paritytech/faucet-bot
+    tag: latest
+    pullPolicy: Always
+
+  secret:
+    # your bot access token here is how to find it https://t2bot.io/docs/access_tokens/
+    SMF_BOT_MATRIX_ACCESS_TOKEN: "ThisIsNotARealAccessToken"
+
+  config:
+    SMF_BOT_MATRIX_SERVER: "https://matrix.org"
+    SMF_BOT_MATRIX_BOT_USER_ID: "@test_bot_faucet:matrix.org"
+    SMF_BOT_DRIP_AMOUNT: 10
+    SMF_BOT_NETWORK_DECIMALS: 12
+    SMF_BOT_NETWORK_UNIT: "UNIT"
+    SMF_BOT_FAUCET_IGNORE_LIST: ''
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: westend
+
+podSecurityContext: {}
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
