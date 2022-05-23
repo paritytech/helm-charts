@@ -40,6 +40,8 @@ bot:
     SMF_BOT_NETWORK_UNIT: "UNIT"
     SMF_BOT_FAUCET_IGNORE_LIST: ''
 
+extraLabels: []
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
