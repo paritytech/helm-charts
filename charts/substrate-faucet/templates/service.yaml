@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-server
+  labels:
+    {{- include "faucet.serverLabels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.server.config.SMF_BACKEND_PORT }}
+      name: metrics
+      protocol: TCP
+  selector:
+    {{- include "faucet.serverSelectorLabels" . | nindent 8 }}
+
