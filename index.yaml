@@ -501,6 +501,16 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/polkadot-introspector-0.1.0/polkadot-introspector-0.1.0.tgz
     version: 0.1.0
+  substrate-faucet:
+  - apiVersion: v2
+    created: "2022-05-24T13:10:12.543706421Z"
+    description: A Helm chart to deploy substrate-faucet
+    digest: 9336cec1c3c09fcfd989a25f4a82444ea81830a437afc13e3630f78dc41e011b
+    name: substrate-faucet
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/substrate-faucet-1.0.0/substrate-faucet-1.0.0.tgz
+    version: 1.0.0
   substrate-telemetry:
   - apiVersion: v2
     appVersion: 1.16.0
@@ -582,4 +592,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/substrate-telemetry-0.1.0/substrate-telemetry-0.1.0.tgz
     version: 0.1.0
-generated: "2022-05-05T13:50:11.187287765Z"
+generated: "2022-05-24T13:10:12.544458326Z"
