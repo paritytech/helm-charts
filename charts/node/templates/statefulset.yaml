@@ -72,23 +72,19 @@ spec:
           args:
             - -c
             - |
+              set -eu -o pipefail
+              apk add --no-cache curl lz4
               if [ -d "/data/chains/${CHAIN_PATH}/db" ]; then
                 echo "Database directory already exists, skipping chain snapshot download"
               else
                 echo "Downloading chain snapshot"
                 SNAPSHOT_URL="{{ .Values.node.chainDataSnapshotUrl }}"
-                wget -O /data/snapshot ${SNAPSHOT_URL}
-                if [ ! -f /data/snapshot ]; then
-                  echo "Failed to download chain snapshot"
-                  exit 1
-                fi
-                mkdir -p /data/chains/${CHAIN_PATH}/
-                if [ "${SNAPSHOT_FORMAT}" == "7z" ]; then
-                  7z x /data/snapshot -o/data/chains/${CHAIN_PATH}/
+                mkdir -p /data/chains/${CHAIN_PATH}/db/full
+                if [ "${SNAPSHOT_FORMAT}" == "lz4" ]; then
+                  curl -o - -L ${SNAPSHOT_URL} | lz4 -c -d - | tar -x -C /data/chains/${CHAIN_PATH}/db/full/
                 else
-                  tar xvf /data/snapshot --directory=/data/chains/${CHAIN_PATH}/db/full/
+                  curl -o - -L ${SNAPSHOT_URL} | tar -x -C /data/chains/${CHAIN_PATH}/db/full/
                 fi
-                rm /data/snapshot
               fi
           env:
             - name: CHAIN_PATH
@@ -106,23 +102,19 @@ spec:
           args:
             - -c
             - |
+              set -eu -o pipefail
+              apk add --no-cache curl lz4
               if [ -d "/data/relay/chains/${RELAY_CHAIN_PATH}/db" ]; then
                 echo "Database directory already exists, skipping relay-chain snapshot download"
               else
                 echo "Downloading relay-chain snapshot"
                 RELAY_SNAPSHOT_URL="{{ .Values.node.collator.relayChainDataSnapshotUrl }}"
-                wget -O /data/relay-snapshot ${RELAY_SNAPSHOT_URL}
-                if [ ! -f /data/relay-snapshot ]; then
-                  echo "Failed to download relay-chain snapshot"
-                  exit 1
-                fi
-                mkdir -p /data/relay/chains/${RELAY_CHAIN_PATH}/
-                if [ "${RELAY_SNAPSHOT_FORMAT}" == "7z" ]; then
-                  7z x /data/relay-snapshot -o/data/relay/chains/${RELAY_CHAIN_PATH}/
+                mkdir -p /data/relay/chains/${RELAY_CHAIN_PATH}/db/full
+                if [ "${RELAY_SNAPSHOT_FORMAT}" == "lz4" ]; then
+                  curl -o - -L ${RELAY_SNAPSHOT_URL} | lz4 -c -d - | tar -x -C /data/chains/${RELAY_CHAIN_PATH}/db/full/
                 else
-                  tar xvf /data/relay-snapshot --directory=/data/relay/chains/${RELAY_CHAIN_PATH}/db/full/
+                  curl -o - -L ${RELAY_SNAPSHOT_URL} | tar -x -C /data/chains/${RELAY_CHAIN_PATH}/db/full/
                 fi
-                rm /data/relay-snapshot
               fi
           env:
             - name: RELAY_SNAPSHOT_FORMAT
@@ -140,6 +132,7 @@ spec:
           args:
             - -c
             - |
+              set -eu -o pipefail
               {{- if .Values.googleCloudSdk.serviceAccountKey }}
               gcloud auth activate-service-account --key-file /tmp/service-account-key.json
               {{- end }}
@@ -174,9 +167,10 @@ spec:
           args:
             - -c
             - |
-               {{- if .Values.googleCloudSdk.serviceAccountKey }}
+              set -eu -o pipefail
+              {{- if .Values.googleCloudSdk.serviceAccountKey }}
               gcloud auth activate-service-account --key-file /tmp/service-account-key.json
-               {{- end }}
+              {{- end }}
               if [ -d "/data/relay/chains/${RELAY_CHAIN_PATH}/db" ]; then
                 echo "Relay-chain database directory already exists, skipping GCS sync"
               else
@@ -208,11 +202,13 @@ spec:
           args:
             - -c
             - |
+              set -eu -o pipefail
+              apk add --no-cache curl
               {{- if .Values.node.customChainspecUrl }}
               {{- if not .Values.node.forceDownloadChainspec }}
               if [ ! -f {{ .Values.node.customChainspecPath }} ]; then
               {{- end }}
-                wget -O {{ .Values.node.customChainspecPath }} {{ .Values.node.customChainspecUrl }}
+                curl -L -o {{ .Values.node.customChainspecPath }} {{ .Values.node.customChainspecUrl }}
               {{- if not .Values.node.forceDownloadChainspec }}
               fi
               {{- end }}
@@ -221,7 +217,7 @@ spec:
               {{- if not .Values.node.forceDownloadChainspec }}
               if [ ! -f {{ .Values.node.relayChainCustomChainspecPath }} ]; then
               {{- end }}
-                wget -O {{ .Values.node.relayChainCustomChainspecPath }} {{ .Values.node.collator.relayChainCustomChainspecUrl }}
+                curl -L -o {{ .Values.node.relayChainCustomChainspecPath }} {{ .Values.node.collator.relayChainCustomChainspecUrl }}
               {{- if not .Values.node.forceDownloadChainspec }}
               fi
               {{- end }}
@@ -237,6 +233,7 @@ spec:
           args:
             - -c
             - |
+              set -eu -o pipefail
               {{- range $keys := .Values.node.keys }}
               {{ $.Values.node.command }} key insert --base-path /data \
               --chain {{ if $.Values.node.customChainspecUrl }}{{ $.Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
@@ -263,6 +260,7 @@ spec:
           args:
             - -c
             - |
+              set -eu -o pipefail
               {{- range $keys := .Values.node.vault.keys }}
               {{ $.Values.node.command }} key insert --base-path /data \
               --chain {{ if $.Values.node.customChainspecUrl }}{{ $.Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
@@ -290,6 +288,7 @@ spec:
           args:
             - -c
             - |
+              set -eu -o pipefail
               POD_INDEX="${HOSTNAME##*-}"
               RELAY_CHAIN_P2P_PORT="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-relay-chain-p2p -o jsonpath='{.spec.ports[*].nodePort}')"
               echo "${RELAY_CHAIN_P2P_PORT}" > /data/relay_chain_p2p_port
@@ -316,6 +315,7 @@ spec:
           args:
             - -c
             - |
+              set -eu -o pipefail
               POD_INDEX="${HOSTNAME##*-}"
               {{- if or $.Values.node.perNodeServices.relayP2pService.enabled $.Values.node.perNodeServices.paraP2pService.enabled }}
               {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
