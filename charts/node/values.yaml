@@ -5,7 +5,7 @@ image:
 
 initContainer:
   image:
-    repository: crazymax/7zip
+    repository: paritytech/lz4
     tag: latest
 
 kubectl:
@@ -70,7 +70,7 @@ node:
   customChainspecPath: "/data/chainspec.json"
   forceDownloadChainspec: false
   #chainDataSnapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
-  #chainDataSnapshotFormat: 7z
+  #chainDataSnapshotFormat: lz4
   #chainPath: ""
   #chainDataKubernetesVolumeSnapshot: ""
   #chainDataGcsBucketUrl: ""
@@ -80,7 +80,7 @@ node:
   #  relayChainCustomChainspecUrl: ""
   relayChainCustomChainspecPath: "/data/relay_chain_chainspec.json"
   #  relayChainDataSnapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
-  #  relayChainDataSnapshotFormat: 7z
+  #  relayChainDataSnapshotFormat: lz4
   #  relayChainPath: ""
   #  relayChainDataKubernetesVolumeSnapshot: ""
   #  relayChainDataGcsBucketUrl: ""

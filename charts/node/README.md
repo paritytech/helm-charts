@@ -13,12 +13,12 @@ This will deploy a single Polkadot node with the default configuration.
 
 Polkadot:
 ```console
-helm install polkadot-node parity/node --set node.chainDataSnapshotUrl=https://dot-rocksdb.polkashots.io/snapshot --set node.chainDataSnapshotFormat=7z
+helm install polkadot-node parity/node --set node.chainDataSnapshotUrl=https://dot-rocksdb.polkashots.io/snapshot --set node.chainDataSnapshotFormat=lz4
 ```
 
 Kusama:
 ```console
-helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm-rocksdb.polkashots.io/snapshot --set node.chainDataSnapshotFormat=7z --set node.chainPath=ksmcc3
+helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm-rocksdb.polkashots.io/snapshot --set node.chainDataSnapshotFormat=lz4 --set node.chainPath=ksmcc3
 ```
 ⚠️ For some chains where the local directory name is different from the chain ID, `node.chainPath` needs to be set to a custom value.
 
@@ -86,7 +86,7 @@ node:
 | `node.replica`                                                            | Number of replica in the node StatefulSet                                                                                                                                                                                                            | `1`                                                                 |
 | `node.role`                                                               | Set the role of the node: `full`, `authority`/`validator`, `collator` or `light`                                                                                                                                                                     | `full`                                                              |
 | `node.chainDataSnapshotUrl`                                               | Download and load chain data from a snapshot archive http URL                                                                                                                                                                                        | ``                                                                  |
-| `node.chainDataSnapshotFormat`                                            | The snapshot archive format (`tar` or `7z`)                                                                                                                                                                                                          | `tar`                                                               |
+| `node.chainDataSnapshotFormat`                                            | The snapshot archive format (`tar` or `lz4`)                                                                                                                                                                                                          | `tar`                                                               |
 | `node.chainDataGcsBucketUrl`                                              | Sync chain data files from a GCS bucket (eg. `gs://bucket-name/folder-name`)                                                                                                                                                                         | ``                                                                  |
 | `node.chainPath`                                                          | Path at which the chain database files are located (`/data/chains/${CHAIN_PATH}`)                                                                                                                                                                    | `nil` (if undefined, fallbacks to the value in `node.chain`)        |
 | `node.chainDataKubernetesVolumeSnapshot`                                  | Initialize the chain data volume from a Kubernetes VolumeSnapshot                                                                                                                                                                                    | ``                                                                  |
@@ -95,7 +95,7 @@ node:
 | `node.collator.isParachain`                                               | If true, configure the node as a parachain (set the relay-chain flags after `--`)                                                                                                                                                                    | `nil`                                                               |
 | `node.collator.relayChainCustomChainspecUrl`                              | Download and use a custom relay-chain chainspec file from a URL                                                                                                                                                                                      | `nil`                                                               |
 | `node.collator.relayChainDataSnapshotUrl`                                 | Download and load relay-chain data from a snapshot archive http URL                                                                                                                                                                                  | `nil`                                                               |
-| `node.collator.relayChainDataSnapshotFormat`                              | The relay-chain snapshot archive format (`tar` or `7z`)                                                                                                                                                                                              | `nil`                                                               |
+| `node.collator.relayChainDataSnapshotFormat`                              | The relay-chain snapshot archive format (`tar` or `lz4`)                                                                                                                                                                                              | `nil`                                                               |
 | `node.collator.relayChainPath`                                            | Path at which the chain database files are located (`/data/polkadot/chains/${RELAY_CHAIN_PATH}`)                                                                                                                                                     | `nil`                                                               |
 | `node.collator.relayChainDataKubernetesVolumeSnapshot`                    | Initialize the relay-chain data volume from a Kubernetes VolumeSnapshot                                                                                                                                                                              | `nil`                                                               |
 | `node.collator.relayChainDataGcsBucketUrl`                                | Sync relay-chain data files from a GCS bucket (eg. `gs://bucket-name/folder-name`)                                                                                                                                                                   | `nil`                                                               |
@@ -144,7 +144,7 @@ node:
 | `image.repository`                 | Node image name                                                                                        | `parity/polkadot`   |
 | `image.tag`                        | Node image tag                                                                                         | `latest`            |
 | `image.pullPolicy`                 | Node image pull policy                                                                                 | `Always`            |
-| `initContainer.image.repository`   | Download-chain-snapshot init container image name                                                      | `crazymax/7zip`     |
+| `initContainer.image.repository`   | Download-chain-snapshot init container image name                                                      | `alpine`     |
 | `initContainer.image.tag`          | Download-chain-snapshot init container image tag                                                       | `latest`            |
 | `googleCloudSdk.image.repository`  | Sync-chain-gcs init container image name                                                               | `google/cloud-sdk`  |
 | `googleCloudSdk.image.tag`         | Sync-chain-gcs init container image tag                                                                | `slim`              |
@@ -160,6 +160,6 @@ node:
 | `jaegerAgent.ports.binaryPort`     | Port to use for jaeger.thrift over binary thrift protocol                                              | `6832`              |
 | `jaegerAgent.ports.samplingPort`   | Port for HTTP sampling strategies                                                                      | `5778`              |
 | `jaegerAgent.collector.url`        | The URL which jaeger agent sends data                                                                  | `nil`               |
-| `jaegerAgent.collector.port   `    | The port which jaeger agent sends data                                                                 | `14250`             |    
-| `extraContainers   `               | Sidecar containers to add to the node                                                                  | `[]`                |   
+| `jaegerAgent.collector.port   `    | The port which jaeger agent sends data                                                                 | `14250`             |
+| `extraContainers   `               | Sidecar containers to add to the node                                                                  | `[]`                |
 | `serviceAccount`                   | ServiceAccount used in init containers                                                                 | `{create: true, createRoleBinding: true,  annotations: {}}` |
