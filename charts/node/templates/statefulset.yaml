@@ -73,7 +73,6 @@ spec:
             - -c
             - |
               set -eu -o pipefail
-              apk add --no-cache wget lz4
               if [ -d "/data/chains/${CHAIN_PATH}/db" ]; then
                 echo "Database directory already exists, skipping chain snapshot download"
               else
@@ -94,8 +93,6 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: chain-data
-          securityContext:
-            runAsUser: 0
         {{- end }}
         {{- if .Values.node.collator.relayChainDataSnapshotUrl }}
         - name: download-relay-chain-snapshot
@@ -105,7 +102,6 @@ spec:
             - -c
             - |
               set -eu -o pipefail
-              apk add --no-cache wget lz4
               if [ -d "/data/relay/chains/${RELAY_CHAIN_PATH}/db" ]; then
                 echo "Database directory already exists, skipping relay-chain snapshot download"
               else
@@ -126,8 +122,6 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: chain-data
-          securityContext:
-            runAsUser: 0
         {{- end }}
         {{- if .Values.node.chainDataGcsBucketUrl }}
         - name: sync-chain-gcs

@@ -5,7 +5,7 @@ image:
 
 initContainer:
   image:
-    repository: alpine
+    repository: paritytech/lz4
     tag: latest
 
 kubectl:
