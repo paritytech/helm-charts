@@ -38,6 +38,9 @@ helm.sh/chart: {{ include "substrate-runtime-exporter.chart" . }}
 {{ include "substrate-runtime-exporter.selectorLabels" . }}
 app.kubernetes.io/version: {{ .Values.image.tag | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- with .Values.extraLabels }}
+{{ toYaml . }}
+{{- end }}
 {{- end }}
 
 {{/*
