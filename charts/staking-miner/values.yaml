@@ -72,7 +72,7 @@ stakingMiner:
 generateConfig:
   image:
     registry: docker.io
-    repository: alpine # TODO: replace with the paritytech image with jq
+    repository: paritytech/tools
     tag: latest
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
