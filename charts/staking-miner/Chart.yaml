@@ -1,0 +1,9 @@
+apiVersion: v2
+name: staking-miner
+description: A Helm chart to deploy staking miner (https://github.com/paritytech/staking-miner)
+type: application
+version: 1.0.0
+dependencies:
+- name: common
+  version: 1.14.1
+  repository: https://charts.bitnami.com/bitnami
