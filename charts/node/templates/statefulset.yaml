@@ -78,11 +78,11 @@ spec:
               else
                 echo "Downloading chain snapshot"
                 SNAPSHOT_URL="{{ .Values.node.chainDataSnapshotUrl }}"
-                mkdir -p /data/chains/${CHAIN_PATH}/db/full
+                mkdir -p /data/chains/${CHAIN_PATH}/db/
                 if [ "${SNAPSHOT_FORMAT}" == "lz4" ]; then
                   wget -O - ${SNAPSHOT_URL} | lz4 -c -d - | tar -x -C /data/chains/${CHAIN_PATH}/
                 else
-                  wget -O - ${SNAPSHOT_URL} | tar -x -C /data/chains/${CHAIN_PATH}/db/full/
+                  wget -O - ${SNAPSHOT_URL} | tar -x -C /data/chains/${CHAIN_PATH}/db/
                 fi
               fi
           env:
@@ -107,11 +107,11 @@ spec:
               else
                 echo "Downloading relay-chain snapshot"
                 RELAY_SNAPSHOT_URL="{{ .Values.node.collator.relayChainDataSnapshotUrl }}"
-                mkdir -p /data/relay/chains/${RELAY_CHAIN_PATH}/db/full
+                mkdir -p /data/relay/chains/${RELAY_CHAIN_PATH}/db
                 if [ "${RELAY_SNAPSHOT_FORMAT}" == "lz4" ]; then
                   wget -O - ${RELAY_SNAPSHOT_URL} | lz4 -c -d - | tar -x -C /data/chains/${RELAY_CHAIN_PATH}/
                 else
-                  wget -O - ${RELAY_SNAPSHOT_URL} | tar -x -C /data/chains/${RELAY_CHAIN_PATH}/db/full/
+                  wget -O - ${RELAY_SNAPSHOT_URL} | tar -x -C /data/chains/${RELAY_CHAIN_PATH}/db/
                 fi
               fi
           env:
@@ -143,8 +143,8 @@ spec:
                   echo "Failed to retrieve latest_version metadata"
                   exit 1
                 fi
-                mkdir -p /data/chains/${CHAIN_PATH}/db/full
-                gsutil -m -o "GSUtil:parallel_process_count=3" -o "GSUtil:parallel_thread_count=15" rsync -d -r ${BUCKET_URL}/${LATEST} /data/chains/${CHAIN_PATH}/db/full/
+                mkdir -p /data/chains/${CHAIN_PATH}/db
+                gsutil -m -o "GSUtil:parallel_process_count=3" -o "GSUtil:parallel_thread_count=15" rsync -d -r ${BUCKET_URL}/${LATEST} /data/chains/${CHAIN_PATH}/db/
               fi
           env:
             - name: CHAIN_PATH
@@ -178,8 +178,8 @@ spec:
                   echo "Failed to retrieve latest_version metadata"
                   exit 1
                 fi
-                mkdir -p /data/relay/chains/${RELAY_CHAIN_PATH}/db/full
-                gsutil -m -o "GSUtil:parallel_process_count=3" -o "GSUtil:parallel_thread_count=15" rsync -d -r ${BUCKET_URL}/${LATEST} /data/relay/chains/${RELAY_CHAIN_PATH}/db/full/
+                mkdir -p /data/relay/chains/${RELAY_CHAIN_PATH}/db
+                gsutil -m -o "GSUtil:parallel_process_count=3" -o "GSUtil:parallel_thread_count=15" rsync -d -r ${BUCKET_URL}/${LATEST} /data/relay/chains/${RELAY_CHAIN_PATH}/db/
               fi
           env:
             - name: RELAY_CHAIN_PATH
