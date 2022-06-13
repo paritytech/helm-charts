@@ -341,7 +341,6 @@ spec:
                 --database={{ .Values.node.database }} \
                 {{- end }}
                 {{- if ge ( int .Values.node.pruning ) 1 }}
-                --unsafe-pruning \
                 --pruning={{ .Values.node.pruning }} \
                 {{- else if and ( not ( kindIs "invalid" .Values.node.pruning ) ) ( eq 0 ( int .Values.node.pruning ) ) }}
                 --pruning=archive \
