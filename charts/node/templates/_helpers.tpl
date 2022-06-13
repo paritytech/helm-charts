@@ -50,6 +50,9 @@ pruning: archive
 unsafe-pruning: false
 {{- end }}
 {{- end }}
+{{- if .Values.node.database }}
+database: {{ .Values.node.database }}
+{{- end }}
 {{- end }}
 
 {{/*
@@ -80,5 +83,16 @@ Create the name of the service account to use
 {{- default (include "node.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
+{{- end }}
+{{- end }}
+
+{{/*
+Create the database path depending on the database backend in use (rocksdb or paritydb)
+*/}}
+{{- define "node.databasePath" -}}
+{{- if eq .Values.node.database "paritydb" }}
+{{- "paritydb" }}
+{{- else }}
+{{- "db" }}
 {{- end }}
 {{- end }}
