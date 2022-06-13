@@ -22,6 +22,27 @@ helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm
 ```
 ⚠️ For some chains where the local directory name is different from the chain ID, `node.chainPath` needs to be set to a custom value.
 
+### Resizing the node disk
+
+To resize the node persistent volume, perform the following steps:
+
+1. Patch the PVC storage size, eg. to `1000Gi`:
+
+```console
+kubectl patch pvc chain-data-polkadot-node-0  -p '{"spec":{"resources":{"requests":{"storage":"1000Gi"}}}}}'
+```
+
+2. Delete the StatefulSet object with `cascade=orphan` (ie. without removing the attached pods):
+
+```console
+kubectl delete sts polkadot-node --cascade=orphan
+```
+
+3. Update the `node.dataVolumeSize` to the new value (eg. `1000Gi`) and upgrade the helm release.
+
+Note that for a Kubernetes Persistent Volume Claims to be resizable, its StorageClass must have specific characteristics. More information on this topic is available in the [Expanding Persistent Volumes Claims
+section of the Kubernetes documentation](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#expanding-persistent-volumes-claims).
+
 ### Optional Vault Integration
 
 To integrate this chart with vault:
