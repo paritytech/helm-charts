@@ -356,6 +356,10 @@ spec:
                 --listen-addr=/ip4/0.0.0.0/tcp/${PARA_CHAIN_P2P_PORT} \
                 {{- end }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30334 \
+                {{- if .Values.node.collator.prometheus.enabled }}
+                --prometheus-external \
+                --prometheus-port {{ .Values.node.collator.prometheus.port }} \
+                {{- end }}
                 {{- end }}
                 {{- if .Values.node.persistGeneratedNodeKey }}
                 --node-key-file /data/node-key \
@@ -366,11 +370,15 @@ spec:
                 {{- end }}
                 {{- if .Values.node.tracing.enabled }}
                 --jaeger-agent=127.0.0.1:{{ .Values.jaegerAgent.ports.compactPort }} \
-                {{- end }}
+                {{- end }}               
                 {{- join " " .Values.node.flags | nindent 16 }} \
                 {{- if .Values.node.collator.isParachain }}
                 -- \
                 --base-path=/data/relay/ \
+                {{- if .Values.node.perNodeServices.apiService.prometheusPort }}
+                --prometheus-external \
+                --prometheus-port {{ .Values.node.perNodeServices.apiService.prometheusPort }} \
+                {{- end }} 
                 {{- end }}
                 {{- if .Values.node.collator.relayChainCustomChainspecUrl }}
                 --chain={{ .Values.node.relayChainCustomChainspecPath }} \
@@ -400,9 +408,13 @@ spec:
             - containerPort: 9944
               name: websocket-rpc
               protocol: TCP
-            - containerPort: 9615
+            - containerPort: {{ .Values.node.perNodeServices.apiService.prometheusPort }}
               name: prometheus
               protocol: TCP
+            {{- if and .Values.node.collator.isParachain .Values.node.collator.prometheus.enabled }}
+            - containerPort: {{ $.Values.node.collator.prometheus.port }}
+              name: prom-parachain
+            {{- end }}    
             - containerPort: 30333
               name: p2p
               protocol: TCP

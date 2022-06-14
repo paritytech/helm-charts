@@ -42,3 +42,48 @@ spec:
   {{- toYaml .| nindent 4 }}
   {{- end}}
 {{- end }}
+---
+{{- if and .Values.node.serviceMonitor.enabled .Values.node.collator.isParachain }}
+{{ $fullname :=  include "node.fullname" . }}
+{{ $serviceLabels :=  include "node.serviceLabels" .  }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ $fullname }}-parachain
+  {{- if $.Values.node.serviceMonitor.namespace }}
+  namespace: {{ $.Values.node.serviceMonitor.namespace }}
+  {{- else }}
+  namespace: {{ $.Release.Namespace }}
+  {{- end }}
+  labels:
+    {{- include "node.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- $serviceLabels | nindent 6 }}
+  endpoints:
+    - port: prom-parachain
+      path: /metrics
+    {{- if $.Values.node.serviceMonitor.interval }}
+      interval: {{ $.Values.node.serviceMonitor.interval }}
+    {{- end }}
+    {{- if $.Values.node.serviceMonitor.scrapeTimeout }}
+      scrapeTimeout: {{ $.Values.node.serviceMonitor.scrapeTimeout }}
+      honorLabels: true
+    {{- end }}
+    {{- with .Values.node.serviceMonitor.relabelings }}
+      relabelings:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.node.serviceMonitor.metricRelabelings }}
+      metricRelabelings:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+  namespaceSelector:
+    matchNames:
+      - {{ $.Release.Namespace }}
+  {{- with $.Values.node.serviceMonitor.targetLabels }}
+  targetLabels:
+  {{- toYaml .| nindent 4 }}
+  {{- end}}
+{{- end }}

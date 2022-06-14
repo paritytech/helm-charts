@@ -60,6 +60,10 @@ spec:
       name: websocket-rpc
     - port: {{ $.Values.node.perNodeServices.apiService.prometheusPort }}
       name: prometheus
+    {{- if $.Values.node.collator.prometheus.enabled }}
+    - port: {{ $.Values.node.collator.prometheus.port }}
+      name: prom-parachain
+    {{- end }}    
 {{- end }}
 ---
 {{- if $.Values.node.perNodeServices.relayP2pService.enabled }}
@@ -67,6 +71,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ $fullname }}-{{ $i }}-relay-chain-p2p
+  labels:
+    {{- include "node.labels" . | nindent 4 }}
   annotations:
 {{- if $.Values.node.perNodeServices.relayP2pService.externalDns.enabled }}
     external-dns.alpha.kubernetes.io/hostname: {{ $fullname }}-{{ $i }}.{{ $.Values.node.perNodeServices.relayP2pService.externalDns.hostname }}
@@ -98,6 +104,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ $fullname }}-{{ $i }}-para-chain-p2p
+  labels:
+    {{- include "node.labels" . | nindent 4 }}
   annotations:
 {{- if $.Values.node.perNodeServices.paraP2pService.externalDns.enabled }}
     external-dns.alpha.kubernetes.io/hostname: {{ $fullname }}-{{ $i }}.{{ $.Values.node.perNodeServices.paraP2pService.externalDns.hostname }}
