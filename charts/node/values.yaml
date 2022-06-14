@@ -90,8 +90,8 @@ ingress:
   #      - chart-example.local
 
 
-## Deploy a Polkadot node
-## ref: https://wiki.polkadot.network/docs/maintain-sync
+## Deploy a substrate node
+## ref: https://docs.substrate.io/v3/getting-started/overview/
 node:
   chain: "polkadot"
   command: "polkadot"
@@ -99,8 +99,6 @@ node:
   replicas: 1
   role: full
   
-  ## Node StorageSotra
-
   ## Node may require custom name for chainspec file. 
   ## ref:  moonbeam https://github.com/PureStake/moonbeam/issues/1104#issuecomment-996787548
   ## Note: path should start with /data/ since this folder mount in init container download-chainspec.
@@ -231,7 +229,7 @@ node:
     relabelings: []
     metricRelabelings: []
 
-  ## Configuration of individual services of Polkadot node
+  ## Configuration of individual services of node
   ##
   perNodeServices:
     ## If enabled, generic service to expose common node APIs
