@@ -351,6 +351,10 @@ spec:
                 {{- if eq .Values.node.role "light" }}
                 --light \
                 {{- end }}
+                {{- if .Values.node.collator.prometheus.enabled }}
+                --prometheus-external \
+                --prometheus-port {{ .Values.node.prometheus.port }} \
+                {{- end }}
                 {{- if .Values.node.collator.isParachain }}
                 {{- if (or $.Values.node.perNodeServices.paraP2pService.enabled) }}
                 {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
@@ -359,10 +363,6 @@ spec:
                 --listen-addr=/ip4/0.0.0.0/tcp/${PARA_CHAIN_P2P_PORT} \
                 {{- end }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30334 \
-                {{- if .Values.node.collator.prometheus.enabled }}
-                --prometheus-external \
-                --prometheus-port {{ .Values.node.collator.prometheus.port }} \
-                {{- end }}
                 {{- end }}
                 {{- if .Values.node.persistGeneratedNodeKey }}
                 --node-key-file /data/node-key \
@@ -373,15 +373,15 @@ spec:
                 {{- end }}
                 {{- if .Values.node.tracing.enabled }}
                 --jaeger-agent=127.0.0.1:{{ .Values.jaegerAgent.ports.compactPort }} \
-                {{- end }}               
+                {{- end }}
                 {{- join " " .Values.node.flags | nindent 16 }} \
                 {{- if .Values.node.collator.isParachain }}
                 -- \
                 --base-path=/data/relay/ \
-                {{- if .Values.node.perNodeServices.apiService.prometheusPort }}
+                {{- if .Values.node.collator.relayChainPrometheus.enabled }}
                 --prometheus-external \
-                --prometheus-port {{ .Values.node.perNodeServices.apiService.prometheusPort }} \
-                {{- end }} 
+                --prometheus-port {{ .Values.node.collator.relayChainPrometheus.port }} \
+                {{- end }}
                 {{- end }}
                 {{- if .Values.node.collator.relayChainCustomChainspecUrl }}
                 --chain={{ .Values.node.relayChainCustomChainspecPath }} \
@@ -393,6 +393,7 @@ spec:
                 --listen-addr=/ip4/0.0.0.0/tcp/${RELAY_CHAIN_P2P_PORT} \
                 {{- end }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30333 \
+
                 {{- join " " .Values.node.collator.relayChainFlags | nindent 16 }}
           env:
             - name: CHAIN
@@ -411,12 +412,12 @@ spec:
             - containerPort: 9944
               name: websocket-rpc
               protocol: TCP
-            - containerPort: {{ .Values.node.perNodeServices.apiService.prometheusPort }}
+            - containerPort: {{ .Values.node.prometheus.port }}
               name: prometheus
               protocol: TCP
-            {{- if and .Values.node.collator.isParachain .Values.node.collator.prometheus.enabled }}
-            - containerPort: {{ $.Values.node.collator.prometheus.port }}
-              name: prom-parachain
+            {{- if and .Values.node.collator.isParachain .Values.node.collator.relayChainPrometheus.enabled }}
+            - containerPort: {{ .Values.node.collator.relayChainPrometheus.port }}
+              name: prom-relaychain
             {{- end }}    
             - containerPort: 30333
               name: p2p

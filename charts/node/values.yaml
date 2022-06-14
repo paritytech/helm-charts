@@ -91,7 +91,7 @@ ingress:
 
 
 ## Deploy a substrate node
-## ref: https://docs.substrate.io/v3/getting-started/overview/
+## ref: https://docs.substrate.io/tutorials/v3/private-network/
 node:
   chain: "polkadot"
   command: "polkadot"
@@ -111,7 +111,7 @@ node:
   # customChainspecUrl:
   forceDownloadChainspec: false
 
-  ## Configuration to download collator snapshot from remote URL
+  ## Configuration to download chain snapshot from remote URL
   ## 
   # chainDataSnapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
   # chainDataSnapshotFormat: lz4
@@ -129,16 +129,6 @@ node:
     ## Name of the Relay Chain to connect
     ##
     relayChain: polkadot
-
-    ## Expose metrics via Prometheus format in /metrics endpoint
-    ## Pass the following args:
-    ##   - "--prometheus-external" \
-    ##   - "--prometheus-port {{ .Values.node.collator.prometheus.port }}"
-    ##
-    prometheus:
-      enabled: true
-      port: 9625
-  
     ## File containing chainspec of relaychain for
     ## 
     relayChainCustomChainspecPath: "/data/relay_chain_chainspec.json"
@@ -151,6 +141,16 @@ node:
     # relayChainDataKubernetesVolumeSnapshot: ""
     # relayChainDataGcsBucketUrl: ""
     # relayChainPath: ""
+
+
+    ## Expose relay chain metrics via Prometheus format in /metrics endpoint
+    ## Pass the following args:
+    ##   - "--prometheus-external" \
+    ##   - "--prometheus-port {{ port }}"
+    ##
+    relayChainPrometheus:
+      enabled: false
+      port: 9625
 
     ## Additional args to use for relay chain node
     ##
@@ -187,7 +187,7 @@ node:
     #authConfigType: ""
     #authConfigServiceAccount: ""
 
-    ## Keys to use by the node via vault
+    ## Keys to fetch from Hashicorp Vault and set on the node
     ##
     keys: {}
       # - name: grankey
@@ -220,6 +220,15 @@ node:
   ##
   # pruning: 1000
 
+  ## Expose metrics via Prometheus format in /metrics endpoint
+  ## Pass the following args:
+  ##   - "--prometheus-external" \
+  ##   - "--prometheus-port {{ .Values.node.prometheus.port }}"
+  ##
+  prometheus:
+    enabled: true
+    port: 9615
+
   ## Enable Service Monitor of Prometheus-Operator
   ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors
   ## 
@@ -245,6 +254,7 @@ node:
       httpPort: 9933
       wsPort: 9944
       prometheusPort: 9615
+      relayChainPrometheusPort: 9625
       externalDns:
         enabled: false
         hostname: example.com

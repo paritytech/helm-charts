@@ -49,7 +49,7 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ $fullname }}-parachain
+  name: {{ $fullname }}-relaychain
   {{- if $.Values.node.serviceMonitor.namespace }}
   namespace: {{ $.Values.node.serviceMonitor.namespace }}
   {{- else }}
@@ -62,7 +62,7 @@ spec:
     matchLabels:
       {{- $serviceLabels | nindent 6 }}
   endpoints:
-    - port: prom-parachain
+    - port: prom-relaychain
       path: /metrics
     {{- if $.Values.node.serviceMonitor.interval }}
       interval: {{ $.Values.node.serviceMonitor.interval }}

@@ -60,9 +60,9 @@ spec:
       name: websocket-rpc
     - port: {{ $.Values.node.perNodeServices.apiService.prometheusPort }}
       name: prometheus
-    {{- if $.Values.node.collator.prometheus.enabled }}
-    - port: {{ $.Values.node.collator.prometheus.port }}
-      name: prom-parachain
+    {{- if $.Values.node.collator.relayChainPrometheus.enabled }}
+    - port: {{ $.Values.node.perNodeServices.apiService.relayChainPrometheusPort}}
+      name: prom-relaychain
     {{- end }}    
 {{- end }}
 ---
