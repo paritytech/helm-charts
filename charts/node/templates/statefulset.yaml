@@ -351,7 +351,7 @@ spec:
                 {{- if eq .Values.node.role "light" }}
                 --light \
                 {{- end }}
-                {{- if .Values.node.collator.prometheus.enabled }}
+                {{- if .Values.node.prometheus.enabled }}
                 --prometheus-external \
                 --prometheus-port {{ .Values.node.prometheus.port }} \
                 {{- end }}

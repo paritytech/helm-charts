@@ -43,7 +43,7 @@ spec:
   {{- end}}
 {{- end }}
 ---
-{{- if and .Values.node.serviceMonitor.enabled .Values.node.collator.isParachain }}
+{{- if and .Values.node.serviceMonitor.enabled .Values.node.collator.relayChainPrometheus.enabled }}
 {{ $fullname :=  include "node.fullname" . }}
 {{ $serviceLabels :=  include "node.serviceLabels" .  }}
 apiVersion: monitoring.coreos.com/v1
