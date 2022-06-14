@@ -98,6 +98,10 @@ node:
   dataVolumeSize: 100Gi
   replicas: 1
   role: full
+
+  ## Database backend engine to use
+  ##
+  # database: rocksdb
   
   ## Node may require custom name for chainspec file. 
   ## ref:  moonbeam https://github.com/PureStake/moonbeam/issues/1104#issuecomment-996787548
@@ -212,7 +216,7 @@ node:
   persistGeneratedNodeKey: false
   # customNodeKey: ""
 
-  ## If set, enable unsafe pruning
+  ## Set the amount of blocks to retain
   ##
   # pruning: 1000
 

@@ -2,6 +2,7 @@
 {{ $selectorLabels :=  include "node.selectorLabels" . }}
 {{ $serviceLabels :=  include "node.serviceLabels" .  }}
 {{ $serviceAccountName :=  include "node.serviceAccountName" . }}
+{{ $databasePath := include "node.databasePath" . }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -78,11 +79,11 @@ spec:
               else
                 echo "Downloading chain snapshot"
                 SNAPSHOT_URL="{{ .Values.node.chainDataSnapshotUrl }}"
-                mkdir -p /data/chains/${CHAIN_PATH}/db/
+                mkdir -p /data/chains/${CHAIN_PATH}/{{ $databasePath }}/
                 if [ "${SNAPSHOT_FORMAT}" == "lz4" ]; then
                   wget -O - ${SNAPSHOT_URL} | lz4 -c -d - | tar -x -C /data/chains/${CHAIN_PATH}/
                 else
-                  wget -O - ${SNAPSHOT_URL} | tar -x -C /data/chains/${CHAIN_PATH}/db/
+                  wget -O - ${SNAPSHOT_URL} | tar -x -C /data/chains/${CHAIN_PATH}/{{ $databasePath }}/
                 fi
               fi
           env:
@@ -111,7 +112,7 @@ spec:
                 if [ "${RELAY_SNAPSHOT_FORMAT}" == "lz4" ]; then
                   wget -O - ${RELAY_SNAPSHOT_URL} | lz4 -c -d - | tar -x -C /data/chains/${RELAY_CHAIN_PATH}/
                 else
-                  wget -O - ${RELAY_SNAPSHOT_URL} | tar -x -C /data/chains/${RELAY_CHAIN_PATH}/db/
+                  wget -O - ${RELAY_SNAPSHOT_URL} | tar -x -C /data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
                 fi
               fi
           env:
@@ -144,7 +145,7 @@ spec:
                   exit 1
                 fi
                 mkdir -p /data/chains/${CHAIN_PATH}/db
-                gsutil -m -o "GSUtil:parallel_process_count=3" -o "GSUtil:parallel_thread_count=15" rsync -d -r ${BUCKET_URL}/${LATEST} /data/chains/${CHAIN_PATH}/db/
+                gsutil -m -o "GSUtil:parallel_process_count=3" -o "GSUtil:parallel_thread_count=15" rsync -d -r ${BUCKET_URL}/${LATEST} /data/chains/${CHAIN_PATH}/{{ $databasePath }}/
               fi
           env:
             - name: CHAIN_PATH
@@ -179,7 +180,7 @@ spec:
                   exit 1
                 fi
                 mkdir -p /data/relay/chains/${RELAY_CHAIN_PATH}/db
-                gsutil -m -o "GSUtil:parallel_process_count=3" -o "GSUtil:parallel_thread_count=15" rsync -d -r ${BUCKET_URL}/${LATEST} /data/relay/chains/${RELAY_CHAIN_PATH}/db/
+                gsutil -m -o "GSUtil:parallel_process_count=3" -o "GSUtil:parallel_thread_count=15" rsync -d -r ${BUCKET_URL}/${LATEST} /data/relay/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
               fi
           env:
             - name: RELAY_CHAIN_PATH
@@ -336,8 +337,10 @@ spec:
                 {{- if or (eq .Values.node.role "authority") (eq .Values.node.role "validator") }}
                 --validator \
                 {{- end }}
+                {{- if .Values.node.database }}
+                --database={{ .Values.node.database }} \
+                {{- end }}
                 {{- if ge ( int .Values.node.pruning ) 1 }}
-                --unsafe-pruning \
                 --pruning={{ .Values.node.pruning }} \
                 {{- else if and ( not ( kindIs "invalid" .Values.node.pruning ) ) ( eq 0 ( int .Values.node.pruning ) ) }}
                 --pruning=archive \
