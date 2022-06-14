@@ -74,7 +74,7 @@ spec:
             - -c
             - |
               set -eu -o pipefail
-              if [ -d "/data/chains/${CHAIN_PATH}/db" ]; then
+              if [ -d "/data/chains/${CHAIN_PATH}/{{ $databasePath }}" ]; then
                 echo "Database directory already exists, skipping chain snapshot download"
               else
                 echo "Downloading chain snapshot"
@@ -103,12 +103,12 @@ spec:
             - -c
             - |
               set -eu -o pipefail
-              if [ -d "/data/relay/chains/${RELAY_CHAIN_PATH}/db" ]; then
+              if [ -d "/data/relay/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}" ]; then
                 echo "Database directory already exists, skipping relay-chain snapshot download"
               else
                 echo "Downloading relay-chain snapshot"
                 RELAY_SNAPSHOT_URL="{{ .Values.node.collator.relayChainDataSnapshotUrl }}"
-                mkdir -p /data/relay/chains/${RELAY_CHAIN_PATH}/db
+                mkdir -p /data/relay/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}
                 if [ "${RELAY_SNAPSHOT_FORMAT}" == "lz4" ]; then
                   wget -O - ${RELAY_SNAPSHOT_URL} | lz4 -c -d - | tar -x -C /data/chains/${RELAY_CHAIN_PATH}/
                 else
@@ -135,7 +135,7 @@ spec:
               {{- if .Values.googleCloudSdk.serviceAccountKey }}
               gcloud auth activate-service-account --key-file /tmp/service-account-key.json
               {{- end }}
-              if [ -d "/data/chains/${CHAIN_PATH}/db" ]; then
+              if [ -d "/data/chains/${CHAIN_PATH}/{{ $databasePath }}" ]; then
                 echo "Chain database directory already exists, skipping GCS sync"
               else
                 BUCKET_URL="{{ .Values.node.chainDataGcsBucketUrl }}"
@@ -144,7 +144,7 @@ spec:
                   echo "Failed to retrieve latest_version metadata"
                   exit 1
                 fi
-                mkdir -p /data/chains/${CHAIN_PATH}/db
+                mkdir -p /data/chains/${CHAIN_PATH}/{{ $databasePath }}
                 gsutil -m -o "GSUtil:parallel_process_count=3" -o "GSUtil:parallel_thread_count=15" rsync -d -r ${BUCKET_URL}/${LATEST} /data/chains/${CHAIN_PATH}/{{ $databasePath }}/
               fi
           env:
@@ -170,7 +170,7 @@ spec:
               {{- if .Values.googleCloudSdk.serviceAccountKey }}
               gcloud auth activate-service-account --key-file /tmp/service-account-key.json
               {{- end }}
-              if [ -d "/data/relay/chains/${RELAY_CHAIN_PATH}/db" ]; then
+              if [ -d "/data/relay/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}" ]; then
                 echo "Relay-chain database directory already exists, skipping GCS sync"
               else
                 BUCKET_URL="{{ .Values.node.collator.relayChainDataGcsBucketUrl }}"
@@ -179,7 +179,7 @@ spec:
                   echo "Failed to retrieve latest_version metadata"
                   exit 1
                 fi
-                mkdir -p /data/relay/chains/${RELAY_CHAIN_PATH}/db
+                mkdir -p /data/relay/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}
                 gsutil -m -o "GSUtil:parallel_process_count=3" -o "GSUtil:parallel_thread_count=15" rsync -d -r ${BUCKET_URL}/${LATEST} /data/relay/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
               fi
           env:
