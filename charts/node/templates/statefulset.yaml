@@ -351,6 +351,10 @@ spec:
                 {{- if eq .Values.node.role "light" }}
                 --light \
                 {{- end }}
+                {{- if .Values.node.prometheus.enabled }}
+                --prometheus-external \
+                --prometheus-port {{ .Values.node.prometheus.port }} \
+                {{- end }}
                 {{- if .Values.node.collator.isParachain }}
                 {{- if (or $.Values.node.perNodeServices.paraP2pService.enabled) }}
                 {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
@@ -374,6 +378,10 @@ spec:
                 {{- if .Values.node.collator.isParachain }}
                 -- \
                 --base-path=/data/relay/ \
+                {{- if .Values.node.collator.relayChainPrometheus.enabled }}
+                --prometheus-external \
+                --prometheus-port {{ .Values.node.collator.relayChainPrometheus.port }} \
+                {{- end }}
                 {{- end }}
                 {{- if .Values.node.collator.relayChainCustomChainspecUrl }}
                 --chain={{ .Values.node.relayChainCustomChainspecPath }} \
@@ -385,6 +393,7 @@ spec:
                 --listen-addr=/ip4/0.0.0.0/tcp/${RELAY_CHAIN_P2P_PORT} \
                 {{- end }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30333 \
+
                 {{- join " " .Values.node.collator.relayChainFlags | nindent 16 }}
           env:
             - name: CHAIN
@@ -403,9 +412,13 @@ spec:
             - containerPort: 9944
               name: websocket-rpc
               protocol: TCP
-            - containerPort: 9615
+            - containerPort: {{ .Values.node.prometheus.port }}
               name: prometheus
               protocol: TCP
+            {{- if and .Values.node.collator.isParachain .Values.node.collator.relayChainPrometheus.enabled }}
+            - containerPort: {{ .Values.node.collator.relayChainPrometheus.port }}
+              name: prom-relaychain
+            {{- end }}    
             - containerPort: 30333
               name: p2p
               protocol: TCP
