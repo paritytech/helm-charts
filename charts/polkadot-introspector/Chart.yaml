@@ -2,5 +2,8 @@ apiVersion: v2
 name: polkadot-introspector
 description: A Helm chart to deploy polkadot-introspector
 type: application
-version: 0.1.0
+version: 0.1.1
 appVersion: "0.1.0"
+maintainers:
+  - name: Parity
+    url: https://github.com/paritytech/helm-charts

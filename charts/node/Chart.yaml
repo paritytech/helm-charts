@@ -2,4 +2,7 @@ apiVersion: v2
 name: node
 description: A Helm chart to deploy Substrate/Polkadot nodes
 type: application
-version: 2.3.1
+version: 2.4.1
+maintainers:
+  - name: Parity
+    url: https://github.com/paritytech/helm-charts

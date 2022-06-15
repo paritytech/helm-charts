@@ -71,7 +71,7 @@ service:
     targetPort: 8000
     annotations: {}
     # nodePort: 31000
-    # externalTrafficPolicy: Cluster 
+    # externalTrafficPolicy: Cluster
     # sessionAffinity: None
   core:
     type: ClusterIP
@@ -79,7 +79,7 @@ service:
     targetPort: 8000
     annotations: {}
     # nodePort: 31000
-    # externalTrafficPolicy: Cluster 
+    # externalTrafficPolicy: Cluster
     # sessionAffinity: None
   frontend:
     type: ClusterIP
@@ -87,7 +87,7 @@ service:
     targetPort: 8000
     annotations: {}
     # nodePort: 31000
-    # externalTrafficPolicy: Cluster 
+    # externalTrafficPolicy: Cluster
     # sessionAffinity: None
 
 ingress:
