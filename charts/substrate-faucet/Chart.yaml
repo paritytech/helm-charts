@@ -2,4 +2,7 @@ apiVersion: v2
 name: substrate-faucet
 description: A Helm chart to deploy substrate-faucet
 type: application
-version: 1.0.0
+version: 1.0.1
+maintainers:
+  - name: Parity
+    url: https://github.com/paritytech/helm-charts

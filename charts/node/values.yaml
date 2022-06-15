@@ -11,7 +11,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 ## Additional common labels on pods and services
-## 
+##
 # extraLabels:
 #   type: rpc
 
@@ -60,7 +60,7 @@ serviceAccount:
 
   ## The name of the service account to use.
   ## If not set and create is true, a name is generated using the fullname template
-  ## 
+  ##
   name: ""
 
 ## SecurityContext holds pod-level security attributes and common container settings.
@@ -101,9 +101,9 @@ node:
 
   ## Database backend engine to use
   ##
-  # database: rocksdb
-  
-  ## Node may require custom name for chainspec file. 
+  database: rocksdb
+
+  ## Node may require custom name for chainspec file.
   ## ref:  moonbeam https://github.com/PureStake/moonbeam/issues/1104#issuecomment-996787548
   ## Note: path should start with /data/ since this folder mount in init container download-chainspec.
   ##
@@ -112,7 +112,7 @@ node:
   forceDownloadChainspec: false
 
   ## Configuration to download chain snapshot from remote URL
-  ## 
+  ##
   # chainDataSnapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
   # chainDataSnapshotFormat: lz4
   # chainDataKubernetesVolumeSnapshot: ""
@@ -130,12 +130,12 @@ node:
     ##
     relayChain: polkadot
     ## File containing chainspec of relaychain for
-    ## 
+    ##
     relayChainCustomChainspecPath: "/data/relay_chain_chainspec.json"
     # relayChainCustomChainspecUrl: ""
 
     ## Configuration to download relaychain snapshot from remote URL
-    ## 
+    ##
     # relayChainDataSnapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
     # relayChainDataSnapshotFormat: lz4
     # relayChainDataKubernetesVolumeSnapshot: ""
@@ -157,13 +157,13 @@ node:
     # relayChainFlags: []
 
   ## Additional args to use
-  ## 
+  ##
   flags:
     - "--rpc-external"
     - "--ws-external"
     - "--rpc-methods=safe"
     - "--rpc-cors=all"
-  
+
   ## Keys to use by the node
   ## ref: https://wiki.polkadot.network/docs/learn-keys
   ##
@@ -231,7 +231,7 @@ node:
 
   ## Enable Service Monitor of Prometheus-Operator
   ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors
-  ## 
+  ##
   serviceMonitor:
     enabled: false
     #namespace: monitoring
@@ -260,7 +260,7 @@ node:
         hostname: example.com
         ttl: 300
     ## If enabled, create service to expose relay chain P2P
-    ##        
+    ##
     relayP2pService:
       enabled: false
       type: NodePort # or ClusterIP or LoadBalancer
@@ -271,7 +271,7 @@ node:
         hostname: example.com
         ttl: 300
     ## If enabled, create service to expose parachain P2P
-    ##    
+    ##
     paraP2pService:
       enabled: false
       type: NodePort # or ClusterIP, LoadBalancer
@@ -310,11 +310,11 @@ node:
   ## Resource limits & requests
   ##
   resources: {}
-  
+
 
 ## Configuration of Substrate API
 ## ref: https://github.com/paritytech/substrate-api-sidecar
-## 
+##
 substrateApiSidecar:
   image:
     repository: parity/substrate-api-sidecar
