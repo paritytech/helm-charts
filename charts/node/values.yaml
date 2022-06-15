@@ -1,44 +1,79 @@
+# Default values for node.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## Provide a name in place of node for `app:` labels
+##
+nameOverride: ""
+
+## Provide a name to substitute for the full names of resources
+##
+fullnameOverride: ""
+
+## Additional common labels on pods and services
+##
+# extraLabels:
+#   type: rpc
+
+
+## Image of Polkadot Node.
+##
 image:
   repository: parity/polkadot
   tag: latest
   pullPolicy: Always
 
+## Image of Init containers to download chain
+##
 initContainer:
   image:
-    repository: crazymax/7zip
+    repository: paritytech/lz4
     tag: latest
 
+## Image of kubectl to use for relay P2p service
+##
 kubectl:
   image:
     repository: bitnami/kubectl
     tag: latest
 
+## Image use to sync chain from GCS bucket
+##
 googleCloudSdk:
   image:
     repository: google/cloud-sdk
     tag: slim # more lightweight than the full image and still contains gsutil
-  #serviceAccountKey: ""
+  # serviceAccountKey: ""
 
+## Reference to one or more secrets to be used when pulling images
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+##
 imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
 
+## Service account for the node to use
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+##
 serviceAccount:
-  # Specifies whether a service account should be created
   create: true
-  # Specifies whether a RoleBinding should be created for service account
   createRoleBinding: true
-  # Annotations to add to the service account
   annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
+
+  ## The name of the service account to use.
+  ## If not set and create is true, a name is generated using the fullname template
+  ##
   name: ""
 
+## SecurityContext holds pod-level security attributes and common container settings.
+## This defaults to non root user with uid 1000 and gid 1000.
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+##
 podSecurityContext:
   runAsUser: 1000
   runAsGroup: 1000
   fsGroup: 1000
 
+## Creates an ingress resource
+##
 ingress:
   enabled: false
   annotations: {}
@@ -54,58 +89,106 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
-# Add extra labels on pods and services
-#extraLabels:
-#  type: rpc
 
+## Deploy a substrate node
+## ref: https://docs.substrate.io/tutorials/v3/private-network/
 node:
   chain: "polkadot"
   command: "polkadot"
   dataVolumeSize: 100Gi
   replicas: 1
   role: full
-  #customChainspecUrl:
-  ## Node may require custom name for chainspec file. Example: moonbeam https://github.com/PureStake/moonbeam/issues/1104#issuecomment-996787548
+
+  ## Database backend engine to use
+  ##
+  database: rocksdb
+
+  ## Node may require custom name for chainspec file.
+  ## ref:  moonbeam https://github.com/PureStake/moonbeam/issues/1104#issuecomment-996787548
   ## Note: path should start with /data/ since this folder mount in init container download-chainspec.
+  ##
   customChainspecPath: "/data/chainspec.json"
+  # customChainspecUrl:
   forceDownloadChainspec: false
-  #chainDataSnapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
-  #chainDataSnapshotFormat: 7z
-  #chainPath: ""
-  #chainDataKubernetesVolumeSnapshot: ""
-  #chainDataGcsBucketUrl: ""
+
+  ## Configuration to download chain snapshot from remote URL
+  ##
+  # chainDataSnapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
+  # chainDataSnapshotFormat: lz4
+  # chainDataKubernetesVolumeSnapshot: ""
+  # chainDataGcsBucketUrl: ""
+  # chainPath: ""
+
+  ## Deploy a collator node
+  ## ref: https://wiki.polkadot.network/docs/learn-collator
+  ## If Collator is enabled, collator image must be used
+  ##
   collator:
     isParachain: false
+
+    ## Name of the Relay Chain to connect
+    ##
     relayChain: polkadot
-  #  relayChainCustomChainspecUrl: ""
-  relayChainCustomChainspecPath: "/data/relay_chain_chainspec.json"
-  #  relayChainDataSnapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
-  #  relayChainDataSnapshotFormat: 7z
-  #  relayChainPath: ""
-  #  relayChainDataKubernetesVolumeSnapshot: ""
-  #  relayChainDataGcsBucketUrl: ""
-  #  relayChainFlags:
-  enableStartupProbe: true
-  enableReadinessProbe: true
+    ## File containing chainspec of relaychain for
+    ##
+    relayChainCustomChainspecPath: "/data/relay_chain_chainspec.json"
+    # relayChainCustomChainspecUrl: ""
+
+    ## Configuration to download relaychain snapshot from remote URL
+    ##
+    # relayChainDataSnapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
+    # relayChainDataSnapshotFormat: lz4
+    # relayChainDataKubernetesVolumeSnapshot: ""
+    # relayChainDataGcsBucketUrl: ""
+    # relayChainPath: ""
+
+
+    ## Expose relay chain metrics via Prometheus format in /metrics endpoint
+    ## Pass the following args:
+    ##   - "--prometheus-external" \
+    ##   - "--prometheus-port {{ port }}"
+    ##
+    relayChainPrometheus:
+      enabled: false
+      port: 9625
+
+    ## Additional args to use for relay chain node
+    ##
+    # relayChainFlags: []
+
+  ## Additional args to use
+  ##
   flags:
     - "--rpc-external"
     - "--ws-external"
     - "--rpc-methods=safe"
     - "--rpc-cors=all"
-    - "--prometheus-external"
+
+  ## Keys to use by the node
+  ## ref: https://wiki.polkadot.network/docs/learn-keys
+  ##
   keys: {}
-  #  - type: "gran"
-  #    scheme: "ed25519"
-  #    seed: "//Alice//gran"
-  #  - type: "babe"
-  #    scheme: "sr25519"
-  #    seed: "//Alice//babe"
+  # - type: "gran"
+  #   scheme: "ed25519"
+  #   seed: "//Alice//gran"
+  # - type: "babe"
+  #   scheme: "sr25519"
+  #   seed: "//Alice//babe"
+
+  ## Component to inject secrets via annotation of Hashicorp Vault
+  ## ref: https://www.vaultproject.io/docs/platform/k8s/injector/annotations
+  ##
   vault:
+    ## Vault annotations to use
+    ##
     #authPath: ""
     #authRole: ""
     #authType: ""
     #authConfigType: ""
     #authConfigServiceAccount: ""
+
+    ## Keys to fetch from Hashicorp Vault and set on the node
+    ##
     keys: {}
       # - name: grankey
       #   type: type
@@ -118,16 +201,37 @@ node:
       #   scheme: scheme
       #   vaultPath: kv/secrets/babeKey
       #   vaultKey: babe
+
+    ## Node key to use via vault
+    ##
     nodeKey: {}
       # name: nodekey
       # vaultPath: kv/secret/nodekey
       # Remark; vaultKey cannot contain dashes ('-'), only alphanumeric characters due to a limitation in the go templating
       # vaultKey: key
       # vaultKeyAppendPodIndex: false
+
+  ## If enabled, generate a persistent volume to use for the keys
+  ##
   persistGeneratedNodeKey: false
-  #customNodeKey: ""
-  #  pruning: 1000
-  resources: {}
+  # customNodeKey: ""
+
+  ## Set the amount of blocks to retain
+  ##
+  # pruning: 1000
+
+  ## Expose metrics via Prometheus format in /metrics endpoint
+  ## Pass the following args:
+  ##   - "--prometheus-external" \
+  ##   - "--prometheus-port {{ .Values.node.prometheus.port }}"
+  ##
+  prometheus:
+    enabled: true
+    port: 9615
+
+  ## Enable Service Monitor of Prometheus-Operator
+  ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors
+  ##
   serviceMonitor:
     enabled: false
     #namespace: monitoring
@@ -137,7 +241,12 @@ node:
       - node
     relabelings: []
     metricRelabelings: []
+
+  ## Configuration of individual services of node
+  ##
   perNodeServices:
+    ## If enabled, generic service to expose common node APIs
+    ##
     apiService:
       enabled: true
       type: ClusterIP # or NodePort, LoadBalancer
@@ -145,10 +254,13 @@ node:
       httpPort: 9933
       wsPort: 9944
       prometheusPort: 9615
+      relayChainPrometheusPort: 9625
       externalDns:
         enabled: false
         hostname: example.com
         ttl: 300
+    ## If enabled, create service to expose relay chain P2P
+    ##
     relayP2pService:
       enabled: false
       type: NodePort # or ClusterIP or LoadBalancer
@@ -158,6 +270,8 @@ node:
         enabled: false
         hostname: example.com
         ttl: 300
+    ## If enabled, create service to expose parachain P2P
+    ##
     paraP2pService:
       enabled: false
       type: NodePort # or ClusterIP, LoadBalancer
@@ -167,20 +281,40 @@ node:
         enabled: false
         hostname: example.com
         ttl: 300
+    ## If enabled, set `--public-addr` flag to be the NodePort p2p services external address
+    ##
     setPublicAddressToExternalIp:
       enabled: false
       ipRetrievalServiceUrl: https://ifconfig.io
-  #podManagementPolicy: Parallel
 
-  # Enables Jaeger Agent as a sidecar
+  ## Pod management policy of stateful set
+  ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies
+  ##
+  # podManagementPolicy: Parallel
+
+  ## Enables Jaeger Agent as a sidecar
+  ##
   tracing:
     enabled: false
 
-  # Enables Sustrate API as a sidecar
+  ## Enables Sustrate API as a sidecar
+  ##
   substrateApiSidecar:
     enabled: false
 
-# https://github.com/paritytech/substrate-api-sidecar
+  ## Enable Node container's startup and readiness probes
+  ##
+  enableStartupProbe: true
+  enableReadinessProbe: true
+
+  ## Resource limits & requests
+  ##
+  resources: {}
+
+
+## Configuration of Substrate API
+## ref: https://github.com/paritytech/substrate-api-sidecar
+##
 substrateApiSidecar:
   image:
     repository: parity/substrate-api-sidecar
@@ -188,7 +322,9 @@ substrateApiSidecar:
   env: {}
   resources: {}
 
-# https://github.com/jaegertracing/jaeger
+## Configuration of Jaeger agent
+## https://github.com/jaegertracing/jaeger
+##
 jaegerAgent:
   image:
     repository: jaegertracing/jaeger-agent
@@ -207,16 +343,28 @@ jaegerAgent:
   env: {}
   resources: {}
 
+## Annotations to add to the node pod
+##
 podAnnotations: {}
 
+## Define which Nodes the Pods are scheduled on.
+##
 nodeSelector: {}
 
 terminationGracePeriodSeconds: 60
 
+## Tolerations for use with node taints
+##
 tolerations: []
 
+## Assign custom affinity rules
+##
 affinity: {}
 
+## Storage class to use for persistent volume
+##
 storageClass: "default"
 
+## Additional containers to run in the pod
+##
 extraContainers: []

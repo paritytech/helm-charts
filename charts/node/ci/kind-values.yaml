@@ -1,0 +1,14 @@
+node:
+  chain: dev
+  role: invalid
+  dataVolumeSize: 1G
+  flags:
+  - "--force-authoring"
+  - "--alice"
+  - "--rpc-external"
+  - "--ws-external"
+  - "--rpc-methods=safe"
+  - "--rpc-cors=all"
+storageClass: standard
+image:
+  tag: v0.9.19

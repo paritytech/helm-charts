@@ -1,0 +1,76 @@
+name: Linting & Integration tests
+
+on:
+  pull_request:
+   types:
+    - opened
+    - synchronize
+    - reopened
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Set up Helm
+      uses: azure/setup-helm@v1
+      with:
+        version: v3.8.1
+
+    - uses: actions/setup-python@v2
+      with:
+        python-version: "3.10"
+
+    - name: Set up chart-testing
+      uses: helm/chart-testing-action@v2.2.1
+
+    - name: Run chart-testing (list-changed)
+      id: list-changed
+      run: |
+        changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }})
+        if [[ -n "$changed" ]]; then
+          echo "::set-output name=changed::true"
+        fi
+
+    - name: Run chart-testing (lint)
+      run: |
+        ct lint \
+          --target-branch ${{ github.event.repository.default_branch }} \
+          --lint-conf chart-testing/lintconf.yaml \
+          --excluded-charts charts/common
+      if: steps.list-changed.outputs.changed == 'true'
+
+    - name: Create kind cluster
+      uses: helm/kind-action@v1.2.0
+      with:
+        node_image: kindest/node:v1.21.10
+      if: steps.list-changed.outputs.changed == 'true'
+
+    - name: Replace secrets in Helm charts
+      env:
+        SMF_BOT_MATRIX_ACCESS_TOKEN: ${{ secrets.SMF_BOT_MATRIX_ACCESS_TOKEN }}
+      run: |
+        shopt -s globstar
+        for f in $(find **/ci/*-values.yaml); do
+          sed -i "s/__GITHUB_SECRET_SMF_BOT_MATRIX_ACCESS_TOKEN/$SMF_BOT_MATRIX_ACCESS_TOKEN/g" $f
+        done
+      if: steps.list-changed.outputs.changed == 'true'
+
+    - name: Run chart-testing (install)
+      run: |
+        ct install \
+        --target-branch ${{ github.event.repository.default_branch }} \
+        --excluded-charts charts/common
+      if: steps.list-changed.outputs.changed == 'true'

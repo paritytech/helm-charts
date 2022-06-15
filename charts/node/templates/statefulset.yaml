@@ -2,6 +2,7 @@
 {{ $selectorLabels :=  include "node.selectorLabels" . }}
 {{ $serviceLabels :=  include "node.serviceLabels" .  }}
 {{ $serviceAccountName :=  include "node.serviceAccountName" . }}
+{{ $databasePath := include "node.databasePath" . }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -72,23 +73,18 @@ spec:
           args:
             - -c
             - |
-              if [ -d "/data/chains/${CHAIN_PATH}/db" ]; then
+              set -eu -o pipefail
+              if [ -d "/data/chains/${CHAIN_PATH}/{{ $databasePath }}" ]; then
                 echo "Database directory already exists, skipping chain snapshot download"
               else
                 echo "Downloading chain snapshot"
                 SNAPSHOT_URL="{{ .Values.node.chainDataSnapshotUrl }}"
-                wget -O /data/snapshot ${SNAPSHOT_URL}
-                if [ ! -f /data/snapshot ]; then
-                  echo "Failed to download chain snapshot"
-                  exit 1
-                fi
-                mkdir -p /data/chains/${CHAIN_PATH}/
-                if [ "${SNAPSHOT_FORMAT}" == "7z" ]; then
-                  7z x /data/snapshot -o/data/chains/${CHAIN_PATH}/
+                mkdir -p /data/chains/${CHAIN_PATH}/{{ $databasePath }}/
+                if [ "${SNAPSHOT_FORMAT}" == "lz4" ]; then
+                  wget -O - ${SNAPSHOT_URL} | lz4 -c -d - | tar -x -C /data/chains/${CHAIN_PATH}/
                 else
-                  tar xvf /data/snapshot --directory=/data/chains/${CHAIN_PATH}/db/full/
+                  wget -O - ${SNAPSHOT_URL} | tar -x -C /data/chains/${CHAIN_PATH}/{{ $databasePath }}/
                 fi
-                rm /data/snapshot
               fi
           env:
             - name: CHAIN_PATH
@@ -106,23 +102,18 @@ spec:
           args:
             - -c
             - |
-              if [ -d "/data/relay/chains/${RELAY_CHAIN_PATH}/db" ]; then
+              set -eu -o pipefail
+              if [ -d "/data/relay/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}" ]; then
                 echo "Database directory already exists, skipping relay-chain snapshot download"
               else
                 echo "Downloading relay-chain snapshot"
                 RELAY_SNAPSHOT_URL="{{ .Values.node.collator.relayChainDataSnapshotUrl }}"
-                wget -O /data/relay-snapshot ${RELAY_SNAPSHOT_URL}
-                if [ ! -f /data/relay-snapshot ]; then
-                  echo "Failed to download relay-chain snapshot"
-                  exit 1
-                fi
-                mkdir -p /data/relay/chains/${RELAY_CHAIN_PATH}/
-                if [ "${RELAY_SNAPSHOT_FORMAT}" == "7z" ]; then
-                  7z x /data/relay-snapshot -o/data/relay/chains/${RELAY_CHAIN_PATH}/
+                mkdir -p /data/relay/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}
+                if [ "${RELAY_SNAPSHOT_FORMAT}" == "lz4" ]; then
+                  wget -O - ${RELAY_SNAPSHOT_URL} | lz4 -c -d - | tar -x -C /data/chains/${RELAY_CHAIN_PATH}/
                 else
-                  tar xvf /data/relay-snapshot --directory=/data/relay/chains/${RELAY_CHAIN_PATH}/db/full/
+                  wget -O - ${RELAY_SNAPSHOT_URL} | tar -x -C /data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
                 fi
-                rm /data/relay-snapshot
               fi
           env:
             - name: RELAY_SNAPSHOT_FORMAT
@@ -140,10 +131,11 @@ spec:
           args:
             - -c
             - |
+              set -eu
               {{- if .Values.googleCloudSdk.serviceAccountKey }}
               gcloud auth activate-service-account --key-file /tmp/service-account-key.json
               {{- end }}
-              if [ -d "/data/chains/${CHAIN_PATH}/db" ]; then
+              if [ -d "/data/chains/${CHAIN_PATH}/{{ $databasePath }}" ]; then
                 echo "Chain database directory already exists, skipping GCS sync"
               else
                 BUCKET_URL="{{ .Values.node.chainDataGcsBucketUrl }}"
@@ -152,8 +144,8 @@ spec:
                   echo "Failed to retrieve latest_version metadata"
                   exit 1
                 fi
-                mkdir -p /data/chains/${CHAIN_PATH}/db/full
-                gsutil -m -o "GSUtil:parallel_process_count=3" -o "GSUtil:parallel_thread_count=15" rsync -d -r ${BUCKET_URL}/${LATEST} /data/chains/${CHAIN_PATH}/db/full/
+                mkdir -p /data/chains/${CHAIN_PATH}/{{ $databasePath }}
+                gsutil -m -o "GSUtil:parallel_process_count=3" -o "GSUtil:parallel_thread_count=15" rsync -d -r ${BUCKET_URL}/${LATEST} /data/chains/${CHAIN_PATH}/{{ $databasePath }}/
               fi
           env:
             - name: CHAIN_PATH
@@ -174,10 +166,11 @@ spec:
           args:
             - -c
             - |
-               {{- if .Values.googleCloudSdk.serviceAccountKey }}
+              set -eu
+              {{- if .Values.googleCloudSdk.serviceAccountKey }}
               gcloud auth activate-service-account --key-file /tmp/service-account-key.json
-               {{- end }}
-              if [ -d "/data/relay/chains/${RELAY_CHAIN_PATH}/db" ]; then
+              {{- end }}
+              if [ -d "/data/relay/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}" ]; then
                 echo "Relay-chain database directory already exists, skipping GCS sync"
               else
                 BUCKET_URL="{{ .Values.node.collator.relayChainDataGcsBucketUrl }}"
@@ -186,8 +179,8 @@ spec:
                   echo "Failed to retrieve latest_version metadata"
                   exit 1
                 fi
-                mkdir -p /data/relay/chains/${RELAY_CHAIN_PATH}/db/full
-                gsutil -m -o "GSUtil:parallel_process_count=3" -o "GSUtil:parallel_thread_count=15" rsync -d -r ${BUCKET_URL}/${LATEST} /data/relay/chains/${RELAY_CHAIN_PATH}/db/full/
+                mkdir -p /data/relay/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}
+                gsutil -m -o "GSUtil:parallel_process_count=3" -o "GSUtil:parallel_thread_count=15" rsync -d -r ${BUCKET_URL}/${LATEST} /data/relay/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
               fi
           env:
             - name: RELAY_CHAIN_PATH
@@ -208,6 +201,8 @@ spec:
           args:
             - -c
             - |
+              set -eu -o pipefail
+              apk add --no-cache wget
               {{- if .Values.node.customChainspecUrl }}
               {{- if not .Values.node.forceDownloadChainspec }}
               if [ ! -f {{ .Values.node.customChainspecPath }} ]; then
@@ -229,6 +224,8 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: chain-data
+          securityContext:
+            runAsUser: 0
         {{- end }}
         {{- if .Values.node.keys }}
         - name: inject-keys
@@ -237,6 +234,7 @@ spec:
           args:
             - -c
             - |
+              set -eu
               {{- range $keys := .Values.node.keys }}
               {{ $.Values.node.command }} key insert --base-path /data \
               --chain {{ if $.Values.node.customChainspecUrl }}{{ $.Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
@@ -263,6 +261,7 @@ spec:
           args:
             - -c
             - |
+              set -eu
               {{- range $keys := .Values.node.vault.keys }}
               {{ $.Values.node.command }} key insert --base-path /data \
               --chain {{ if $.Values.node.customChainspecUrl }}{{ $.Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
@@ -290,6 +289,7 @@ spec:
           args:
             - -c
             - |
+              set -eu
               POD_INDEX="${HOSTNAME##*-}"
               RELAY_CHAIN_P2P_PORT="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-relay-chain-p2p -o jsonpath='{.spec.ports[*].nodePort}')"
               echo "${RELAY_CHAIN_P2P_PORT}" > /data/relay_chain_p2p_port
@@ -316,6 +316,7 @@ spec:
           args:
             - -c
             - |
+              set -eu
               POD_INDEX="${HOSTNAME##*-}"
               {{- if or $.Values.node.perNodeServices.relayP2pService.enabled $.Values.node.perNodeServices.paraP2pService.enabled }}
               {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
@@ -336,8 +337,10 @@ spec:
                 {{- if or (eq .Values.node.role "authority") (eq .Values.node.role "validator") }}
                 --validator \
                 {{- end }}
+                {{- if .Values.node.database }}
+                --database={{ .Values.node.database }} \
+                {{- end }}
                 {{- if ge ( int .Values.node.pruning ) 1 }}
-                --unsafe-pruning \
                 --pruning={{ .Values.node.pruning }} \
                 {{- else if and ( not ( kindIs "invalid" .Values.node.pruning ) ) ( eq 0 ( int .Values.node.pruning ) ) }}
                 --pruning=archive \
@@ -347,6 +350,10 @@ spec:
                 {{- end }}
                 {{- if eq .Values.node.role "light" }}
                 --light \
+                {{- end }}
+                {{- if .Values.node.prometheus.enabled }}
+                --prometheus-external \
+                --prometheus-port {{ .Values.node.prometheus.port }} \
                 {{- end }}
                 {{- if .Values.node.collator.isParachain }}
                 {{- if (or $.Values.node.perNodeServices.paraP2pService.enabled) }}
@@ -371,6 +378,10 @@ spec:
                 {{- if .Values.node.collator.isParachain }}
                 -- \
                 --base-path=/data/relay/ \
+                {{- if .Values.node.collator.relayChainPrometheus.enabled }}
+                --prometheus-external \
+                --prometheus-port {{ .Values.node.collator.relayChainPrometheus.port }} \
+                {{- end }}
                 {{- end }}
                 {{- if .Values.node.collator.relayChainCustomChainspecUrl }}
                 --chain={{ .Values.node.relayChainCustomChainspecPath }} \
@@ -382,6 +393,7 @@ spec:
                 --listen-addr=/ip4/0.0.0.0/tcp/${RELAY_CHAIN_P2P_PORT} \
                 {{- end }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30333 \
+
                 {{- join " " .Values.node.collator.relayChainFlags | nindent 16 }}
           env:
             - name: CHAIN
@@ -400,9 +412,13 @@ spec:
             - containerPort: 9944
               name: websocket-rpc
               protocol: TCP
-            - containerPort: 9615
+            - containerPort: {{ .Values.node.prometheus.port }}
               name: prometheus
               protocol: TCP
+            {{- if and .Values.node.collator.isParachain .Values.node.collator.relayChainPrometheus.enabled }}
+            - containerPort: {{ .Values.node.collator.relayChainPrometheus.port }}
+              name: prom-relaychain
+            {{- end }}    
             - containerPort: 30333
               name: p2p
               protocol: TCP

@@ -13,14 +13,35 @@ This will deploy a single Polkadot node with the default configuration.
 
 Polkadot:
 ```console
-helm install polkadot-node parity/node --set node.chainDataSnapshotUrl=https://dot-rocksdb.polkashots.io/snapshot --set node.chainDataSnapshotFormat=7z
+helm install polkadot-node parity/node --set node.chainDataSnapshotUrl=https://dot-rocksdb.polkashots.io/snapshot --set node.chainDataSnapshotFormat=lz4
 ```
 
 Kusama:
 ```console
-helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm-rocksdb.polkashots.io/snapshot --set node.chainDataSnapshotFormat=7z --set node.chainPath=ksmcc3
+helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm-rocksdb.polkashots.io/snapshot --set node.chainDataSnapshotFormat=lz4 --set node.chainPath=ksmcc3
 ```
 ⚠️ For some chains where the local directory name is different from the chain ID, `node.chainPath` needs to be set to a custom value.
+
+### Resizing the node disk
+
+To resize the node persistent volume, perform the following steps:
+
+1. Patch the PVC storage size, eg. to `1000Gi`:
+
+```console
+kubectl patch pvc chain-data-polkadot-node-0  -p '{"spec":{"resources":{"requests":{"storage":"1000Gi"}}}}}'
+```
+
+2. Delete the StatefulSet object with `cascade=orphan` (ie. without removing the attached pods):
+
+```console
+kubectl delete sts polkadot-node --cascade=orphan
+```
+
+3. Update the `node.dataVolumeSize` to the new value (eg. `1000Gi`) and upgrade the helm release.
+
+Note that for a Kubernetes Persistent Volume Claims to be resizable, its StorageClass must have specific characteristics. More information on this topic is available in the [Expanding Persistent Volumes Claims
+section of the Kubernetes documentation](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#expanding-persistent-volumes-claims).
 
 ### Optional Vault Integration
 
@@ -85,21 +106,26 @@ node:
 | `node.dataVolumeSize`                                                     | The size of the chain data PersistentVolume                                                                                                                                                                                                          | `100Gi`                                                             |
 | `node.replica`                                                            | Number of replica in the node StatefulSet                                                                                                                                                                                                            | `1`                                                                 |
 | `node.role`                                                               | Set the role of the node: `full`, `authority`/`validator`, `collator` or `light`                                                                                                                                                                     | `full`                                                              |
+| `node.prometheus.enabled`                                                 | If true, enables Prometheus endpoint                                                                                                                                                                                                                 | `true`                                                              |
+| `node.prometheus.port`                                                    | Port to use for the Prometheus endpoint                                                                                                                                                                                                              | `9615`                                                              |
 | `node.chainDataSnapshotUrl`                                               | Download and load chain data from a snapshot archive http URL                                                                                                                                                                                        | ``                                                                  |
-| `node.chainDataSnapshotFormat`                                            | The snapshot archive format (`tar` or `7z`)                                                                                                                                                                                                          | `tar`                                                               |
+| `node.chainDataSnapshotFormat`                                            | The snapshot archive format (`tar` or `lz4`)                                                                                                                                                                                                         | `tar`                                                               |
 | `node.chainDataGcsBucketUrl`                                              | Sync chain data files from a GCS bucket (eg. `gs://bucket-name/folder-name`)                                                                                                                                                                         | ``                                                                  |
 | `node.chainPath`                                                          | Path at which the chain database files are located (`/data/chains/${CHAIN_PATH}`)                                                                                                                                                                    | `nil` (if undefined, fallbacks to the value in `node.chain`)        |
 | `node.chainDataKubernetesVolumeSnapshot`                                  | Initialize the chain data volume from a Kubernetes VolumeSnapshot                                                                                                                                                                                    | ``                                                                  |
 | `node.customChainspecUrl`                                                 | Download and use a custom chainspec file from a URL                                                                                                                                                                                                  | `nil`                                                               |
+| `node.database`                                                           | Set the database backend to use and that will be passed to the `--database` flag (`rocksdb`, `paritydb` or `nil`)                                                                                                                                    | `nil`                                                               |
 | `node.forceDownloadChainspec`                                             | Force the chainspec download even if it is already present on the volume                                                                                                                                                                             | `false`                                                             |
 | `node.collator.isParachain`                                               | If true, configure the node as a parachain (set the relay-chain flags after `--`)                                                                                                                                                                    | `nil`                                                               |
 | `node.collator.relayChainCustomChainspecUrl`                              | Download and use a custom relay-chain chainspec file from a URL                                                                                                                                                                                      | `nil`                                                               |
 | `node.collator.relayChainDataSnapshotUrl`                                 | Download and load relay-chain data from a snapshot archive http URL                                                                                                                                                                                  | `nil`                                                               |
-| `node.collator.relayChainDataSnapshotFormat`                              | The relay-chain snapshot archive format (`tar` or `7z`)                                                                                                                                                                                              | `nil`                                                               |
+| `node.collator.relayChainDataSnapshotFormat`                              | The relay-chain snapshot archive format (`tar` or `lz4`)                                                                                                                                                                                             | `nil`                                                               |
 | `node.collator.relayChainPath`                                            | Path at which the chain database files are located (`/data/polkadot/chains/${RELAY_CHAIN_PATH}`)                                                                                                                                                     | `nil`                                                               |
 | `node.collator.relayChainDataKubernetesVolumeSnapshot`                    | Initialize the relay-chain data volume from a Kubernetes VolumeSnapshot                                                                                                                                                                              | `nil`                                                               |
 | `node.collator.relayChainDataGcsBucketUrl`                                | Sync relay-chain data files from a GCS bucket (eg. `gs://bucket-name/folder-name`)                                                                                                                                                                   | `nil`                                                               |
 | `node.collator.relayChainFlags`                                           | Relay-chain node flags other than `--name` (set from the helm release name), `--base-path` and `--chain`                                                                                                                                             | `nil`                                                               |
+| `node.collator.relayChainPrometheus.enabled`                              | If true, enables Prometheus endpoint for relaychain                                                                                                                                                                                                  | `false`                                                             |
+| `node.collator.relayChainPrometheus.port`                                 | Port to use for the Relaychain Service Prometheus endpoint                                                                                                                                                                                           | `9625`                                                              |
 | `node.resources.limits`                                                   | The resources limits (cpu/memory) for nodes                                                                                                                                                                                                          | `{}`                                                                |
 | `node.podManagementPolicy`                                                | The pod management policy to apply to the StatefulSet, set it to `Parallel` to launch or terminate all Pods in parallel, and not to wait for pods to become Running and Ready or completely terminated prior to launching or terminating another pod | `{}`                                                                |
 | `node.pruning`                                                            | The amount of blocks to retain. Set to a number or set to 0 for `--pruning=archive` .                                                                                                                                                                | `nil`                                                               |
@@ -144,7 +170,7 @@ node:
 | `image.repository`                 | Node image name                                                                                        | `parity/polkadot`   |
 | `image.tag`                        | Node image tag                                                                                         | `latest`            |
 | `image.pullPolicy`                 | Node image pull policy                                                                                 | `Always`            |
-| `initContainer.image.repository`   | Download-chain-snapshot init container image name                                                      | `crazymax/7zip`     |
+| `initContainer.image.repository`   | Download-chain-snapshot init container image name                                                      | `alpine`     |
 | `initContainer.image.tag`          | Download-chain-snapshot init container image tag                                                       | `latest`            |
 | `googleCloudSdk.image.repository`  | Sync-chain-gcs init container image name                                                               | `google/cloud-sdk`  |
 | `googleCloudSdk.image.tag`         | Sync-chain-gcs init container image tag                                                                | `slim`              |
@@ -160,6 +186,6 @@ node:
 | `jaegerAgent.ports.binaryPort`     | Port to use for jaeger.thrift over binary thrift protocol                                              | `6832`              |
 | `jaegerAgent.ports.samplingPort`   | Port for HTTP sampling strategies                                                                      | `5778`              |
 | `jaegerAgent.collector.url`        | The URL which jaeger agent sends data                                                                  | `nil`               |
-| `jaegerAgent.collector.port   `    | The port which jaeger agent sends data                                                                 | `14250`             |    
-| `extraContainers   `               | Sidecar containers to add to the node                                                                  | `[]`                |   
+| `jaegerAgent.collector.port   `    | The port which jaeger agent sends data                                                                 | `14250`             |
+| `extraContainers   `               | Sidecar containers to add to the node                                                                  | `[]`                |
 | `serviceAccount`                   | ServiceAccount used in init containers                                                                 | `{create: true, createRoleBinding: true,  annotations: {}}` |
