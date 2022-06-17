@@ -1,14 +1,14 @@
-{{- if .Values.secrets }}
+{{- if .Values.config }}
+---
 apiVersion: v1
-kind: Secret
+kind: ConfigMap
 metadata:
   name: {{ template "common.fullname" . }}
   namespace: {{ template "common.namespace" . }}
   labels:
     {{- include "common.labels" . | nindent 4 }}
-type: Opaque
 data:
-{{- range $key, $val := .Values.secrets }}
+{{- range $key, $val := .Values.config }}
   {{ $key }}: {{ $val | quote }}
 {{- end -}}
 {{- end }}

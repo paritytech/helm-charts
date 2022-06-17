@@ -2,37 +2,68 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
+## Provide a name in place of node for `app:` labels
+##
+nameOverride: ""
 
+## Provide a name to substitute for the full names of resources
+##
+fullnameOverride: ""
+
+## Provide a name to substitute for the full names of resources
+##
+namespaceOverride: ""
+## Additional common labels on resources
+##
+# extraLabels:
+#   env: production
+
+
+## Image to use for the chart
+##
 image:
   repository: nginx
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
+## Number of replicas for the pod
+##
+replicaCount: 1
 
+## Reference to one or more secrets to be used when pulling images
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+##
+imagePullSecrets: []
+
+## Service account for the node to use
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+##
 serviceAccount:
-  # Specifies whether a service account should be created
   create: true
-  # Annotations to add to the service account
   annotations: {}
-    # uncomment if you're using workload indentity
+    ## uncomment if you're using workload indentity
+    ##
     # iam.gke.io/gcp-service-account: 'mysa@gcp-project-id.iam.gserviceaccount.com'
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
+
+  ## The name of the service account to use.
+  ## If not set and create is true, a name is generated using the fullname template
+  ##
   name: ""
 
+## Annotations to add to the node pod
+##
 podAnnotations: {}
 
+## SecurityContext holds pod-level security attributes and common container settings.
+## This defaults to non root user with uid 1000 and gid 1000.
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+##
 podSecurityContext: {}
   # fsGroup: 1000
   # runAsNonRoot: true
   # runAsUser: 1000
   # runAsGroup: 1000
-
 containerSecurityContext: {}
   # capabilities:
   #   drop:
@@ -42,24 +73,52 @@ containerSecurityContext: {}
   # runAsUser: 1000
   # runAsGroup: 1000
 
+## Environment variable to add to the pods
+##
 env: {}
   # VAR: value
 
+## Environment variables from secrets or configmaps to add to the pods
+##
 envFrom: []
 #  - configMapRef:
 #      name: env-configmap
 #  - secretRef:
 #      name: env-secret
 
+
+## Additional Pod Spec
+##
+additionalPodSpec: {}
+
+## Creates a secret resource
+## The value must be base64 encoded
+##
 secrets: {}
-#  admin: <base64-encoded>
+# admin: <base64-encoded>
 
+## Creates a configmap resource
+##
+config: {}
 
+## Creates a service resource
+##
 service:
+  annotations: {}
   type: ClusterIP
-  port: 80
-  containerPort: 80
+  sessionAffinity: ""
+  ports: []
+  # - name: http
+  #   port: 80
+  #   containerPort: 8080
+  #   protocol: TCP
+  # - name: rpc
+  #   port: 9090
+  #   containerPort: 9090
+  #   protocol: TCP
 
+## Creates an ingress resource
+##
 ingress:
   enabled: false
   className: ""
@@ -76,6 +135,8 @@ ingress:
     hosts:
       - chart-example.local
 
+## Resource limits & requests
+##
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
@@ -88,22 +149,21 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
-# Autoscaling should be enabled for statefulsets
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
-
+## Define which Nodes the Pods are scheduled on.
+##
 nodeSelector: {}
 
+## Tolerations for use with node taints
+##
 tolerations: []
 
+## Assign custom affinity rules
+##
 affinity: {}
 
 ## Controller Container liveness/readiness probe configuration
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+##
 livenessProbe: {}
   # failureThreshold: 3
   # successThreshold: 1
@@ -122,6 +182,8 @@ readinessProbe: {}
   #   port: 80
   # periodSeconds: 10
 
+## If enabled, creates a PVC and deploy the pod as statefulset
+##
 persistence:
   enabled: false
   accessModes:
@@ -135,6 +197,35 @@ persistence:
   # existingClaim:
   # storageClassName: 
 
+## Autoscaling should be enabled for statefulsets
+## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+##
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+## If enabeled, create service monitor of Prometheus-Operator
+## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors
+##
+serviceMonitor:
+  enabled: false
+  annotations: {}
+
+  ## List of endpoints of service which Prometheus scrapes
+  ##
+  endpoints:
+  - path: /metrics
+    port: http
+    interval: 1m
+    scheme: http
+    scrapeTimeout: 30s
+    honorLabels: true
+
+## If enabled, create cloudsql resources
+##
 cloudsql:
   enabled: false
   service:
