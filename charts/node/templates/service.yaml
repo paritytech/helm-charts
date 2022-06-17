@@ -6,7 +6,7 @@ kind: Service
 metadata:
   name: {{ $fullname }}
   labels:
-    {{- include "node.labels" . | nindent 4 }}
+    {{- $serviceLabels | nindent 4 }}
 spec:
   type: ClusterIP
   clusterIP: None
@@ -63,7 +63,7 @@ spec:
     {{- if $.Values.node.collator.relayChainPrometheus.enabled }}
     - port: {{ $.Values.node.perNodeServices.apiService.relayChainPrometheusPort}}
       name: prom-relaychain
-    {{- end }}    
+    {{- end }}
 {{- end }}
 ---
 {{- if $.Values.node.perNodeServices.relayP2pService.enabled }}
@@ -72,7 +72,7 @@ kind: Service
 metadata:
   name: {{ $fullname }}-{{ $i }}-relay-chain-p2p
   labels:
-    {{- include "node.labels" . | nindent 4 }}
+    {{- $serviceLabels | nindent 4 }}
   annotations:
 {{- if $.Values.node.perNodeServices.relayP2pService.externalDns.enabled }}
     external-dns.alpha.kubernetes.io/hostname: {{ $fullname }}-{{ $i }}.{{ $.Values.node.perNodeServices.relayP2pService.externalDns.hostname }}
@@ -105,7 +105,7 @@ kind: Service
 metadata:
   name: {{ $fullname }}-{{ $i }}-para-chain-p2p
   labels:
-    {{- include "node.labels" . | nindent 4 }}
+    {{- $serviceLabels | nindent 4 }}
   annotations:
 {{- if $.Values.node.perNodeServices.paraP2pService.externalDns.enabled }}
     external-dns.alpha.kubernetes.io/hostname: {{ $fullname }}-{{ $i }}.{{ $.Values.node.perNodeServices.paraP2pService.externalDns.hostname }}
