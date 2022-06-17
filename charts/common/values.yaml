@@ -194,7 +194,7 @@ persistence:
   #     app.kubernetes.io/name: common
   # subPath: ""
   # existingClaim:
-  # storageClassName: 
+  # storageClassName:
 
 ## Autoscaling should be enabled for statefulsets
 ## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
