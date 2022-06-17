@@ -14,7 +14,7 @@ service:
 
 env:
   RANDOM_ENV_VAR: justsomerandom
-  
+
 config:
   test.yml: |-
     test: data
