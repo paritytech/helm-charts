@@ -9,10 +9,12 @@ service:
   ports:
   - name: http
     port: 80
-    containerPort: 80
+    targetPort: 80
     protocol: TCP
 
-
+env:
+  RANDOM_ENV_VAR: justsomerandom
+  
 config:
-  test.yaml: |-
+  test.yml: |-
     test: data
