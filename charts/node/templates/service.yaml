@@ -41,13 +41,14 @@ metadata:
 {{ toYaml . | indent 4}}
 {{- end }}
 spec:
-  {{- if eq $.Values.node.perNodeServices.apiService.type "NodePort" }}
-  type: NodePort
-  externalTrafficPolicy: Local
-  {{- else if eq $.Values.node.perNodeServices.apiService.type "ClusterIP" }}
+  {{- if eq $.Values.node.perNodeServices.apiService.type "ClusterIP" }}
   type: ClusterIP
+  {{- else if eq $.Values.node.perNodeServices.apiService.type "NodePort" }}
+  externalTrafficPolicy: {{ $.Values.node.perNodeServices.apiService.externalTrafficPolicy }}
+  type: NodePort
   clusterIP: None
   {{- else if eq $.Values.node.perNodeServices.apiService.type "LoadBalancer" }}
+  externalTrafficPolicy: {{ $.Values.node.perNodeServices.apiService.externalTrafficPolicy }}
   type: LoadBalancer
   {{- end }}
   selector:
@@ -82,12 +83,13 @@ metadata:
 {{ toYaml . | indent 4}}
 {{- end }}
 spec:
-  {{- if eq $.Values.node.perNodeServices.relayP2pService.type "NodePort" }}
-  type: NodePort
-  externalTrafficPolicy: Local
-  {{- else if eq $.Values.node.perNodeServices.relayP2pService.type "ClusterIP" }}
+  {{- if eq $.Values.node.perNodeServices.relayP2pService.type "ClusterIP" }}
   type: ClusterIP
+  {{- else if eq $.Values.node.perNodeServices.relayP2pService.type "NodePort" }}
+  externalTrafficPolicy: {{ $.Values.node.perNodeServices.relayP2pService.externalTrafficPolicy }}
+  type: NodePort
   {{- else if eq $.Values.node.perNodeServices.relayP2pService.type "LoadBalancer" }}
+  externalTrafficPolicy: {{ $.Values.node.perNodeServices.relayP2pService.externalTrafficPolicy }}
   type: LoadBalancer
   {{- end }}
   selector:
@@ -115,12 +117,13 @@ metadata:
 {{ toYaml . | indent 4}}
 {{- end }}
 spec:
-  {{- if eq $.Values.node.perNodeServices.paraP2pService.type "NodePort" }}
-  type: NodePort
-  externalTrafficPolicy: Local
-  {{- else if eq $.Values.node.perNodeServices.paraP2pService.type "ClusterIP" }}
+  {{- if eq $.Values.node.perNodeServices.paraP2pService.type "ClusterIP" }}
   type: ClusterIP
+  {{- else if eq $.Values.node.perNodeServices.paraP2pService.type "NodePort" }}
+  externalTrafficPolicy: {{ $.Values.node.perNodeServices.paraP2pService.externalTrafficPolicy }}
+  type: NodePort
   {{- else if eq $.Values.node.perNodeServices.paraP2pService.type "LoadBalancer" }}
+  externalTrafficPolicy: {{ $.Values.node.perNodeServices.paraP2pService.externalTrafficPolicy }}
   type: LoadBalancer
   {{- end }}
   selector:
