@@ -214,9 +214,9 @@ spec:
               {{- end }}
               {{- if .Values.node.collator.relayChainCustomChainspecUrl }}
               {{- if not .Values.node.forceDownloadChainspec }}
-              if [ ! -f {{ .Values.node.relayChainCustomChainspecPath }} ]; then
+              if [ ! -f {{ .Values.node.collator.relayChainCustomChainspecPath }} ]; then
               {{- end }}
-                wget -O {{ .Values.node.relayChainCustomChainspecPath }} {{ .Values.node.collator.relayChainCustomChainspecUrl }}
+                wget -O {{ .Values.node.collator.relayChainCustomChainspecPath }} {{ .Values.node.collator.relayChainCustomChainspecUrl }}
               {{- if not .Values.node.forceDownloadChainspec }}
               fi
               {{- end }}
@@ -384,7 +384,7 @@ spec:
                 {{- end }}
                 {{- end }}
                 {{- if .Values.node.collator.relayChainCustomChainspecUrl }}
-                --chain={{ .Values.node.relayChainCustomChainspecPath }} \
+                --chain={{ .Values.node.collator.relayChainCustomChainspecPath }} \
                 {{- end }}
                 {{- if (or $.Values.node.perNodeServices.relayP2pService.enabled ) }}
                 {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
