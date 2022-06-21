@@ -242,6 +242,8 @@ node:
     relabelings: []
     metricRelabelings: []
 
+  serviceAnnotations: {}
+
   ## Configuration of individual services of node
   ##
   perNodeServices:
