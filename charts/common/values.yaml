@@ -13,11 +13,10 @@ fullnameOverride: ""
 ## Provide a name to substitute for the full names of resources
 ##
 namespaceOverride: ""
+
 ## Additional common labels on resources
 ##
-# extraLabels:
-#   env: production
-
+extraLabels: {}
 
 ## Image to use for the chart
 ##
@@ -35,7 +34,7 @@ replicaCount: 1
 ##
 imagePullSecrets: []
 
-## Service account for the node to use
+## Service account for the pod to use
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
 ##
 serviceAccount:
@@ -50,7 +49,7 @@ serviceAccount:
   ##
   name: ""
 
-## Annotations to add to the node pod
+## Annotations to add to the pod
 ##
 podAnnotations: {}
 
