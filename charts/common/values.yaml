@@ -14,7 +14,7 @@ fullnameOverride: ""
 ##
 namespaceOverride: ""
 
-## Additional common labels on resources 
+## Additional common labels on resources
 ##
 extraLabels: {}
 
