@@ -655,6 +655,23 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/polkadot-introspector-0.1.0/polkadot-introspector-0.1.0.tgz
     version: 0.1.0
+  staking-miner:
+  - apiVersion: v2
+    created: "2022-06-23T09:03:48.720794445Z"
+    dependencies:
+    - name: common
+      repository: https://charts.bitnami.com/bitnami
+      version: 1.14.1
+    description: A Helm chart to deploy staking miner (https://github.com/paritytech/staking-miner)
+    digest: 041320638d94d39181754798356084500916764137312274376d1f01c4704af6
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: staking-miner
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/staking-miner-1.0.0/staking-miner-1.0.0.tgz
+    version: 1.0.0
   substrate-faucet:
   - apiVersion: v2
     created: "2022-06-15T12:17:26.489155666Z"
@@ -771,4 +788,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/substrate-telemetry-0.1.0/substrate-telemetry-0.1.0.tgz
     version: 0.1.0
-generated: "2022-06-23T07:03:32.733239639Z"
+generated: "2022-06-23T09:03:48.721267635Z"
