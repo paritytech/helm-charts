@@ -99,7 +99,7 @@ generateConfig:
 image:
   registry: docker.io
   repository: paritytech/staking-miner
-  tag: latest
+  tag: master
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
   ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -156,7 +156,7 @@ containerSecurityContext:
 
 ## @param command Override default container command (useful when using custom images)
 ##
-command: [ "/bin/sh" ]
+command: ["/bin/sh"]
 ## @param args Override default container args (useful when using custom images)
 ##
 args:

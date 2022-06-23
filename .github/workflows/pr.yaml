@@ -36,6 +36,10 @@ jobs:
     - name: Set up chart-testing
       uses: helm/chart-testing-action@v2.2.1
 
+    - name: Install additional Helm repos
+      run: |
+        helm repo add bitnami https://charts.bitnami.com/bitnami
+
     - name: Run chart-testing (list-changed)
       id: list-changed
       run: |
