@@ -5,8 +5,12 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ $fullname }}
+{{- with .Values.node.serviceAnnotations }}
+  annotations:
+{{- toYaml . | nindent 4 }}
+{{- end }}
   labels:
-    {{- include "node.labels" . | nindent 4 }}
+    {{- $serviceLabels | nindent 4 }}
 spec:
   type: ClusterIP
   clusterIP: None
@@ -41,13 +45,14 @@ metadata:
 {{ toYaml . | indent 4}}
 {{- end }}
 spec:
-  {{- if eq $.Values.node.perNodeServices.apiService.type "NodePort" }}
-  type: NodePort
-  externalTrafficPolicy: Local
-  {{- else if eq $.Values.node.perNodeServices.apiService.type "ClusterIP" }}
+  {{- if eq $.Values.node.perNodeServices.apiService.type "ClusterIP" }}
   type: ClusterIP
+  {{- else if eq $.Values.node.perNodeServices.apiService.type "NodePort" }}
+  externalTrafficPolicy: {{ $.Values.node.perNodeServices.apiService.externalTrafficPolicy }}
+  type: NodePort
   clusterIP: None
   {{- else if eq $.Values.node.perNodeServices.apiService.type "LoadBalancer" }}
+  externalTrafficPolicy: {{ $.Values.node.perNodeServices.apiService.externalTrafficPolicy }}
   type: LoadBalancer
   {{- end }}
   selector:
@@ -63,7 +68,7 @@ spec:
     {{- if $.Values.node.collator.relayChainPrometheus.enabled }}
     - port: {{ $.Values.node.perNodeServices.apiService.relayChainPrometheusPort}}
       name: prom-relaychain
-    {{- end }}    
+    {{- end }}
 {{- end }}
 ---
 {{- if $.Values.node.perNodeServices.relayP2pService.enabled }}
@@ -72,7 +77,7 @@ kind: Service
 metadata:
   name: {{ $fullname }}-{{ $i }}-relay-chain-p2p
   labels:
-    {{- include "node.labels" . | nindent 4 }}
+    {{- $serviceLabels | nindent 4 }}
   annotations:
 {{- if $.Values.node.perNodeServices.relayP2pService.externalDns.enabled }}
     external-dns.alpha.kubernetes.io/hostname: {{ $fullname }}-{{ $i }}.{{ $.Values.node.perNodeServices.relayP2pService.externalDns.hostname }}
@@ -82,12 +87,13 @@ metadata:
 {{ toYaml . | indent 4}}
 {{- end }}
 spec:
-  {{- if eq $.Values.node.perNodeServices.relayP2pService.type "NodePort" }}
-  type: NodePort
-  externalTrafficPolicy: Local
-  {{- else if eq $.Values.node.perNodeServices.relayP2pService.type "ClusterIP" }}
+  {{- if eq $.Values.node.perNodeServices.relayP2pService.type "ClusterIP" }}
   type: ClusterIP
+  {{- else if eq $.Values.node.perNodeServices.relayP2pService.type "NodePort" }}
+  externalTrafficPolicy: {{ $.Values.node.perNodeServices.relayP2pService.externalTrafficPolicy }}
+  type: NodePort
   {{- else if eq $.Values.node.perNodeServices.relayP2pService.type "LoadBalancer" }}
+  externalTrafficPolicy: {{ $.Values.node.perNodeServices.relayP2pService.externalTrafficPolicy }}
   type: LoadBalancer
   {{- end }}
   selector:
@@ -105,7 +111,7 @@ kind: Service
 metadata:
   name: {{ $fullname }}-{{ $i }}-para-chain-p2p
   labels:
-    {{- include "node.labels" . | nindent 4 }}
+    {{- $serviceLabels | nindent 4 }}
   annotations:
 {{- if $.Values.node.perNodeServices.paraP2pService.externalDns.enabled }}
     external-dns.alpha.kubernetes.io/hostname: {{ $fullname }}-{{ $i }}.{{ $.Values.node.perNodeServices.paraP2pService.externalDns.hostname }}
@@ -115,12 +121,13 @@ metadata:
 {{ toYaml . | indent 4}}
 {{- end }}
 spec:
-  {{- if eq $.Values.node.perNodeServices.paraP2pService.type "NodePort" }}
-  type: NodePort
-  externalTrafficPolicy: Local
-  {{- else if eq $.Values.node.perNodeServices.paraP2pService.type "ClusterIP" }}
+  {{- if eq $.Values.node.perNodeServices.paraP2pService.type "ClusterIP" }}
   type: ClusterIP
+  {{- else if eq $.Values.node.perNodeServices.paraP2pService.type "NodePort" }}
+  externalTrafficPolicy: {{ $.Values.node.perNodeServices.paraP2pService.externalTrafficPolicy }}
+  type: NodePort
   {{- else if eq $.Values.node.perNodeServices.paraP2pService.type "LoadBalancer" }}
+  externalTrafficPolicy: {{ $.Values.node.perNodeServices.paraP2pService.externalTrafficPolicy }}
   type: LoadBalancer
   {{- end }}
   selector:

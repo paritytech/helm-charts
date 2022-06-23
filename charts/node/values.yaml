@@ -242,6 +242,8 @@ node:
     relabelings: []
     metricRelabelings: []
 
+  serviceAnnotations: {}
+
   ## Configuration of individual services of node
   ##
   perNodeServices:
@@ -249,6 +251,7 @@ node:
     ##
     apiService:
       enabled: true
+      externalTrafficPolicy: Cluster
       type: ClusterIP # or NodePort, LoadBalancer
       annotations: {}
       httpPort: 9933
@@ -263,6 +266,7 @@ node:
     ##
     relayP2pService:
       enabled: false
+      externalTrafficPolicy: Cluster
       type: NodePort # or ClusterIP or LoadBalancer
       port: 30333
       annotations: {}
@@ -274,6 +278,7 @@ node:
     ##
     paraP2pService:
       enabled: false
+      externalTrafficPolicy: Cluster
       type: NodePort # or ClusterIP, LoadBalancer
       port: 30334
       annotations: {}

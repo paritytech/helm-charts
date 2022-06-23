@@ -3,8 +3,13 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ template "common.fullname" . }}
+  namespace: {{ template "common.namespace" . }}
   labels:
     {{- include "common.labels" . | nindent 4 }}
+  {{- if .Values.stateful.podAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
   serviceName: {{ include "common.fullname" . }}
@@ -19,6 +24,9 @@ spec:
       {{- end }}
       labels:
         {{- include "common.selectorLabels" . | nindent 8 }}
+        {{- with .Values.extraLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -77,6 +85,9 @@ spec:
       {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.additionalPodSpec }}
+        {{- toYaml . | nindent 6 }}
       {{- end }}
       volumes:
       {{- if .Values.persistence.existingClaim }}

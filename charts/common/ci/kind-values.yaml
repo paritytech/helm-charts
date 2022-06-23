@@ -1,0 +1,20 @@
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  annotations: {}
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+    protocol: TCP
+
+env:
+  RANDOM_ENV_VAR: justsomerandom
+
+config:
+  test.yml: |-
+    test: data

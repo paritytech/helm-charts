@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "common.fullname" . }}
+  namespace: {{ template "common.namespace" . }}
   labels:
     {{- include "common.labels" . | nindent 4 }}
 spec:
@@ -20,6 +21,9 @@ spec:
       {{- end }}
       labels:
         {{- include "common.selectorLabels" . | nindent 8 }}
+        {{- with .Values.extraLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -35,9 +39,11 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - name: http
-              containerPort: {{ .Values.service.containerPort }} 
-              protocol: TCP
+          {{- range $keys := .Values.service.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .targetPort }} 
+              protocol: {{ .protocol }}
+          {{- end }}
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | trim | nindent 12 }}
@@ -68,5 +74,8 @@ spec:
       {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.additionalPodSpec }}
+        {{- toYaml . | nindent 6 }}
       {{- end }}
 {{- end }}
