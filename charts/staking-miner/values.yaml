@@ -156,12 +156,13 @@ containerSecurityContext:
 
 ## @param command Override default container command (useful when using custom images)
 ##
-# command: ["/bin/sh"]
+command: ["/bin/sh"]
 ## @param args Override default container args (useful when using custom images)
 ##
 args:
+- -c
 - |
-  --seed-or-path /config/seed --uri $(cat /config/uri) monitor seq-phragmen
+  staking-miner --seed-or-path /config/seed --uri $(cat /config/uri) monitor seq-phragmen
 ## @param hostAliases staking-miner pods host aliases
 ## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
 ##
