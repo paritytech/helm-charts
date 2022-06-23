@@ -1,0 +1,2 @@
+stakingMiner:
+  config: '[{"seed":"__GITHUB_SECRET_STAKING_MINER_CONFIG_SEED","uri":"wss://westend-rpc.polkadot.io:443"}]'
