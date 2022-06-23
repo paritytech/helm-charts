@@ -69,6 +69,7 @@ jobs:
         shopt -s globstar
         for f in $(find **/ci/*-values.yaml); do
           sed -i "s/__GITHUB_SECRET_SMF_BOT_MATRIX_ACCESS_TOKEN/$SMF_BOT_MATRIX_ACCESS_TOKEN/g" $f
+          sed -i "s/__GITHUB_SECRET_STAKING_MINER_CONFIG_SEED/$STAKING_MINER_CONFIG_SEED/g" $f
         done
       if: steps.list-changed.outputs.changed == 'true'
 
