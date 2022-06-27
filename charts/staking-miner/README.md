@@ -42,6 +42,21 @@ The command removes all the Kubernetes components associated with the chart and 
 
 > **NOTE**: The Helm chart uses [readme-generator](https://github.com/bitnami-labs/readme-generator-for-helm) to generate [Parameters](#parameters) section. Make sure to update the parameters with that tool instead of manually editing it.
 
+## Upgrading
+### ⚠️ 1.1.0 (breaking change)
+Chart version 1.1.0 has breaking changes. staking-miner CLI [has changed](https://github.com/paritytech/polkadot/pull/5577) the order of positional arguments.
+
+Before:
+```
+staking-miner --seed-or-path <foo> monitor|dry-run
+```
+
+Now:
+```
+staking-miner monitor|dry-run --seed-or-path <foo>
+```
+
+If you use a customized value for `args` make sure to update it accordingly. If you use `args` as is you don't have to do anything.
 ## Parameters
 
 ### Global parameters
