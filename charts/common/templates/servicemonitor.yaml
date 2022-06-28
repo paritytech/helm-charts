@@ -17,7 +17,7 @@ spec:
   jobLabel: "{{ .Release.Name }}"
   selector:
     matchLabels:
-      {{- include "common.selectorLabels" . | nindent 8 }}
+      {{- include "common.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: {{ .Release.Name }}
   namespaceSelector:
     matchNames:
