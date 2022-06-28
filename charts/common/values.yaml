@@ -180,6 +180,11 @@ readinessProbe: {}
   #   port: 80
   # periodSeconds: 10
 
+## Annotations to add to the pod of statefulset
+##
+stateful:
+  annotations: {}
+
 ## If enabled, creates a PVC and deploy the pod as statefulset
 ##
 persistence:
