@@ -13,7 +13,6 @@ spec:
   selector:
     matchLabels:
       {{- include "common.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: {{ .Release.Name }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -22,7 +21,6 @@ spec:
       {{- end }}
       labels:
         {{- include "common.selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: {{ .Release.Name }}
         {{- with .Values.extraLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -43,7 +41,7 @@ spec:
           ports:
           {{- range $keys := .Values.service.ports }}
             - name: {{ .name }}
-              containerPort: {{ .targetPort }} 
+              containerPort: {{ .targetPort }}
               protocol: {{ .protocol }}
           {{- end }}
           {{- with .Values.livenessProbe }}

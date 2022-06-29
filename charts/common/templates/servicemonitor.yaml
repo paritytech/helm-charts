@@ -18,7 +18,6 @@ spec:
   selector:
     matchLabels:
       {{- include "common.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: {{ .Release.Name }}
   namespaceSelector:
     matchNames:
       - {{ .Release.Namespace }}
