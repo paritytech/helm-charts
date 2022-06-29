@@ -2,10 +2,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.cloudsql.service.name }}
+  name: {{ include "common.cloudsqlFullname" . }}
   labels:
-    {{- include "common.labels" . | nindent 4 }}
-    app.kubernetes.io/component: {{ .Values.cloudsql.service.name }}
+    {{- include "common.cloudsqlLabels" . | nindent 4 }}
 spec:
   type: ClusterIP
   ports:
@@ -13,6 +12,5 @@ spec:
       targetPort: {{ .Values.cloudsql.service.targetPort }}
       protocol: TCP
   selector:
-    {{- include "common.selectorLabels" . | nindent 4 }}
-    app.kubernetes.io/component: {{ .Values.cloudsql.service.name }}
+    {{- include "common.cloudsqlSelectorLabels" . | nindent 4 }}
 {{- end }}

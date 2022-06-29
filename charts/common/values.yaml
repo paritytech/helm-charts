@@ -105,15 +105,15 @@ service:
   annotations: {}
   type: ClusterIP
   sessionAffinity: ""
-  ports: []
-  # - name: http
-  #   port: 80
-  #   containerPort: 8080
-  #   protocol: TCP
-  # - name: rpc
-  #   port: 9090
-  #   containerPort: 9090
-  #   protocol: TCP
+  ports:
+    # - name: http
+    #   port: 80
+    #   targetPort: 8080
+    #   protocol: TCP
+    # - name: rpc
+    #   port: 9090
+    #   targetPort: 9090
+    #   protocol: TCP
 
 ## Creates an ingress resource
 ##
@@ -227,12 +227,11 @@ serviceMonitor:
     scrapeTimeout: 30s
     honorLabels: true
 
-## If enabled, create cloudsql resources
+## If enabled, create cloudsql proxy resources
 ##
 cloudsql:
   enabled: false
   service:
-    name: cloudsql
     port: 5432
     targetPort: 5432
   commandline:

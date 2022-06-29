@@ -2,21 +2,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cloudsql
+  name: {{ include "common.cloudsqlFullname" . }}
   labels:
-    {{- include "common.selectorLabels" . | nindent 4 }}
-    app.kubernetes.io/component: {{ .Values.cloudsql.service.name }}
+    {{- include "common.cloudsqlLabels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "common.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: {{ .Values.cloudsql.service.name }}
+      {{- include "common.cloudsqlSelectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "common.selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: {{ .Values.cloudsql.service.name }}
+        {{- include "common.cloudsqlSelectorLabels" . | nindent 8 }}
+        {{- with .Values.extraLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       serviceAccountName: {{ include "common.serviceAccountName" . }}
       containers:

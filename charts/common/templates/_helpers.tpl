@@ -51,6 +51,7 @@ Selector labels
 {{- define "common.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "common.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/component: {{ .Release.Name }}
 {{- end }}
 
 {{/*
