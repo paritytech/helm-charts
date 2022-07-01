@@ -1,0 +1,24 @@
+{{- if .Values.serviceMonitor.enabled }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "polkadot-notification-service.fullname" . }}
+  namespace: {{ template "polkadot-notification-service.namespace" . }}
+  labels:
+    {{- include "polkadot-notification-service.labels" . | nindent 4 }}
+  {{- if .Values.serviceMonitor.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  endpoints:
+{{ toYaml .Values.serviceMonitor.endpoints | indent 4 }}
+  jobLabel: "{{ .Release.Name }}"
+  selector:
+    matchLabels:
+      {{- include "polkadot-notification-service.selectorLabels" . | nindent 8 }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+{{- end }}
