@@ -73,7 +73,7 @@ spec:
           args:
             - -c
             - |
-              set -eux -o pipefail
+              set -eu -o pipefail {{ if .Values.initContainer.debug }}-x{{ end }}
               if [ -d "/data/chains/${CHAIN_PATH}/{{ $databasePath }}" ]; then
                 echo "Database directory already exists, skipping chain snapshot download"
               else
@@ -102,7 +102,7 @@ spec:
           args:
             - -c
             - |
-              set -eux -o pipefail
+              set -eu -o pipefail {{ if .Values.initContainer.debug }}-x{{ end }}
               if [ -d "/data/relay/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}" ]; then
                 echo "Database directory already exists, skipping relay-chain snapshot download"
               else
@@ -131,7 +131,7 @@ spec:
           args:
             - -c
             - |
-              set -eux
+              set -eu {{ if .Values.initContainer.debug }}-x{{ end }}
               {{- if .Values.googleCloudSdk.serviceAccountKey }}
               gcloud auth activate-service-account --key-file /tmp/service-account-key.json
               {{- end }}
@@ -166,7 +166,7 @@ spec:
           args:
             - -c
             - |
-              set -eux
+              set -eu {{ if .Values.initContainer.debug }}-x{{ end }}
               {{- if .Values.googleCloudSdk.serviceAccountKey }}
               gcloud auth activate-service-account --key-file /tmp/service-account-key.json
               {{- end }}
@@ -201,7 +201,7 @@ spec:
           args:
             - -c
             - |
-              set -eux -o pipefail
+              set -eu -o pipefail {{ if .Values.initContainer.debug }}-x{{ end }}
               {{- if .Values.node.customChainspecUrl }}
               {{- if not .Values.node.forceDownloadChainspec }}
               if [ ! -f {{ .Values.node.customChainspecPath }} ]; then
@@ -233,7 +233,7 @@ spec:
           args:
             - -c
             - |
-              set -eux
+              set -eu {{ if .Values.initContainer.debug }}-x{{ end }}
               {{- range $keys := .Values.node.keys }}
               {{ $.Values.node.command }} key insert --base-path /data \
               --chain {{ if $.Values.node.customChainspecUrl }}{{ $.Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
@@ -260,7 +260,7 @@ spec:
           args:
             - -c
             - |
-              set -eu
+              set -eu {{ if .Values.initContainer.debug }}-x{{ end }}
               {{- range $keys := .Values.node.vault.keys }}
               {{ $.Values.node.command }} key insert --base-path /data \
               --chain {{ if $.Values.node.customChainspecUrl }}{{ $.Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
@@ -288,7 +288,7 @@ spec:
           args:
             - -c
             - |
-              set -eux
+              set -eu {{ if .Values.initContainer.debug }}-x{{ end }}
               POD_INDEX="${HOSTNAME##*-}"
               RELAY_CHAIN_P2P_PORT="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-relay-chain-p2p -o jsonpath='{.spec.ports[*].nodePort}')"
               echo "${RELAY_CHAIN_P2P_PORT}" > /data/relay_chain_p2p_port
