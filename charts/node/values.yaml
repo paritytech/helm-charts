@@ -29,6 +29,10 @@ initContainer:
   image:
     repository: paritytech/lz4
     tag: latest
+  ## Add `-x` shell option to initContainers
+  ## Note: passwords and keys used in initContainers can appear in logs
+  ##
+  debug: false
 
 ## Image of kubectl to use for relay P2p service
 ##
