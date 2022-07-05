@@ -76,6 +76,11 @@ podSecurityContext:
   runAsGroup: 1000
   fsGroup: 1000
 
+podDisruptionBudget:
+  enabled: false
+  #minAvailable:
+  #maxUnavailable:
+
 ## Creates an ingress resource
 ##
 ingress:
