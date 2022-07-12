@@ -25,6 +25,10 @@ spec:
       name: http-rpc
     - port: 9944
       name: websocket-rpc
+    {{- if $.Values.node.serviceMonitor.enabled }}
+    - port: {{ .Values.node.prometheus.port | int }}
+      name: prometheus
+    {{- end }}
 ---
 {{range $i := until (.Values.node.replicas | int) }}
 {{- if $.Values.node.perNodeServices.apiService.enabled }}
