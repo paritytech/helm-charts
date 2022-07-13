@@ -547,11 +547,16 @@ spec:
         name: chain-data
       spec:
         accessModes: [ "ReadWriteOnce" ]
-        {{- if .Values.node.chainDataKubernetesVolumeSnapshot }}
+        {{- if or .Values.node.chainDataKubernetesVolumeSnapshot .Values.node.chainDataKubernetesVolumeToClone }}
         dataSource:
+          {{- if .Values.node.chainDataKubernetesVolumeSnapshot }}
           name: {{ .Values.node.chainDataKubernetesVolumeSnapshot }}
           kind: VolumeSnapshot
           apiGroup: snapshot.storage.k8s.io
+          {{- else }}
+          name: {{ .Values.node.chainDataKubernetesVolumeToClone }}
+          kind: PersistentVolumeClaim
+          {{- end }}
         {{- end }}
         storageClassName: {{ .Values.storageClass }}
         resources:

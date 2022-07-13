@@ -125,6 +125,7 @@ node:
   # chainDataSnapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
   # chainDataSnapshotFormat: lz4
   # chainDataKubernetesVolumeSnapshot: ""
+  # chainDataKubernetesVolumeToClone: ""
   # chainDataGcsBucketUrl: ""
   # chainPath: ""
 
@@ -147,7 +148,6 @@ node:
     ##
     # relayChainDataSnapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
     # relayChainDataSnapshotFormat: lz4
-    # relayChainDataKubernetesVolumeSnapshot: ""
     # relayChainDataGcsBucketUrl: ""
     # relayChainPath: ""
 
