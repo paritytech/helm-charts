@@ -29,6 +29,10 @@ spec:
     - port: {{ .Values.node.prometheus.port | int }}
       name: prometheus
     {{- end }}
+    {{- if $.Values.node.collator.relayChainPrometheus.enabled }}
+    - port: {{ $.Values.node.perNodeServices.apiService.relayChainPrometheusPort}}
+      name: prom-relaychain
+    {{- end }}
 ---
 {{range $i := until (.Values.node.replicas | int) }}
 {{- if $.Values.node.perNodeServices.apiService.enabled }}
