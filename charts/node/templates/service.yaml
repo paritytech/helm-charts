@@ -25,6 +25,14 @@ spec:
       name: http-rpc
     - port: 9944
       name: websocket-rpc
+    {{- if and $.Values.node.serviceMonitor.enabled (not $.Values.node.perNodeServices.apiService.enabled) }}
+    - port: {{ .Values.node.prometheus.port | int }}
+      name: prometheus
+    {{- end }}
+    {{- if $.Values.node.collator.relayChainPrometheus.enabled }}
+    - port: {{ $.Values.node.perNodeServices.apiService.relayChainPrometheusPort | int }}
+      name: prom-relaychain
+    {{- end }}
 ---
 {{range $i := until (.Values.node.replicas | int) }}
 {{- if $.Values.node.perNodeServices.apiService.enabled }}
@@ -59,14 +67,14 @@ spec:
     {{- $selectorLabels | nindent 4 }}
     statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
   ports:
-    - port: {{ $.Values.node.perNodeServices.apiService.httpPort }}
+    - port: {{ $.Values.node.perNodeServices.apiService.httpPort | int }}
       name: http-rpc
-    - port: {{ $.Values.node.perNodeServices.apiService.wsPort }}
+    - port: {{ $.Values.node.perNodeServices.apiService.wsPort | int }}
       name: websocket-rpc
-    - port: {{ $.Values.node.perNodeServices.apiService.prometheusPort }}
+    - port: {{ $.Values.node.perNodeServices.apiService.prometheusPort | int }}
       name: prometheus
     {{- if $.Values.node.collator.relayChainPrometheus.enabled }}
-    - port: {{ $.Values.node.perNodeServices.apiService.relayChainPrometheusPort}}
+    - port: {{ $.Values.node.perNodeServices.apiService.relayChainPrometheusPort | int }}
       name: prom-relaychain
     {{- end }}
 {{- end }}
@@ -101,7 +109,7 @@ spec:
     statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
   ports:
     - name: p2p
-      port: {{ $.Values.node.perNodeServices.relayP2pService.port }}
+      port: {{ $.Values.node.perNodeServices.relayP2pService.port | int }}
       targetPort: 30333
 {{- end }}
 ---
@@ -135,7 +143,7 @@ spec:
     statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
   ports:
     - name: p2p
-      port: {{ $.Values.node.perNodeServices.paraP2pService.port }}
+      port: {{ $.Values.node.perNodeServices.paraP2pService.port | int }}
       targetPort: 30334
 {{- end }}
 ---
