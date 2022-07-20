@@ -55,10 +55,10 @@ metadata:
 spec:
   {{- if eq $.Values.node.perNodeServices.apiService.type "ClusterIP" }}
   type: ClusterIP
+  clusterIP: None
   {{- else if eq $.Values.node.perNodeServices.apiService.type "NodePort" }}
   externalTrafficPolicy: {{ $.Values.node.perNodeServices.apiService.externalTrafficPolicy }}
   type: NodePort
-  clusterIP: None
   {{- else if eq $.Values.node.perNodeServices.apiService.type "LoadBalancer" }}
   externalTrafficPolicy: {{ $.Values.node.perNodeServices.apiService.externalTrafficPolicy }}
   type: LoadBalancer
