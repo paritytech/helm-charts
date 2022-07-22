@@ -88,6 +88,10 @@ generateConfig:
     ##
     pullSecrets: []
 
+## @param waitRuntimeUpgrade Wait until chain will have same spec version as staking miner.
+##
+waitRuntimeUpgrade: false
+
 ## Parity staking-miner image
 ## ref: https://hub.docker.com/r/paritytech/staking-miner/tags/
 ## @param image.registry staking-miner image registry
