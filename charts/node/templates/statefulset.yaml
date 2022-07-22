@@ -124,6 +124,44 @@ spec:
             - mountPath: /data
               name: chain-data
         {{- end }}
+        {{- if .Values.node.enableChainBackupGcs }}
+        - name: backup-chain-gcs
+          image: {{ .Values.googleCloudSdk.image.repository }}:{{ .Values.googleCloudSdk.image.tag }}
+          command: [ "/bin/sh" ]
+          args:
+            - -c
+            - |
+              set -eu {{ if .Values.initContainer.debug }}-x{{ end }}
+              {{- if .Values.googleCloudSdk.serviceAccountKey }}
+              gcloud auth activate-service-account --key-file /tmp/service-account-key.json
+              {{- end }}
+              if [ -d "/data/chains/${CHAIN_PATH}/{{ $databasePath }}" ]; then
+                echo "Chain database directory exists, starting GCS backup sync"
+                BUCKET_URL="{{ .Values.node.chainBackupGcsUrl }}/${HOSTNAME}"
+                NOW=$(date +"%Y%m%d-%H%M%S")
+                echo -e "\nStart gsutil backup\n"
+                gsutil {{ .Values.googleCloudSdk.gsutilFlags }} rsync -d -r /data/chains/${CHAIN_PATH}/{{ $databasePath }}/ ${BUCKET_URL}/${NOW}
+                size=$(gsutil du -s ${BUCKET_URL}/${NOW} | awk '{ print $1 }' )
+                echo -e "size:
+                  ${size}\nversion: {{ .Values.image.tag }}" > /data/now.meta.txt
+                gsutil cp /data/now.meta.txt ${BUCKET_URL}/${NOW}.meta.txt
+                rm -f /data/now.meta.txt
+                echo "${NOW}" > /data/latest_version.meta.txt
+                gsutil cp /data/latest_version.meta.txt ${BUCKET_URL}/latest_version.meta.txt
+                rm -f /data/latest_version.meta.txt
+              fi
+          env:
+            - name: CHAIN_PATH
+              value: {{ default .Values.node.chain .Values.node.chainPath }}
+          volumeMounts:
+            - mountPath: /data
+              name: chain-data
+            {{- if .Values.googleCloudSdk.serviceAccountKey }}
+            - name: service-account-key
+              mountPath: /tmp
+              readOnly: true
+            {{- end }}
+        {{- end }}
         {{- if .Values.node.chainDataGcsBucketUrl }}
         - name: sync-chain-gcs
           image: {{ .Values.googleCloudSdk.image.repository }}:{{ .Values.googleCloudSdk.image.tag }}
@@ -145,7 +183,7 @@ spec:
                   exit 1
                 fi
                 mkdir -p /data/chains/${CHAIN_PATH}/{{ $databasePath }}
-                gsutil -m -o "GSUtil:parallel_process_count=3" -o "GSUtil:parallel_thread_count=15" rsync -d -r ${BUCKET_URL}/${LATEST} /data/chains/${CHAIN_PATH}/{{ $databasePath }}/
+                gsutil {{ .Values.googleCloudSdk.gsutilFlags }} rsync -d -r ${BUCKET_URL}/${LATEST} /data/chains/${CHAIN_PATH}/{{ $databasePath }}/
               fi
           env:
             - name: CHAIN_PATH
