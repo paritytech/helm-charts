@@ -218,7 +218,7 @@ spec:
                   exit 1
                 fi
                 mkdir -p /data/relay/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}
-                gsutil -m -o "GSUtil:parallel_process_count=3" -o "GSUtil:parallel_thread_count=15" rsync -d -r ${BUCKET_URL}/${LATEST} /data/relay/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
+                gsutil {{ .Values.googleCloudSdk.gsutilFlags }} rsync -d -r ${BUCKET_URL}/${LATEST} /data/relay/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
               fi
           env:
             - name: RELAY_CHAIN_PATH
@@ -455,7 +455,7 @@ spec:
             {{- if and .Values.node.collator.isParachain .Values.node.collator.relayChainPrometheus.enabled }}
             - containerPort: {{ .Values.node.collator.relayChainPrometheus.port }}
               name: prom-relaychain
-            {{- end }}    
+            {{- end }}
             - containerPort: 30333
               name: p2p
               protocol: TCP
