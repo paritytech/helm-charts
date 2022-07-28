@@ -47,7 +47,7 @@ googleCloudSdk:
   image:
     repository: google/cloud-sdk
     tag: slim # more lightweight than the full image and still contains gsutil
-  gsutilFlags: "-m -o 'GSUtil:parallel_process_count=8' -o 'GSUtil:parallel_thread_count=4'"
+  gsutilFlags: '-m -o "GSUtil:parallel_process_count=$(nproc --all)" -o "GSUtil:parallel_thread_count=2"'
   # serviceAccountKey: ""
 
 ## Reference to one or more secrets to be used when pulling images
