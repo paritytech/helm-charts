@@ -24,15 +24,18 @@ config:
         accessToken: "Pass via MATRIX_ACCESSTOKEN env variable secret"
         roomId: "!1234example4321:matrix.parity.io"
         server: "https://matrix.parity.io"
+  secret:
+    MATRIX_ACCESSTOKEN: ""
+    MATRIX_USERID: ""
+    # A name of the existing secret with MATRIX_ACCESSTOKEN and MATRIX_USERID. See secrets.yaml
+    existingSecret: ""
 
 replicaCount: 1
 
 env:
   APP_CONFIG_FILE: "/config/config.yaml"
 
-#envFrom:
-#  - secretRef:
-#    name: notification-secrets
+envFrom: []
 
 image:
   repository: rbazen/polkadot-notifications #To be replaced once public image is available
