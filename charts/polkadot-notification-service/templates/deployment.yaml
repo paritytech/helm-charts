@@ -4,6 +4,11 @@ metadata:
   name: {{ include "polkadot-notification-service.fullname" . }}
   labels:
     {{- include "polkadot-notification-service.labels" . | nindent 4 }}
+  annotations:
+    checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    {{- if (not .Values.config.secret.existingSecret) }}
+    checksum/secret: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+    {{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -36,8 +41,14 @@ spec:
             - name: "{{ $key }}"
               value: "{{ $value }}"
           {{- end }}
-          {{- with .Values.envFrom }}
           envFrom:
+            - secretRef:
+                {{- if (not .Values.config.secret.existingSecret) }}
+                name: {{ include "polkadot-notification-service.fullname" . }}
+                {{- else }}
+                name: {{ .Values.config.secret.existingSecret }}
+                {{- end }}
+          {{- with .Values.envFrom }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
           ports:
