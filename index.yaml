@@ -802,6 +802,19 @@ entries:
   polkadot-notification-service:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2022-08-01T09:06:28.91761685Z"
+    description: A Helm chart for Kubernetes
+    digest: 649f8590afe82fdac3a3be755a04b3c531b5e3f924133bc13f27caa6147bff7c
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: polkadot-notification-service
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/polkadot-notification-service-0.2.0/polkadot-notification-service-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2022-07-04T09:11:47.133590184Z"
     description: A Helm chart for Kubernetes
     digest: 7c710a3817f873913425d54d39cf09e934bbf106fc063bcd2449c2357472f242
@@ -978,4 +991,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/substrate-telemetry-0.1.0/substrate-telemetry-0.1.0.tgz
     version: 0.1.0
-generated: "2022-07-28T09:02:39.995372869Z"
+generated: "2022-08-01T09:06:28.918294676Z"
