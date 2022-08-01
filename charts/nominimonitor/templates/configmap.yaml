@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "nominimonitor.fullname" . }}
+  labels:
+    {{- include "nominimonitor.labels" . | nindent 4 }}
+data:
+  nominators: {{ toYaml .Values.nominimonitor.nominators | indent 2 }}
+  configFile: {{ toYaml .Values.nominimonitor.configFile | indent 2 }}
