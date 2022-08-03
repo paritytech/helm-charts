@@ -388,3 +388,11 @@ storageClass: "default"
 ## Additional containers to run in the pod
 ##
 extraContainers: []
+
+## Autoscaling configuration
+autoscaling:
+  enabled: false
+  minReplicas: ""
+  maxReplicas: ""
+  targetCPU: ""
+  targetMemory: ""
