@@ -396,3 +396,4 @@ autoscaling:
   maxReplicas: ""
   targetCPU: ""
   targetMemory: ""
+  additionalMetrics: {}

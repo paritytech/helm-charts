@@ -28,4 +28,7 @@ spec:
           type: Utilization
           averageUtilization: {{ .Values.autoscaling.targetCPU }}
     {{- end }}
+    {{- with .Values.autoscaling.additionalMetrics }}
+    {{- toYaml . | nindent 4 }}
+    {{- end}}
 {{- end }}
