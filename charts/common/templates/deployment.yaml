@@ -52,6 +52,10 @@ spec:
           readinessProbe:
             {{- toYaml . | trim | nindent 12 }}
           {{- end }}
+          {{- with .Values.startupProbe }}
+          startupProbe:
+            {{- toYaml . | trim | nindent 12 }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
