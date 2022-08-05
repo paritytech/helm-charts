@@ -2,6 +2,18 @@ apiVersion: v1
 entries:
   common:
   - apiVersion: v2
+    created: "2022-08-05T03:54:26.621415683Z"
+    description: A generic helm chart for Kubernetes
+    digest: 815c7f8ec5bf5ab5cb56ac4b1fda2707229eb57fec00eaaa6996bcb65c402cbf
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: common
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/common-0.5.0/common-0.5.0.tgz
+    version: 0.5.0
+  - apiVersion: v2
     created: "2022-06-29T06:10:53.872111635Z"
     description: A generic helm chart for Kubernetes
     digest: 74c9e87acf291ee7a332efb36d02ae16fe4055bef3ea57ec7ef390b341c53d03
@@ -1027,4 +1039,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/substrate-telemetry-0.1.0/substrate-telemetry-0.1.0.tgz
     version: 0.1.0
-generated: "2022-08-04T07:23:13.722047409Z"
+generated: "2022-08-05T03:54:26.621938181Z"
