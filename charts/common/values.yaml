@@ -209,6 +209,12 @@ persistence:
   # existingClaim:
   # storageClassName:
 
+## See `kubectl explain poddisruptionbudget.spec` for more
+## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+podDisruptionBudget: {}
+  # minAvailable: 1
+  # maxUnavailable: 1
+
 ## Autoscaling should be enabled for statefulsets
 ## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
 ##
