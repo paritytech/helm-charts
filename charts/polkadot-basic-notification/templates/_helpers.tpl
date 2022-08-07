@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "polkadot-notification-service.name" -}}
+{{- define "polkadot-basic-notification.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -9,7 +9,7 @@ Expand the name of the chart.
 Create a default fully qualified app name.
 We truncate at 52 chars because this https://github.com/kubernetes/kubernetes/issues/64023
 */}}
-{{- define "polkadot-notification-service.fullname" -}}
+{{- define "polkadot-basic-notification.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 52 | trimSuffix "-" }}
 {{- else }}
@@ -25,16 +25,16 @@ We truncate at 52 chars because this https://github.com/kubernetes/kubernetes/is
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "polkadot-notification-service.chart" -}}
+{{- define "polkadot-basic-notification.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "polkadot-notification-service.labels" -}}
-helm.sh/chart: {{ include "polkadot-notification-service.chart" . }}
-{{ include "polkadot-notification-service.selectorLabels" . }}
+{{- define "polkadot-basic-notification.labels" -}}
+helm.sh/chart: {{ include "polkadot-basic-notification.chart" . }}
+{{ include "polkadot-basic-notification.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -47,17 +47,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "polkadot-notification-service.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "polkadot-notification-service.name" . }}
+{{- define "polkadot-basic-notification.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "polkadot-basic-notification.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "polkadot-notification-service.serviceAccountName" -}}
+{{- define "polkadot-basic-notification.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "polkadot-notification-service.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "polkadot-basic-notification.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

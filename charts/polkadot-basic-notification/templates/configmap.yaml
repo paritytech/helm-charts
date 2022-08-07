@@ -3,9 +3,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "polkadot-notification-service.fullname" . }}
+  name: {{ template "polkadot-basic-notification.fullname" . }}
   labels:
-    {{- include "polkadot-notification-service.labels" . | nindent 4 }}
+    {{- include "polkadot-basic-notification.labels" . | nindent 4 }}
 data:
   {{- range $index := until (len .Values.config.configFiles ) }}
   configFile-{{ $index }}: {{ (index $.Values.config.configFiles $index) | quote }}
