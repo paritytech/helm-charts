@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "polkadot-notification-service.fullname" . }}
   labels:
@@ -10,10 +10,15 @@ metadata:
     checksum/secret: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
     {{- end }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ len .Values.config.configFiles }}
+  podManagementPolicy: {{ .Values.podManagementPolicy | quote }}
   selector:
     matchLabels:
       {{- include "polkadot-notification-service.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "polkadot-notification-service.fullname" . }}
+  {{- if .Values.updateStrategy }}
+  updateStrategy: {{- toYaml .Values.updateStrategy | nindent 4 }}
+  {{- end }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -37,6 +42,8 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
+            - name: "APP_CONFIG_FILE"
+              value: "/config/config-${HOSTNAME##*-}.yaml"
           {{- range $key, $value := .Values.env }}
             - name: "{{ $key }}"
               value: "{{ $value }}"
@@ -76,8 +83,10 @@ spec:
         configMap:
           name: {{ include "polkadot-notification-service.fullname" . }}
           items:
-          - key: "configFile"
-            path: "config.yaml"
+          {{- range $index := until (len .Values.config.configFiles ) }}
+          - key: "configFile-{{ $index }}"
+            path: "config-{{ $index }}.yaml"
+          {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

@@ -7,5 +7,7 @@ metadata:
   labels:
     {{- include "polkadot-notification-service.labels" . | nindent 4 }}
 data:
-  configFile: {{ .Values.config.configFile | quote }}
+  {{- range $index := until (len .Values.config.configFiles ) }}
+  configFile-{{ $index }}: {{ (index $.Values.config.configFiles $index) | quote }}
+  {{- end }}
 {{- end }}

@@ -3,37 +3,36 @@
 # Declare variables to be passed into your templates.
 
 config:
-  configFile: |
-    accounts:
-      - address: "SS85 ADDRESS HERE"
-        label: "This is the label for the 1st account"
-      - address: "SS85 ADDRESS HERE"
-        label: "This is the label for the 2nd account"
-    endpoints:
-      - "wss://westend-rpc.polkadot.io"
-      - "wss://rococo-rpc.polkadot.io"
-    extrinsicFilter: []
-    eventFilter:
-      - "system.CodeUpdated"
-      - "democracy.Passed"
-      - "imonline.SomeOffline"
-    reporters:
-      console: true
-      matrix:
-        userId: "Pass via MATRIX_USERID env variable secret"
-        accessToken: "Pass via MATRIX_ACCESSTOKEN env variable secret"
-        roomId: "!1234example4321:matrix.parity.io"
-        server: "https://matrix.parity.io"
+  # number of items in configFiles is equals to replicaCount
+  configFiles:
+    - |
+      accounts:
+        - address: "SS85 ADDRESS HERE"
+          label: "This is the label for the 1st account"
+        - address: "SS85 ADDRESS HERE"
+          label: "This is the label for the 2nd account"
+      endpoints:
+        - "wss://westend-rpc.polkadot.io"
+        - "wss://rococo-rpc.polkadot.io"
+      extrinsicFilter: []
+      eventFilter:
+        - "system.CodeUpdated"
+        - "democracy.Passed"
+        - "imonline.SomeOffline"
+      reporters:
+        console: true
+        matrix:
+          userId: "Pass via MATRIX_USERID env variable secret"
+          accessToken: "Pass via MATRIX_ACCESSTOKEN env variable secret"
+          roomId: "!1234example4321:matrix.parity.io"
+          server: "https://matrix.parity.io"
   secret:
     MATRIX_ACCESSTOKEN: ""
     MATRIX_USERID: ""
     # A name of the existing secret with MATRIX_ACCESSTOKEN and MATRIX_USERID. See secrets.yaml
     existingSecret: ""
 
-replicaCount: 1
-
-env:
-  APP_CONFIG_FILE: "/config/config.yaml"
+env: {}
 
 envFrom: []
 
