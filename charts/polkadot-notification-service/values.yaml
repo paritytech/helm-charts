@@ -37,7 +37,7 @@ env: {}
 envFrom: []
 
 image:
-  repository: rbazen/polkadot-notifications #To be replaced once public image is available
+  repository: paritytech/polkadot-basic-notification
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest

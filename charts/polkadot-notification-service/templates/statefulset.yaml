@@ -41,9 +41,14 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh"]
+          args:
+            - -c
+            - |
+              set -eu
+              export APP_CONFIG_FILE=/config/config-${HOSTNAME##*-}.yaml
+              node build/index.js
           env:
-            - name: "APP_CONFIG_FILE"
-              value: "/config/config-${HOSTNAME##*-}.yaml"
           {{- range $key, $value := .Values.env }}
             - name: "{{ $key }}"
               value: "{{ $value }}"
