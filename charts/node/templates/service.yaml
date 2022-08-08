@@ -34,7 +34,7 @@ spec:
       name: prom-relaychain
     {{- end }}
 ---
-{{range $i := until (.Values.node.replicas | int) }}
+{{range $i := until (max .Values.autoscaling.maxReplicas .Values.node.replicas | int) }}
 {{- if $.Values.node.perNodeServices.apiService.enabled }}
 apiVersion: v1
 kind: Service

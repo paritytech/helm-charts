@@ -9,8 +9,8 @@ spec:
     apiVersion: apps/v1
     kind: StatefulSet
     name: {{ $fullname }}
-  minReplicas: {{ .Values.autoscaling.minReplicas }}
-  maxReplicas: {{ .Values.autoscaling.maxReplicas }}
+  minReplicas: {{ .Values.autoscaling.minReplicas | int }}
+  maxReplicas: {{ .Values.autoscaling.maxReplicas | int }}
   metrics:
     {{- if .Values.autoscaling.targetMemory }}
     - type: Resource
@@ -18,7 +18,7 @@ spec:
         name: memory
         target:
           type: Utilization
-          averageUtilization: {{ .Values.autoscaling.targetMemory }}
+          averageUtilization: {{ .Values.autoscaling.targetMemory | int }}
     {{- end }}
     {{- if .Values.autoscaling.targetCPU }}
     - type: Resource
@@ -26,7 +26,7 @@ spec:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: {{ .Values.autoscaling.targetCPU }}
+          averageUtilization: {{ .Values.autoscaling.targetCPU | int }}
     {{- end }}
     {{- with .Values.autoscaling.additionalMetrics }}
     {{- toYaml . | nindent 4 }}
