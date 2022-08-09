@@ -1,0 +1,77 @@
+# Default values for validator-manager.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+args:
+  server:
+    - "-m"
+    - "gunicorn"
+    - "-k"
+    - "uvicorn.workers.UvicornWorker"
+    - "main:app"
+    - "--bind=0.0.0.0:5000"
+    - "--timeout=3600"
+    - "--capture-output"
+    - "--enable-stdio-inheritance"
+    - "--workers=4"
+  taskScheduler:
+    - "-m"
+    - "gunicorn"
+    - "-k"
+    - "uvicorn.workers.UvicornWorker"
+    - "task-scheduler:app"
+    - "--bind=0.0.0.0:5000"
+    - "--timeout=3600"
+    - "--capture-output"
+    - "--enable-stdio-inheritance"
+    - "--workers=1"
+
+replicaCount: 1
+
+image:
+  repository: paritytech/testnet-manager
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  #name: validator-manager
+  # Annotations to add to the service account
+  annotations: {}
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  #annotations:
+  #host:
+
+resources:
+  limits:
+    cpu: 2
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 128Mi
+
+nodeSelector: {}
