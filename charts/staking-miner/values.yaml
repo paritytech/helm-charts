@@ -59,10 +59,14 @@ diagnosticMode:
 ## @section staking-miner Parameters
 ## @param stakingMiner.config A config for staking miner. Parameter is parsed as a JSON string containing a list of dicts. A number of dicts must match the number of replicas. Each dict may contain a 'seed' and 'uri' keys. Its values matches the SEED and URI environment variables as defined in staking-miner.
 ## @param stakingMiner.existingSecret A name of the existing secret with staking-miner's config. Must be a JSON encoded string that matches stakingMiner.config's format. See secrets.yaml
+## @param stakingMiner.prometheus.enabled Enable exposing the prometheus port
+## @param stakingMiner.prometheus.port Set the prometheus port
 stakingMiner:
   config: '[{"seed":"0x44","uri":"ws://localhost:443"}]'
   existingSecret: ""
-
+  prometheus:
+    enabled: false
+    port: 9999
 ## Parameters for init container that generates config for staking-miner
 ## @param generateConfig.image.registry init-container image registry
 ## @param generateConfig.image.repository init-container image repository
@@ -337,3 +341,29 @@ serviceAccount:
   ## @param serviceAccount.automountServiceAccountToken Automount service account token for the server service account
   ##
   automountServiceAccountToken: true
+
+## ServiceMonitor configuration
+##
+serviceMonitor:
+  ## @param serviceMonitor.enabled Specifies whether a ServiceMonitor should be created
+  ##
+  enabled: false
+  ## @param serviceMonitor.annotations Set the ServiceMonitor annotations
+  ##
+  annotations: {}
+
+  ## Prometheus endpoints scrape configuration
+  ##
+  ## @param serviceMonitor.endpoint.path HTTP path to scrape for metrics.
+  ## @param serviceMonitor.endpoint.port Name of the service port this endpoint refers to
+  ## @param serviceMonitor.endpoint.interval Interval at which metrics should be scraped
+  ## @param serviceMonitor.endpoint.scheme HTTP scheme to use for scraping.
+  ## @param serviceMonitor.endpoint.scrapeTimeout Timeout after which the scrape is ended
+  ## @param serviceMonitor.endpoint.honorLabels Chooses the metric’s labels on collisions with target labels.
+  endpoint:
+    path: /metrics
+    port: prom
+    interval: 1m
+    scheme: http
+    scrapeTimeout: 30s
+    honorLabels: true

@@ -120,6 +120,12 @@ spec:
         - name: staking-miner
           image: {{ template "stakingminer.image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.stakingMiner.prometheus.enabled }}
+          ports:
+          - name: prom
+            containerPort: {{ .Values.stakingMiner.prometheus.port }}
+            protocol: TCP
+          {{- end }}
           {{- if .Values.containerSecurityContext.enabled }}
           securityContext: {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
           {{- end }}
