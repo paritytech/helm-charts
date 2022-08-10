@@ -847,6 +847,20 @@ entries:
     urls:
     - https://github.com/paritytech/node-helm-chart/releases/download/node-0.1.0/node-0.1.0.tgz
     version: 0.1.0
+  polkadot-basic-notification:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2022-08-10T09:08:17.575525273Z"
+    description: A Helm chart for Kubernetes
+    digest: 28ebe3524274c9c7224dfa26f0910afd482bea9d51c7b0362882d3a959159a8c
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: polkadot-basic-notification
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/polkadot-basic-notification-1.0.0/polkadot-basic-notification-1.0.0.tgz
+    version: 1.0.0
   polkadot-introspector:
   - apiVersion: v2
     appVersion: 0.1.0
@@ -1063,4 +1077,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/substrate-telemetry-0.1.0/substrate-telemetry-0.1.0.tgz
     version: 0.1.0
-generated: "2022-08-08T08:21:57.772036405Z"
+generated: "2022-08-10T09:08:17.578251047Z"
