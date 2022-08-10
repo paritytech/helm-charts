@@ -1,19 +1,24 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: {{ include "polkadot-notification-service.fullname" . }}
+  name: {{ include "polkadot-basic-notification.fullname" . }}
   labels:
-    {{- include "polkadot-notification-service.labels" . | nindent 4 }}
+    {{- include "polkadot-basic-notification.labels" . | nindent 4 }}
   annotations:
     checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     {{- if (not .Values.config.secret.existingSecret) }}
     checksum/secret: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
     {{- end }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ len .Values.config.configFiles }}
+  podManagementPolicy: {{ .Values.podManagementPolicy | quote }}
   selector:
     matchLabels:
-      {{- include "polkadot-notification-service.selectorLabels" . | nindent 6 }}
+      {{- include "polkadot-basic-notification.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "polkadot-basic-notification.fullname" . }}
+  {{- if .Values.updateStrategy }}
+  updateStrategy: {{- toYaml .Values.updateStrategy | nindent 4 }}
+  {{- end }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -21,13 +26,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "polkadot-notification-service.selectorLabels" . | nindent 8 }}
+        {{- include "polkadot-basic-notification.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "polkadot-notification-service.serviceAccountName" . }}
+      serviceAccountName: {{ include "polkadot-basic-notification.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -36,6 +41,12 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh"]
+          args:
+            - -c
+            - |
+              set -eu
+              node build/index.js -c /config/config-${HOSTNAME##*-}.yaml
           env:
           {{- range $key, $value := .Values.env }}
             - name: "{{ $key }}"
@@ -44,7 +55,7 @@ spec:
           envFrom:
             - secretRef:
                 {{- if (not .Values.config.secret.existingSecret) }}
-                name: {{ include "polkadot-notification-service.fullname" . }}
+                name: {{ include "polkadot-basic-notification.fullname" . }}
                 {{- else }}
                 name: {{ .Values.config.secret.existingSecret }}
                 {{- end }}
@@ -55,16 +66,17 @@ spec:
             - name: http
               containerPort: 3000
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: http
-            initialDelaySeconds: 5
-          readinessProbe:
-            httpGet:
-              path: /ready
-              port: http
-            initialDelaySeconds: 5
+# TODO add livenessProbe in paritytech/polkadot-basic-notification image
+#          livenessProbe:
+#            httpGet:
+#              path: /health
+#              port: http
+#            initialDelaySeconds: 5
+#          readinessProbe:
+#            httpGet:
+#              path: /ready
+#              port: http
+#            initialDelaySeconds: 5
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
@@ -74,10 +86,12 @@ spec:
       volumes:
       - name: config
         configMap:
-          name: {{ include "polkadot-notification-service.fullname" . }}
+          name: {{ include "polkadot-basic-notification.fullname" . }}
           items:
-          - key: "configFile"
-            path: "config.yaml"
+          {{- range $index := until (len .Values.config.configFiles ) }}
+          - key: "configFile-{{ $index }}"
+            path: "config-{{ $index }}.yaml"
+          {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
