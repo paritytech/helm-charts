@@ -46,8 +46,7 @@ spec:
             - -c
             - |
               set -eu
-              export APP_CONFIG_FILE=/config/config-${HOSTNAME##*-}.yaml
-              node build/index.js
+              node build/index.js -c /config/config-${HOSTNAME##*-}.yaml
           env:
           {{- range $key, $value := .Values.env }}
             - name: "{{ $key }}"
@@ -67,16 +66,17 @@ spec:
             - name: http
               containerPort: 3000
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: http
-            initialDelaySeconds: 5
-          readinessProbe:
-            httpGet:
-              path: /ready
-              port: http
-            initialDelaySeconds: 5
+# TODO add livenessProbe in paritytech/polkadot-basic-notification image
+#          livenessProbe:
+#            httpGet:
+#              path: /health
+#              port: http
+#            initialDelaySeconds: 5
+#          readinessProbe:
+#            httpGet:
+#              path: /ready
+#              port: http
+#            initialDelaySeconds: 5
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
