@@ -2,6 +2,18 @@ apiVersion: v1
 entries:
   common:
   - apiVersion: v2
+    created: "2022-08-10T09:18:19.420662815Z"
+    description: A generic helm chart for Kubernetes
+    digest: 0e00b9168c1681ac8b26c26b7f1ad18f92ef747337a023411963d535b76c9f30
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: common
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/common-0.6.1/common-0.6.1.tgz
+    version: 0.6.1
+  - apiVersion: v2
     created: "2022-08-05T08:05:42.313098038Z"
     description: A generic helm chart for Kubernetes
     digest: 69c71c62e90ea86434ce40bceb12fb9b688001d3e840f33e64143814412ca1d4
@@ -914,6 +926,22 @@ entries:
     version: 0.1.0
   staking-miner:
   - apiVersion: v2
+    created: "2022-08-10T09:18:19.574645553Z"
+    dependencies:
+    - name: common
+      repository: https://charts.bitnami.com/bitnami
+      version: 1.14.1
+    description: A Helm chart to deploy staking miner (https://github.com/paritytech/staking-miner)
+    digest: dd76103d4927bb5f3ed987389643c1d01366ef3032af87dd800ea5b8a68b8e6d
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: staking-miner
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/staking-miner-1.3.0/staking-miner-1.3.0.tgz
+    version: 1.3.0
+  - apiVersion: v2
     created: "2022-07-22T12:28:18.386444027Z"
     dependencies:
     - name: common
@@ -1077,4 +1105,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/substrate-telemetry-0.1.0/substrate-telemetry-0.1.0.tgz
     version: 0.1.0
-generated: "2022-08-10T09:08:17.578251047Z"
+generated: "2022-08-10T09:18:19.575791188Z"
