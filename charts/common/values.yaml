@@ -225,7 +225,7 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-## If enabeled, create service monitor of Prometheus-Operator
+## If enabled, create service monitor of Prometheus-Operator
 ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors
 ##
 serviceMonitor:
