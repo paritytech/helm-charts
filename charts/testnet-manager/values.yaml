@@ -25,6 +25,10 @@ args:
     - "--enable-stdio-inheritance"
     - "--workers=1"
 
+## Extra Environment variables
+##
+extraEnv: []
+
 replicaCount: 1
 
 image:
@@ -39,8 +43,8 @@ fullnameOverride: ""
 
 serviceAccount:
   # Specifies whether a service account should be created
-  create: false
-  #name: validator-manager
+  create: true
+  #name: testnet-manager
   # Annotations to add to the service account
   annotations: {}
 
