@@ -41,6 +41,9 @@ spec:
           env:
           - name: NAMESPACE
             value: {{ .Release.Namespace | quote }}
+          {{- with .Values.extraEnv }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
           {{- range $key, $value := .Values.configmap }}
           - name: {{ $key }}
             valueFrom:
@@ -116,6 +119,9 @@ spec:
           env:
           - name: NAMESPACE
             value: {{ .Release.Namespace | quote }}
+          {{- with .Values.extraEnv }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
           {{- range $key, $value := .Values.configmap }}
           - name: {{ $key }}
             valueFrom:

@@ -25,6 +25,10 @@ args:
     - "--enable-stdio-inheritance"
     - "--workers=1"
 
+## Extra Environment variables
+##
+extraEnv: []
+
 replicaCount: 1
 
 image:
