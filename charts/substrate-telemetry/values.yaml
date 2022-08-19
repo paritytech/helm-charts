@@ -35,8 +35,7 @@ envVars:
     
 extraArgs:
   shard: {}
-  core: {}
-  frontend: {}      
+  core: {}    
 
 serviceMonitor:
   # Only core service has Prometheus metrics exposed at the moment.
