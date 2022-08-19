@@ -35,8 +35,7 @@ envVars:
     
 extraArgs:
   shard: {}
-  core:
-    - --expose-node-ips
+  core: {}
   frontend: {}      
 
 serviceMonitor:
