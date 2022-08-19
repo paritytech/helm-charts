@@ -20,10 +20,10 @@ spec:
   serviceName: {{ $fullname }}
   template:
     metadata:
-      {{- if or .Values.podAnnotations .Values.node.vault.keys .Values.node.vault.nodeKey }}
+    {{- if or .Values.podAnnotations .Values.node.vault.keys .Values.node.vault.nodeKey }}
       annotations:
       {{- with .Values.podAnnotations }}
-      {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- range $keys := .Values.node.vault.keys }}
         vault.hashicorp.com/agent-inject-secret-{{ .name }}: {{ .vaultPath | squote }}
@@ -31,17 +31,19 @@ spec:
           {{`{{ with secret "`}}{{ .vaultPath }}{{`" }}{{ .Data.data.`}}{{ .vaultKey }}{{` }}{{ end }}`}}
       {{- end }}
       {{- if .Values.node.vault.nodeKey }}
-      {{- if .Values.node.vault.nodeKey.vaultKeyAppendPodIndex }}
-        {{- range $index := until (.Values.node.replicas | int) }}
+        {{- if .Values.node.vault.nodeKey.vaultKeyAppendPodIndex }}
+          {{- range $index := until (.Values.node.replicas | int) }}
         vault.hashicorp.com/agent-inject-secret-{{ $.Values.node.vault.nodeKey.name }}-{{ $index }}: {{ $.Values.node.vault.nodeKey.vaultPath | squote }}
         vault.hashicorp.com/agent-inject-template-{{ $.Values.node.vault.nodeKey.name }}-{{ $index }}: |
             {{`{{ with secret "`}}{{ $.Values.node.vault.nodeKey.vaultPath }}{{`" }}{{ .Data.data.`}}{{ printf "%s_%s" $.Values.node.vault.nodeKey.vaultKey ($index | toString) }}{{` }}{{ end }}`}}
-        {{- end }}
-      {{- else }}
+          {{- end }}
+        {{- else }}
         vault.hashicorp.com/agent-inject-secret-{{ .Values.node.vault.nodeKey.name }}: {{ .Values.node.vault.nodeKey.vaultPath | squote }}
         vault.hashicorp.com/agent-inject-template-{{ .Values.node.vault.nodeKey.name }}: |
           {{`{{ with secret "`}}{{ .Values.node.vault.nodeKey.vaultPath }}{{`" }}{{ .Data.data.`}}{{ .Values.node.vault.nodeKey.vaultKey }}{{` }}{{ end }}`}}
+        {{- end }}
       {{- end }}
+      {{- if or .Values.node.vault.keys .Values.node.vault.nodeKey }}
         vault.hashicorp.com/agent-inject: 'true'
         vault.hashicorp.com/agent-init-first: 'true'
         vault.hashicorp.com/agent-pre-populate-only: 'true'
@@ -59,7 +61,7 @@ spec:
       {{- if .Values.node.vault.authConfigServiceAccount }}
         vault.hashicorp.com/auth-config-service-account: {{ .Values.node.vault.authConfigServiceAccount | squote }}
       {{- end }}
-      {{- end }}
+    {{- end }}
       labels:
       {{- include "node.labels" . | nindent 8 }}
     spec:
@@ -275,6 +277,10 @@ spec:
             - |
               set -eu {{ if .Values.initContainer.debug }}-x{{ end }}
               {{- range $keys := .Values.node.keys }}
+              if [ ! -f /var/run/secrets/{{ .type }}/type ]; then
+                 echo "Error: File /var/run/secrets/{{ .type }}/type does not exist"
+                 exit 1
+              fi
               {{ $.Values.node.command }} key insert --base-path /data \
               --chain {{ if $.Values.node.customChainspecUrl }}{{ $.Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
               --key-type $(cat /var/run/secrets/{{ .type }}/type) \
@@ -302,6 +308,10 @@ spec:
             - |
               set -eu {{ if .Values.initContainer.debug }}-x{{ end }}
               {{- range $keys := .Values.node.vault.keys }}
+              if [ ! -f /vault/secrets/{{ .name }} ]; then
+                 echo "Error: File /vault/secrets/{{ .name }} does not exist"
+                 exit 1
+              fi
               {{ $.Values.node.command }} key insert --base-path /data \
               --chain {{ if $.Values.node.customChainspecUrl }}{{ $.Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
               --key-type {{ .type }} \
