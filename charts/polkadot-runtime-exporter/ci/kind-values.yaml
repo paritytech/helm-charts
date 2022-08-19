@@ -1,0 +1,2 @@
+runtimeExporter:
+  config: '{"rpcs": ["wss://rpc.polkadot.io"]}'
