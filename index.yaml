@@ -936,6 +936,23 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/polkadot-notification-service-0.1.0/polkadot-notification-service-0.1.0.tgz
     version: 0.1.0
+  runtime-exporter:
+  - apiVersion: v2
+    created: "2022-08-22T16:22:13.141973927Z"
+    dependencies:
+    - name: common
+      repository: https://charts.bitnami.com/bitnami
+      version: 1.14.1
+    description: A Helm chart to deploy runtime exporter (https://github.com/paritytech/runtime-exporter)
+    digest: 9bdd7a87a2222747f7cb1d51aa02f7ac9d9ce8cf6ed651f722e89a89180baa7b
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: runtime-exporter
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/runtime-exporter-1.0.0/runtime-exporter-1.0.0.tgz
+    version: 1.0.0
   staking-miner:
   - apiVersion: v2
     created: "2022-08-11T14:06:35.6204406Z"
@@ -1173,4 +1190,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/testnet-manager-1.0.0/testnet-manager-1.0.0.tgz
     version: 1.0.0
-generated: "2022-08-22T14:16:04.443497942Z"
+generated: "2022-08-22T16:22:13.14253433Z"
