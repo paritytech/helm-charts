@@ -1,0 +1,12 @@
+apiVersion: v2
+name: runtime-exporter
+description: A Helm chart to deploy runtime exporter (https://github.com/paritytech/runtime-exporter)
+type: application
+version: 1.0.0
+maintainers:
+  - name: Parity
+    url: https://github.com/paritytech/helm-charts
+dependencies:
+- name: common
+  version: 1.14.1
+  repository: https://charts.bitnami.com/bitnami
