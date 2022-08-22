@@ -48,6 +48,9 @@ spec:
           args:
             - "--listen"
             - "0.0.0.0:{{ .Values.service.core.targetPort }}"
+            {{-  range .Values.extraArgs.core }}
+            - {{ . }}
+            {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.service.core.targetPort }}

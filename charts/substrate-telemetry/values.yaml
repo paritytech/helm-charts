@@ -33,6 +33,10 @@ envVars:
     # so that it knows where to look for feed information:
     SUBSTRATE_TELEMETRY_URL: "wss://core-service-domain.com"
 
+extraArgs:
+  shard: {}
+  core: {}
+
 serviceMonitor:
   # Only core service has Prometheus metrics exposed at the moment.
   core:
