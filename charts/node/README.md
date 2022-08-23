@@ -85,13 +85,15 @@ Common `storageClass` parameter has been moved to the corresponding separate gro
 
 As both the chain data and keystore can now be stored on up to 4 different volumes you may need to manually relocate the existing data to the newly created volumes.
 
-If you're running a collator node:
-- move chain keystore from `/data/chains/<chain_name>/keystore` to `/keystore`
-- move relaychain data from `/data/relay/polkadot` to `/relaychain-data/polkadot`
-- move relaychain keystore from `/data/relay/polkadot/chains/<relay_chain_name>/keystore` to `/relaychain-keystore`
-
 If you're running a non-collator node:
-- move chain keystore from `/data/chains/<chain_name>/keystore` to `/keystore`
+- Move chain files from the `/data/chains/<chain_name>` in the `chain-data` volume to `/chain-data` in the `chain-data` volume.
+- Move keystore files from the `/data/chains/<chain_name>/keystore` in the `chain-data` volume to `/keystore` in the `chain-keystore` volume.
+
+If you're running a collator node:
+- Move chain files from the `/data/chains/<chain_name>` in the `chain-data` volume to `/chain-data` in the `chain-data` volume.
+- Move keystore files from the `/data/chains/<chain_name>/keystore` in the `chain-data` volume to `/keystore` in the `chain-keystore` volume.
+- Move relaychain files from the `/data/relay/polkadot` in the `chain-data` volume to `/relaychain-data/polkadot` in the `relaychain-data` volume.
+- Move relaychain keystore from `/data/relay/polkadot/chains/<relay_chain_name>/keystore` in the `chain-data` volume to `/relaychain-keystore` in the `relaychain-keystore` volume
 
 ## Parameters
 
