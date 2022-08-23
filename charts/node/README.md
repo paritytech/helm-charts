@@ -83,6 +83,16 @@ Some chart parameters have been grouped together and renamed. There are now sepa
 
 Common `storageClass` parameter has been moved to the corresponding separate groups mentioned above.
 
+As both the chain data and keystore can now be stored on up to 4 different volumes you may need to manually relocate the existing data to the newly created volumes.
+
+If you're running a collator node:
+- move chain keystore from `/data/chains/<chain_name>/keystore` to `/keystore`
+- move relaychain data from `/data/relay/polkadot` to `/relaychain-data/polkadot`
+- move relaychain keystore from `/data/relay/polkadot/chains/<relay_chain_name>/keystore` to `/relaychain-keystore`
+
+If you're running a non-collator node:
+- move chain keystore from `/data/chains/<chain_name>/keystore` to `/keystore`
+
 ## Parameters
 
 ### Common parameters
