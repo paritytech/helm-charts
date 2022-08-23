@@ -135,6 +135,9 @@ node:
     volumeSize: 100Gi
 
   chainKeystore:
+    ## Mount chain keystore in memory using an emptyDir volume
+    ##
+    mountInMemory: false
     # kubernetesVolumeSnapshot: ""
     # kubernetesVolumeToClone: ""
     ## Storage class to use for persistent volume
@@ -182,6 +185,9 @@ node:
       volumeSize: 100Gi
 
     relayChainKeystore:
+      ## Mount relay-chain keystore in memory using an emptyDir volume
+      ##
+      mountInMemory: false
       # kubernetesVolumeSnapshot: ""
       # kubernetesVolumeToClone: ""
       ## Storage class to use for persistent volume

@@ -618,6 +618,16 @@ spec:
             secretName: {{ $fullname }}-{{ .type }}
             defaultMode: 0400
       {{- end }}
+      {{- if .Values.node.chainKeystore.mountInMemory }}
+        - name: chain-keystore
+          emptyDir:
+            medium: "Memory"
+      {{- end }}
+      {{- if .Values.node.relayChainKeystore.mountInMemory }}
+        - name: relaychain-keystore
+          emptyDir:
+            medium: "Memory"
+      {{- end }}
   volumeClaimTemplates:
     - apiVersion: v1
       kind: PersistentVolumeClaim
@@ -640,6 +650,7 @@ spec:
         resources:
           requests:
             storage: {{ .Values.node.chainData.volumeSize }}
+    {{- if not .Values.node.chainKeystore.mountInMemory }}
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
@@ -661,6 +672,7 @@ spec:
         resources:
           requests:
             storage: {{ .Values.node.chainKeystore.volumeSize }}
+    {{- end }}
     {{- if .Values.node.collator.isParachain }}
     - apiVersion: v1
       kind: PersistentVolumeClaim
@@ -683,6 +695,7 @@ spec:
         resources:
           requests:
             storage: {{ .Values.node.collator.relayChainData.volumeSize }}
+    {{- if not .Values.node.relayChainKeystore.mountInMemory }}
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
@@ -704,4 +717,5 @@ spec:
         resources:
           requests:
             storage: {{ .Values.node.collator.relayChainKeystore.volumeSize }}
-      {{- end }}
+    {{- end }}
+    {{- end }}
