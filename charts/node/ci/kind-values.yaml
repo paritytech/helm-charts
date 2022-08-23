@@ -11,4 +11,4 @@ node:
   - "--rpc-cors=all"
 storageClass: standard
 image:
-  tag: v0.9.19
+  tag: v0.9.27
