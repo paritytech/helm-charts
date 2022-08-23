@@ -9,6 +9,9 @@ node:
   - "--ws-external"
   - "--rpc-methods=safe"
   - "--rpc-cors=all"
-storageClass: standard
+  chainData:
+    storageClass: standard
+  chainKeystore:
+    storageClass: standard
 image:
-  tag: v0.9.19
+  tag: v0.9.27
