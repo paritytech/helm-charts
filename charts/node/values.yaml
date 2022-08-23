@@ -409,10 +409,6 @@ tolerations: []
 ##
 affinity: {}
 
-## Storage class to use for persistent volume
-##
-storageClass: "default"
-
 ## Additional containers to run in the pod
 ##
 extraContainers: []

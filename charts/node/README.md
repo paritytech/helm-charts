@@ -81,6 +81,8 @@ Some chart parameters have been grouped together and renamed. There are now sepa
 - `node.chainKeystore`
 - `node.collator`
 
+Common `storageClass` parameter has been moved to the corresponding separate groups mentioned above.
+
 ## Parameters
 
 ### Common parameters
@@ -94,7 +96,6 @@ Some chart parameters have been grouped together and renamed. There are now sepa
 | `nodeSelector`      | Node labels for pod assignment               | `{}` (evaluated as a template) |
 | `tolerations`       | Tolerations for pod assignment               | `[]` (evaluated as a template) |
 | `affinity`          | Affinity for pod assignment                  | `{}` (evaluated as a template) |
-| `storageClass`      | The storage class to use for volumes         | `default`                      |
 
 ### Node parameters
 
