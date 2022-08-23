@@ -68,6 +68,19 @@ node:
       vaultKey: nodekey
 ```
 
+## Upgrade
+### From v2.x.x to v3.0.0 (⚠️ breaking changes)
+There are now separate volumes for:
+- relaychain data
+- relaychain keystore
+- parachain data
+- parachain keystore
+
+Some chart parameters have been grouped together and renamed. There are now separate sections for the following values:
+- `node.chainData`
+- `node.chainKeystore`
+- `node.collator`
+
 ## Parameters
 
 ### Common parameters
