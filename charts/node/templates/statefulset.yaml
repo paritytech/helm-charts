@@ -70,7 +70,7 @@ spec:
       {{- toYaml . | nindent 8 }}
       {{- end }}
       initContainers:
-        {{- if .Values.node.chainDataSnapshotUrl }}
+        {{- if .Values.node.chainData.snapshotUrl }}
         - name: download-chain-snapshot
           image: {{ .Values.initContainer.image.repository }}:{{ .Values.initContainer.image.tag }}
           command: [ "/bin/sh" ]
@@ -82,7 +82,7 @@ spec:
                 echo "Database directory already exists, skipping chain snapshot download"
               else
                 echo "Downloading chain snapshot"
-                SNAPSHOT_URL="{{ .Values.node.chainDataSnapshotUrl }}"
+                SNAPSHOT_URL="{{ .Values.node.chainData.snapshotUrl }}"
                 mkdir -p /data/chains/${CHAIN_PATH}/{{ $databasePath }}/
                 if [ "${SNAPSHOT_FORMAT}" == "lz4" ]; then
                   wget -O - ${SNAPSHOT_URL} | lz4 -c -d - | tar -x -C /data/chains/${CHAIN_PATH}/
@@ -92,14 +92,14 @@ spec:
               fi
           env:
             - name: CHAIN_PATH
-              value: {{ default .Values.node.chain .Values.node.chainPath }}
+              value: {{ default .Values.node.chain .Values.node.chainData.chainPath }}
             - name: SNAPSHOT_FORMAT
-              value: {{ default "tar" .Values.node.chainDataSnapshotFormat }}
+              value: {{ default "tar" .Values.node.chainData.snapshotFormat }}
           volumeMounts:
             - mountPath: /data
               name: chain-data
         {{- end }}
-        {{- if .Values.node.collator.relayChainDataSnapshotUrl }}
+        {{- if .Values.node.collator.relayChainData.snapshotUrl }}
         - name: download-relay-chain-snapshot
           image: {{ .Values.initContainer.image.repository }}:{{ .Values.initContainer.image.tag }}
           command: [ "/bin/sh" ]
@@ -107,26 +107,26 @@ spec:
             - -c
             - |
               set -eu -o pipefail {{ if .Values.initContainer.debug }}-x{{ end }}
-              if [ -d "/data/relay/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}" ]; then
+              if [ -d "/relaychain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}" ]; then
                 echo "Database directory already exists, skipping relay-chain snapshot download"
               else
                 echo "Downloading relay-chain snapshot"
-                RELAY_SNAPSHOT_URL="{{ .Values.node.collator.relayChainDataSnapshotUrl }}"
-                mkdir -p /data/relay/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}
+                RELAY_SNAPSHOT_URL="{{ .Values.node.collator.relayChainData.snapshotUrl }}"
+                mkdir -p /relaychain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}
                 if [ "${RELAY_SNAPSHOT_FORMAT}" == "lz4" ]; then
-                  wget -O - ${RELAY_SNAPSHOT_URL} | lz4 -c -d - | tar -x -C /data/chains/${RELAY_CHAIN_PATH}/
+                  wget -O - ${RELAY_SNAPSHOT_URL} | lz4 -c -d - | tar -x -C /relaychain-data/chains/${RELAY_CHAIN_PATH}/
                 else
-                  wget -O - ${RELAY_SNAPSHOT_URL} | tar -x -C /data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
+                  wget -O - ${RELAY_SNAPSHOT_URL} | tar -x -C /relaychain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
                 fi
               fi
           env:
             - name: RELAY_SNAPSHOT_FORMAT
-              value: {{ default "tar" .Values.node.collator.relayChainDataSnapshotFormat }}
+              value: {{ default "tar" .Values.node.collator.relayChainData.snapshotFormat }}
             - name: RELAY_CHAIN_PATH
-              value: {{ default .Values.node.collator.relayChain .Values.node.collator.relayChainPath }}
+              value: {{ default .Values.node.collator.relayChain .Values.node.collator.relayChainData.chainPath }}
           volumeMounts:
-            - mountPath: /data
-              name: chain-data
+            - mountPath: /relaychain-data
+              name: relaychain-data
         {{- end }}
         {{- if .Values.node.enableChainBackupGcs }}
         - name: backup-chain-gcs
@@ -156,7 +156,7 @@ spec:
               fi
           env:
             - name: CHAIN_PATH
-              value: {{ default .Values.node.chain .Values.node.chainPath }}
+              value: {{ default .Values.node.chain .Values.node.chainData.chainPath }}
           volumeMounts:
             - mountPath: /data
               name: chain-data
@@ -166,7 +166,7 @@ spec:
               readOnly: true
             {{- end }}
         {{- end }}
-        {{- if .Values.node.chainDataGcsBucketUrl }}
+        {{- if .Values.node.chainData.GCSBucketUrl }}
         - name: sync-chain-gcs
           image: {{ .Values.googleCloudSdk.image.repository }}:{{ .Values.googleCloudSdk.image.tag }}
           command: [ "/bin/sh" ]
@@ -180,7 +180,7 @@ spec:
               if [ -d "/data/chains/${CHAIN_PATH}/{{ $databasePath }}" ]; then
                 echo "Chain database directory already exists, skipping GCS sync"
               else
-                BUCKET_URL="{{ .Values.node.chainDataGcsBucketUrl }}"
+                BUCKET_URL="{{ .Values.node.chainData.GCSBucketUrl }}"
                 LATEST=$(gsutil cat ${BUCKET_URL}/latest_version.meta.txt)
                 if [ -z "$LATEST" ]; then
                   echo "Failed to retrieve latest_version metadata"
@@ -191,7 +191,7 @@ spec:
               fi
           env:
             - name: CHAIN_PATH
-              value: {{ default .Values.node.chain .Values.node.chainPath }}
+              value: {{ default .Values.node.chain .Values.node.chainData.chainPath }}
           volumeMounts:
             - mountPath: /data
               name: chain-data
@@ -201,7 +201,7 @@ spec:
               readOnly: true
             {{- end }}
         {{- end }}
-        {{- if .Values.node.collator.relayChainDataGcsBucketUrl }}
+        {{- if .Values.node.collator.relayChainData.GCSBucketUrl }}
         - name: sync-relay-chain-gcs
           image: {{ .Values.googleCloudSdk.image.repository }}:{{ .Values.googleCloudSdk.image.tag }}
           command: [ "/bin/sh" ]
@@ -212,24 +212,24 @@ spec:
               {{- if .Values.googleCloudSdk.serviceAccountKey }}
               gcloud auth activate-service-account --key-file /tmp/service-account-key.json
               {{- end }}
-              if [ -d "/data/relay/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}" ]; then
+              if [ -d "/relaychain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}" ]; then
                 echo "Relay-chain database directory already exists, skipping GCS sync"
               else
-                BUCKET_URL="{{ .Values.node.collator.relayChainDataGcsBucketUrl }}"
+                BUCKET_URL="{{ .Values.node.collator.relayChainData.GCSBucketUrl }}"
                 LATEST=$(gsutil cat ${BUCKET_URL}/latest_version.meta.txt)
                 if [ -z "$LATEST" ]; then
                   echo "Failed to retrieve latest_version metadata"
                   exit 1
                 fi
-                mkdir -p /data/relay/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}
-                gsutil {{ .Values.googleCloudSdk.gsutilFlags }} rsync -d -r ${BUCKET_URL}/${LATEST} /data/relay/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
+                mkdir -p /relaychain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}
+                gsutil {{ .Values.googleCloudSdk.gsutilFlags }} rsync -d -r ${BUCKET_URL}/${LATEST} /relaychain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
               fi
           env:
             - name: RELAY_CHAIN_PATH
-              value: {{ default .Values.node.collator.relayChain .Values.node.collator.relayChainPath }}
+              value: {{ default .Values.node.collator.relayChain .Values.node.collator.relayChainData.chainPath }}
           volumeMounts:
-            - mountPath: /data
-              name: chain-data
+            - mountPath: /relaychain-data
+              name: relaychain-data
              {{- if .Values.googleCloudSdk.serviceAccountKey }}
             - name: service-account-key
               mountPath: /tmp
@@ -282,6 +282,7 @@ spec:
                  exit 1
               fi
               {{ $.Values.node.command }} key insert --base-path /data \
+              --keystore-path /keystore \
               --chain {{ if $.Values.node.customChainspecUrl }}{{ $.Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
               --key-type $(cat /var/run/secrets/{{ .type }}/type) \
               --scheme $(cat /var/run/secrets/{{ .type }}/scheme) \
@@ -295,6 +296,8 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: chain-data
+            - mountPath: /keystore
+              name: chain-keystore
           {{- range $keys := .Values.node.keys }}
             - mountPath: /var/run/secrets/{{ .type }}
               name: {{ .type }}
@@ -316,6 +319,7 @@ spec:
               --chain {{ if $.Values.node.customChainspecUrl }}{{ $.Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
               --key-type {{ .type }} \
               --scheme {{ .scheme }} \
+              --keystore-path /keystore \
               {{- if .extraDerivation }}
               --suri "$(cat /vault/secrets/{{ .name }}){{ .extraDerivation }}" \
               {{- else }}
@@ -330,6 +334,8 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: chain-data
+            - mountPath: /keystore
+              name: chain-keystore
         {{- end }}
         {{- if or $.Values.node.perNodeServices.relayP2pService.enabled $.Values.node.perNodeServices.paraP2pService.enabled }}
         - name: retrieve-node-port
@@ -381,7 +387,8 @@ spec:
               {{- end }}
               exec {{ .Values.node.command }} \
                 --name=${POD_NAME} \
-                --base-path=/data/ \
+                --base-path=/data \
+                --keystore-path=/keystore \
                 --chain={{ if .Values.node.customChainspecUrl }}{{ .Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
                 {{- if or (eq .Values.node.role "authority") (eq .Values.node.role "validator") }}
                 --validator \
@@ -426,7 +433,8 @@ spec:
                 {{- join " " .Values.node.flags | nindent 16 }} \
                 {{- if .Values.node.collator.isParachain }}
                 -- \
-                --base-path=/data/relay/ \
+                --base-path=/relaychain-data \
+                --keystore-path=/relaychain-keystore \
                 {{- if .Values.node.collator.relayChainPrometheus.enabled }}
                 --prometheus-external \
                 --prometheus-port {{ .Values.node.collator.relayChainPrometheus.port }} \
@@ -498,6 +506,14 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: chain-data
+            - mountPath: /keystore
+              name: chain-keystore
+            {{- if .Values.node.collator.isParachain }}
+            - mountPath: /relaychain-data
+              name: relaychain-data
+            - mountPath: /relaychain-keystore
+              name: relaychain-keystore
+            {{- end }}
           {{- if .Values.node.persistGeneratedNodeKey }}
           {{- else if .Values.node.customNodeKey }}
             - mountPath: /tmp/
@@ -597,18 +613,83 @@ spec:
         name: chain-data
       spec:
         accessModes: [ "ReadWriteOnce" ]
-        {{- if or .Values.node.chainDataKubernetesVolumeSnapshot .Values.node.chainDataKubernetesVolumeToClone }}
+        {{- if or .Values.node.chainData.kubernetesVolumeSnapshot .Values.node.chainData.kubernetesVolumeToClone }}
         dataSource:
-          {{- if .Values.node.chainDataKubernetesVolumeSnapshot }}
-          name: {{ .Values.node.chainDataKubernetesVolumeSnapshot }}
+          {{- if .Values.node.chainData.kubernetesVolumeSnapshot }}
+          name: {{ .Values.node.chainData.kubernetesVolumeSnapshot }}
           kind: VolumeSnapshot
           apiGroup: snapshot.storage.k8s.io
           {{- else }}
-          name: {{ .Values.node.chainDataKubernetesVolumeToClone }}
+          name: {{ .Values.node.chainData.kubernetesVolumeToClone }}
           kind: PersistentVolumeClaim
           {{- end }}
         {{- end }}
-        storageClassName: {{ .Values.storageClass }}
+        storageClassName: {{ .Values.node.chainData.storageClass }}
         resources:
           requests:
-            storage: {{ .Values.node.dataVolumeSize }}
+            storage: {{ .Values.node.chainData.volumeSize }}
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: chain-keystore
+      spec:
+        accessModes: {{ .Values.node.chainKeystore.accessModes }}
+        {{- if or .Values.node.chainKeystore.kubernetesVolumeSnapshot .Values.node.chainKeystore.kubernetesVolumeToClone }}
+        dataSource:
+          {{- if .Values.node.chainKeystore.kubernetesVolumeSnapshot }}
+          name: {{ .Values.node.chainKeystore.kubernetesVolumeSnapshot }}
+          kind: VolumeSnapshot
+          apiGroup: snapshot.storage.k8s.io
+          {{- else }}
+          name: {{ .Values.node.chainKeystore.kubernetesVolumeToClone }}
+          kind: PersistentVolumeClaim
+          {{- end }}
+        {{- end }}
+        storageClassName: {{ .Values.node.chainKeystore.storageClass }}
+        resources:
+          requests:
+            storage: {{ .Values.node.chainKeystore.volumeSize }}
+    {{- if .Values.node.collator.isParachain }}
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: relaychain-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        {{- if or .Values.node.collator.relayChainData.kubernetesVolumeSnapshot .Values.node.collator.relayChainData.kubernetesVolumeToClone }}
+        dataSource:
+          {{- if .Values.node.collator.relayChainData.kubernetesVolumeSnapshot }}
+          name: {{ .Values.node.collator.relayChainData.kubernetesVolumeSnapshot }}
+          kind: VolumeSnapshot
+          apiGroup: snapshot.storage.k8s.io
+          {{- else }}
+          name: {{ .Values.node.collator.relayChainData.kubernetesVolumeToClone }}
+          kind: PersistentVolumeClaim
+          {{- end }}
+        {{- end }}
+        storageClassName: {{ .Values.node.collator.relayChainData.storageClass }}
+        resources:
+          requests:
+            storage: {{ .Values.node.collator.relayChainData.volumeSize }}
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: relaychain-keystore
+      spec:
+        accessModes: {{ .Values.node.collator.relayChainKeystore.accessModes }}
+        {{- if or .Values.node.collator.relayChainKeystore.kubernetesVolumeSnapshot .Values.node.collator.relayChainKeystore.kubernetesVolumeToClone }}
+        dataSource:
+          {{- if .Values.node.collator.relayChainKeystore.kubernetesVolumeSnapshot }}
+          name: {{ .Values.node.collator.relayChainKeystore.kubernetesVolumeSnapshot }}
+          kind: VolumeSnapshot
+          apiGroup: snapshot.storage.k8s.io
+          {{- else }}
+          name: {{ .Values.node.collator.relayChainKeystore.kubernetesVolumeToClone }}
+          kind: PersistentVolumeClaim
+          {{- end }}
+        {{- end }}
+        storageClassName: {{ .Values.collator.relayChainKeystore.storageClass }}
+        resources:
+          requests:
+            storage: {{ .Values.node.collator.relayChainKeystore.volumeSize }}
+      {{- end }}

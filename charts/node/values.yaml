@@ -105,7 +105,6 @@ ingress:
 node:
   chain: "polkadot"
   command: "polkadot"
-  dataVolumeSize: 100Gi
   replicas: 1
   role: full
 
@@ -121,14 +120,28 @@ node:
   # customChainspecUrl:
   forceDownloadChainspec: false
 
-  ## Configuration to download chain snapshot from remote URL
-  ##
-  # chainDataSnapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
-  # chainDataSnapshotFormat: lz4
-  # chainDataKubernetesVolumeSnapshot: ""
-  # chainDataKubernetesVolumeToClone: ""
-  # chainDataGcsBucketUrl: ""
-  # chainPath: ""
+  chainData:
+    ## Configuration to download chain snapshot from remote URL
+    ##
+    # snapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
+    # snapshotFormat: lz4
+    # kubernetesVolumeSnapshot: ""
+    # kubernetesVolumeToClone: ""
+    # GCSBucketUrl: ""
+    # chainPath: ""
+    ## Storage class to use for persistent volume
+    ##
+    storageClass: "default"
+    volumeSize: 100Gi
+
+  chainKeystore:
+    # kubernetesVolumeSnapshot: ""
+    # kubernetesVolumeToClone: ""
+    ## Storage class to use for persistent volume
+    ##
+    storageClass: "default"
+    volumeSize: 10Mi
+    accessModes: ["ReadWriteOnce"]
 
   ## Deploy a collator node
   ## ref: https://wiki.polkadot.network/docs/learn-collator
@@ -145,13 +158,28 @@ node:
     relayChainCustomChainspecPath: "/data/relay_chain_chainspec.json"
     # relayChainCustomChainspecUrl: ""
 
-    ## Configuration to download relaychain snapshot from remote URL
-    ##
-    # relayChainDataSnapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
-    # relayChainDataSnapshotFormat: lz4
-    # relayChainDataGcsBucketUrl: ""
-    # relayChainPath: ""
+    relayChainData:
+      ## Configuration to download chain snapshot from remote URL
+      ##
+      # snapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
+      # snapshotFormat: lz4
+      # kubernetesVolumeSnapshot: ""
+      # kubernetesVolumeToClone: ""
+      # GCSBucketUrl: ""
+      # chainPath: ""
+      ## Storage class to use for persistent volume
+      ##
+      storageClass: "default"
+      volumeSize: 100Gi
 
+    relayChainKeystore:
+      # kubernetesVolumeSnapshot: ""
+      # kubernetesVolumeToClone: ""
+      ## Storage class to use for persistent volume
+      ##
+      storageClass: "default"
+      volumeSize: 10Mi
+      accessModes: ["ReadWriteOnce"]
 
     ## Expose relay chain metrics via Prometheus format in /metrics endpoint
     ## Pass the following args:
