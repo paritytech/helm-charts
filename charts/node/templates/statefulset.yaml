@@ -265,6 +265,10 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: chain-data
+            {{- if and .Values.node.collator.isParachain .Values.node.collator.relayChainCustomChainspecUrl }}
+            - mountPath: /relaychain-data
+              name: relaychain-data
+            {{- end }}
           securityContext:
             runAsUser: 0
         {{- end }}

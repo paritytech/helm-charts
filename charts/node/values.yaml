@@ -155,7 +155,7 @@ node:
     relayChain: polkadot
     ## File containing chainspec of relaychain for
     ##
-    relayChainCustomChainspecPath: "/data/relay_chain_chainspec.json"
+    relayChainCustomChainspecPath: "/relaychain-data/relay_chain_chainspec.json"
     # relayChainCustomChainspecUrl: ""
 
     relayChainData:
