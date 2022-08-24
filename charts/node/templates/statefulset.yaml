@@ -692,7 +692,7 @@ spec:
           kind: PersistentVolumeClaim
           {{- end }}
         {{- end }}
-        storageClassName: {{ .Values.collator.relayChainKeystore.storageClass }}
+        storageClassName: {{ .Values.node.collator.relayChainKeystore.storageClass }}
         resources:
           requests:
             storage: {{ .Values.node.collator.relayChainKeystore.volumeSize }}
