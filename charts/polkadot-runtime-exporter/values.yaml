@@ -302,5 +302,5 @@ serviceMonitor:
     port: prom
     interval: 6s # Corresponds to the average 6s block time of Polkadot
     scheme: http
-    scrapeTimeout: 30s
+    scrapeTimeout: 3s
     honorLabels: true
