@@ -114,9 +114,9 @@ node:
 
   ## Node may require custom name for chainspec file.
   ## ref:  moonbeam https://github.com/PureStake/moonbeam/issues/1104#issuecomment-996787548
-  ## Note: path should start with /data/ since this folder mount in init container download-chainspec.
+  ## Note: path should start with /chain-data/ since this folder mount in init container download-chainspec.
   ##
-  customChainspecPath: "/data/chainspec.json"
+  customChainspecPath: "/chain-data/chainspec.json"
   # customChainspecUrl:
   forceDownloadChainspec: false
 
