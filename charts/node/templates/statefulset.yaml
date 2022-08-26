@@ -439,6 +439,9 @@ spec:
                 -- \
                 --base-path=/relaychain-data \
                 --keystore-path=/relaychain-keystore \
+                {{- if .Values.node.collator.database }}
+                --database={{ .Values.node.collator.database }} \
+                {{- end }}
                 {{- if .Values.node.collator.relayChainPrometheus.enabled }}
                 --prometheus-external \
                 --prometheus-port {{ .Values.node.collator.relayChainPrometheus.port }} \
