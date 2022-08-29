@@ -153,9 +153,15 @@ node:
     ## Name of the Relay Chain to connect
     ##
     relayChain: polkadot
+
     ## Database backend engine to use
     ##
-    database: rocksdb
+    relayChainDatabase: rocksdb
+
+    ## Set the amount of blocks to retain
+    ##
+    # relayChainPruning: 1000
+
     ## File containing chainspec of relaychain for
     ##
     relayChainCustomChainspecPath: "/relaychain-data/relay_chain_chainspec.json"
