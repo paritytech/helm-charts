@@ -439,8 +439,13 @@ spec:
                 -- \
                 --base-path=/relaychain-data \
                 --keystore-path=/relaychain-keystore \
-                {{- if .Values.node.collator.database }}
-                --database={{ .Values.node.collator.database }} \
+                {{- if .Values.node.collator.relayChainDatabase }}
+                --database={{ .Values.node.collator.relayChainDatabase }} \
+                {{- end }}
+                {{- if ge ( int .Values.node.collator.relayChainPruning ) 1 }}
+                --pruning={{ .Values.node.collator.relayChainPruning }} \
+                {{- else if and ( not ( kindIs "invalid" .Values.node.collator.relayChainPruning ) ) ( eq 0 ( int .Values.node.collator.relayChainPruning ) ) }}
+                --pruning=archive \
                 {{- end }}
                 {{- if .Values.node.collator.relayChainPrometheus.enabled }}
                 --prometheus-external \
