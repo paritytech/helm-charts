@@ -97,7 +97,10 @@ spec:
             - name: CONFIG_FULL_PATH
               value: "/config/config.json"
             - name: TSDB_CONN
-              value: {{ .Values.runtimeExporter.tsdbConnectionUrl | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "runtimeExporter.secretName" . }}
+                  key: TSDB_CONN
           {{- if .Values.extraEnvVars }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
           {{- end }}

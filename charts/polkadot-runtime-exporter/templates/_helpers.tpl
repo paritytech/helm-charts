@@ -13,6 +13,17 @@ Return the proper Docker Image Registry Secret Names
 {{- end -}}
 
 {{/*
+Create the name of the secret to use
+*/}}
+{{- define "runtimeExporter.secretName" -}}
+{{- if not .Values.runtimeExporter.existingSecretName -}}
+    {{ include "common.names.fullname" . }}
+{{- else -}}
+    {{ .Values.runtimeExporter.existingSecretName }}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Create the name of the service account to use
 */}}
 {{- define "runtimeExporter.serviceAccountName" -}}
