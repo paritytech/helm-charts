@@ -1024,6 +1024,22 @@ entries:
     version: 0.1.0
   polkadot-runtime-exporter:
   - apiVersion: v2
+    created: "2022-09-01T15:38:57.064797032Z"
+    dependencies:
+    - name: common
+      repository: https://charts.bitnami.com/bitnami
+      version: 1.14.1
+    description: A Helm chart to deploy runtime exporter (https://github.com/paritytech/polkadot-runtime-prom-exporter)
+    digest: f5a019ac2882ad5baf64dfb4cb5005803044b0b8cca816a6bd62dd6f44f3e69b
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: polkadot-runtime-exporter
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/polkadot-runtime-exporter-1.1.0/polkadot-runtime-exporter-1.1.0.tgz
+    version: 1.1.0
+  - apiVersion: v2
     created: "2022-08-25T08:27:49.53386201Z"
     dependencies:
     - name: common
@@ -1350,4 +1366,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/testnet-manager-1.0.0/testnet-manager-1.0.0.tgz
     version: 1.0.0
-generated: "2022-09-01T08:50:02.891972319Z"
+generated: "2022-09-01T15:38:57.066228739Z"
