@@ -2,7 +2,7 @@ apiVersion: v2
 name: polkadot-runtime-exporter
 description: A Helm chart to deploy runtime exporter (https://github.com/paritytech/polkadot-runtime-prom-exporter)
 type: application
-version: 1.0.2
+version: 1.1.0
 maintainers:
   - name: Parity
     url: https://github.com/paritytech/helm-charts
