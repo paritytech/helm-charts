@@ -934,6 +934,19 @@ entries:
   polkadot-basic-notification:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2022-09-01T08:50:02.191063037Z"
+    description: A Helm chart for Kubernetes
+    digest: 979c86f8c2916a3734d4c84fe99c798de16f0ee8636e4c1d13957c350f3382aa
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: polkadot-basic-notification
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/polkadot-basic-notification-1.0.1/polkadot-basic-notification-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2022-08-10T09:08:17.575525273Z"
     description: A Helm chart for Kubernetes
     digest: 28ebe3524274c9c7224dfa26f0910afd482bea9d51c7b0362882d3a959159a8c
@@ -946,6 +959,19 @@ entries:
     - https://github.com/paritytech/helm-charts/releases/download/polkadot-basic-notification-1.0.0/polkadot-basic-notification-1.0.0.tgz
     version: 1.0.0
   polkadot-introspector:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2022-09-01T08:50:02.414714539Z"
+    description: A Helm chart to deploy polkadot-introspector
+    digest: 2d87f3e824b20a28ef3445c36dd32f6061d7eecaa9f050c41cdc170440e34b25
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: polkadot-introspector
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/polkadot-introspector-0.1.2/polkadot-introspector-0.1.2.tgz
+    version: 0.1.2
   - apiVersion: v2
     appVersion: 0.1.0
     created: "2022-06-15T12:17:26.327589124Z"
@@ -1145,6 +1171,18 @@ entries:
     version: 1.0.0
   substrate-faucet:
   - apiVersion: v2
+    created: "2022-09-01T08:50:02.713041277Z"
+    description: A Helm chart to deploy substrate-faucet
+    digest: 7cf6421ffc9f1a749bc5b93606e7f268f2f10eb7d211caba546970faf459d815
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: substrate-faucet
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/substrate-faucet-1.0.2/substrate-faucet-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
     created: "2022-06-15T12:17:26.489155666Z"
     description: A Helm chart to deploy substrate-faucet
     digest: 6f67fcac00302102aa81997fc9844d4f51938c3bf01c58e5adee9a84f7c4d42e
@@ -1275,6 +1313,19 @@ entries:
   testnet-manager:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2022-09-01T08:50:02.891307411Z"
+    description: A Helm chart to deploy testnet-manager
+    digest: 8962583395cdc35104fdaaee8d6302a42f2a45ab1b58ca5ffaf4e274a3a34966
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: testnet-manager
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/testnet-manager-1.1.1/testnet-manager-1.1.1.tgz
+    version: 1.1.1
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2022-08-18T12:53:56.162827121Z"
     description: A Helm chart to deploy testnet-manager
     digest: 8d9cefcf03fa118e224926a34e63cd157c3a9b3e6cce0dbc378c2ebe659deff0
@@ -1299,4 +1350,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/testnet-manager-1.0.0/testnet-manager-1.0.0.tgz
     version: 1.0.0
-generated: "2022-08-29T12:25:53.775179037Z"
+generated: "2022-09-01T08:50:02.891972319Z"
