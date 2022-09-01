@@ -1,6 +1,6 @@
 # Polkadot introspector helm chart
 
-The helm chart installs Polkadot introspector. The repo is located in https://github.com/paritytech/polkadot-introspector.
+The helm chart installs the [Polkadot introspector](https://github.com/paritytech/polkadot-introspector).
 
 ## Installing the chart
 

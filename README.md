@@ -6,6 +6,10 @@ Parity's [Kubernetes Helm](https://helm.sh/) charts collection.
 
 - [Common](charts/common/README.md): a generic helm chart for kubernetes
 - [Node](charts/node/README.md): deploy Substrate/Polkadot nodes
-- [Substrate telemetry](charts/substrate-telemetry/README.md): deploy Substrate Telemetry for the nodes
-- [Substrate faucet](charts/substrate-faucet/README.md): deploy Substrate Faucet
-- [Introspector](charts/introspector/README.md): deploy introspector for the nodes
+- [Polkadot Basic Notification](charts/polkadot-basic-notification/README.md): deploy a chain notification bot
+- [Polkadot Introspector](charts/polkadot-introspector/README.md): deploy a chain monitoring and introspection service
+- [Polkadot Runtime Exporter](charts/polkadot-runtime-exporter/README.md): deploy a tool to collect runtime statistics
+- [Staking miner](charts/staking-miner/README.md): deploy the staking-miner for submitting solutions to NPoS elections
+- [Substrate faucet](charts/substrate-faucet/README.md): deploy Substrate Faucet service
+- [Substrate telemetry](charts/substrate-telemetry/README.md): deploy the Substrate Telemetry service
+- [Testnet Manager](charts/testnet-manager/README.md): deploy a management tool for operating testnets
