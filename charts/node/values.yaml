@@ -368,6 +368,12 @@ node:
   enableChainBackupGcs: false
   #chainBackupGcsUrl:
 
+  ## Define the WASM runtime overrides directory path
+  ##
+  wasmRuntimeOverridesPath: "/chain-data/runtimes"
+  ## Download a WASM runtime to override the on-chain runtime when the version matches
+  ##
+  wasmRuntimeUrl: ""
 
 ## Configuration of Substrate API
 ## ref: https://github.com/paritytech/substrate-api-sidecar
