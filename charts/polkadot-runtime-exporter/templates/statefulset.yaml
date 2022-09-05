@@ -23,8 +23,11 @@ spec:
   {{- end }}
   template:
     metadata:
+      annotations:
+        configmap/checksum: {{ include (print $.Template.BasePath "/config.yaml") . | sha256sum }}
+        secret/checksum: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
       {{- if .Values.podAnnotations }}
-      annotations: {{- include "common.tplvalues.render" (dict "value" .Values.podAnnotations "context" $) | nindent 8 }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.podAnnotations "context" $) | nindent 8 }}
       {{- end }}
       labels: {{- include "common.labels.standard" . | nindent 8 }}
         app.kubernetes.io/component: runtime-exporter
