@@ -281,7 +281,7 @@ spec:
             - |
               set -eu -o pipefail {{ if .Values.initContainer.debug }}-x{{ end }}
               mkdir -p {{ .Values.node.wasmRuntimeOverridesPath }}
-              wget -P -nc {{ .Values.node.wasmRuntimeOverridesPath }} {{ .Values.node.wasmRuntimeUrl }}
+              wget -nc -P {{ .Values.node.wasmRuntimeOverridesPath }} {{ .Values.node.wasmRuntimeUrl }}
           volumeMounts:
             - mountPath: /chain-data
               name: chain-data
