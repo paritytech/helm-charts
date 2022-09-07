@@ -24,7 +24,7 @@ spec:
         configmap/checksum: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
       {{- end }}
       {{- if .Values.secrets }}
-        secret/checksum: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }} 
+        secret/checksum: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
       {{- end }}
       {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
