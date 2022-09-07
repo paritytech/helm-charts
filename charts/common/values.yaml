@@ -242,6 +242,12 @@ serviceMonitor:
     scrapeTimeout: 30s
     honorLabels: true
 
+# Extra volumes to be added in addition to those specified under `defaultVolumes`.
+extraVolumes: []
+
+# Extra volume mounts together. Corresponds to `extraVolumes`.
+extraVolumeMounts: []
+
 ## If enabled, create cloudsql proxy resources
 ##
 cloudsql:

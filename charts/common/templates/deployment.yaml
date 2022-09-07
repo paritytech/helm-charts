@@ -75,6 +75,10 @@ spec:
           envFrom:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          volumeMounts:
+            {{- with .Values.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -89,5 +93,9 @@ spec:
       {{- end }}
       {{- with .Values.additionalPodSpec }}
         {{- toYaml . | nindent 6 }}
+      {{- end }}
+      volumes:
+      {{- with .Values.extraVolumes }}
+      {{- toYaml . | nindent 8 }}
       {{- end }}
 {{- end }}
