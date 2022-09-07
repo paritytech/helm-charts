@@ -15,10 +15,18 @@ spec:
       {{- include "common.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+    {{- if or .Values.config .Values.secrets .Values.podAnnotations }}
       annotations:
+      {{- if .Values.config }}
+        configmap/checksum: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      {{- end }}
+      {{- if .Values.secrets }}
+        secret/checksum: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }} 
+      {{- end }}
+      {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
+    {{- end }}
       labels:
         {{- include "common.selectorLabels" . | nindent 8 }}
         {{- with .Values.extraLabels }}
