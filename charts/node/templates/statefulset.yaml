@@ -272,6 +272,22 @@ spec:
           securityContext:
             runAsUser: 0
         {{- end }}
+        {{- if .Values.node.wasmRuntimeUrl }}
+        - name: download-runtime
+          image: {{ .Values.initContainer.image.repository }}:{{ .Values.initContainer.image.tag }}
+          command: [ "/bin/sh" ]
+          args:
+            - -c
+            - |
+              set -eu -o pipefail {{ if .Values.initContainer.debug }}-x{{ end }}
+              mkdir -p {{ .Values.node.wasmRuntimeOverridesPath }}
+              wget -nc -P {{ .Values.node.wasmRuntimeOverridesPath }} {{ .Values.node.wasmRuntimeUrl }}
+          volumeMounts:
+            - mountPath: /chain-data
+              name: chain-data
+          securityContext:
+            runAsUser: 0
+        {{- end }}
         {{- if .Values.node.keys }}
         - name: inject-keys
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -285,9 +301,8 @@ spec:
                  echo "Error: File /var/run/secrets/{{ .type }}/type does not exist"
                  exit 1
               fi
-              {{ $.Values.node.command }} key insert --base-path /chain-data \
+              {{ $.Values.node.command }} key insert \
               --keystore-path /keystore \
-              --chain {{ if $.Values.node.customChainspecUrl }}{{ $.Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
               --key-type $(cat /var/run/secrets/{{ .type }}/type) \
               --scheme $(cat /var/run/secrets/{{ .type }}/scheme) \
               --suri /var/run/secrets/{{ .type }}/seed \
@@ -298,8 +313,6 @@ spec:
             - name: CHAIN
               value: {{ .Values.node.chain }}
           volumeMounts:
-            - mountPath: /chain-data
-              name: chain-data
             - mountPath: /keystore
               name: chain-keystore
           {{- range $keys := .Values.node.keys }}
@@ -314,16 +327,24 @@ spec:
             - -c
             - |
               set -eu {{ if .Values.initContainer.debug }}-x{{ end }}
+              {{- if .Values.node.vault.nodeKey }}
+              NODE_KEY_PATH="/vault/secrets/{{ .Values.node.vault.nodeKey.name }}{{ if .Values.node.vault.nodeKey.vaultKeyAppendPodIndex }}-${HOSTNAME##*-}{{ end }}"
+              if [ ! -f ${NODE_KEY_PATH} ]; then
+                 echo "Error: File ${NODE_KEY_PATH} does not exist"
+                 exit 1
+              fi
+              NODE_PEER_ID="$(cat ${NODE_KEY_PATH} | {{ .Values.node.command }} key inspect-node-key)"
+              echo "Inserted node key at ${NODE_KEY_PATH} with peer-id: ${NODE_PEER_ID}"
+              {{- end }}
               {{- range $keys := .Values.node.vault.keys }}
               if [ ! -f /vault/secrets/{{ .name }} ]; then
                  echo "Error: File /vault/secrets/{{ .name }} does not exist"
                  exit 1
               fi
-              {{ $.Values.node.command }} key insert --base-path /chain-data \
-              --chain {{ if $.Values.node.customChainspecUrl }}{{ $.Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
+              {{ $.Values.node.command }} key insert \
+              --keystore-path /keystore \
               --key-type {{ .type }} \
               --scheme {{ .scheme }} \
-              --keystore-path /keystore \
               {{- if .extraDerivation }}
               --suri "$(cat /vault/secrets/{{ .name }}){{ .extraDerivation }}" \
               {{- else }}
@@ -336,8 +357,6 @@ spec:
             - name: CHAIN
               value: {{ .Values.node.chain }}
           volumeMounts:
-            - mountPath: /chain-data
-              name: chain-data
             - mountPath: /keystore
               name: chain-keystore
         {{- end }}
@@ -430,6 +449,9 @@ spec:
                 --node-key $(cat /tmp/custom-node-key) \
                 {{- else if .Values.node.vault.nodeKey }}
                 --node-key $(cat /vault/secrets/{{ .Values.node.vault.nodeKey.name }}{{ if .Values.node.vault.nodeKey.vaultKeyAppendPodIndex }}-${POD_INDEX}{{ end }}) \
+                {{- end }}
+                {{- if .Values.node.wasmRuntimeUrl }}
+                --wasm-runtime-overrides={{ .Values.node.wasmRuntimeOverridesPath }} \
                 {{- end }}
                 {{- if .Values.node.tracing.enabled }}
                 --jaeger-agent=127.0.0.1:{{ .Values.jaegerAgent.ports.compactPort }} \

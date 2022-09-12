@@ -1,6 +1,6 @@
 # Substrate faucet helm chart
 
-The helm chart installs the [Substrate faucet](https://github.com/paritytech/substrate-matrix-faucet), a generic faucet for Substrate based chains.
+The helm chart installs the [Substrate Matrix faucet](https://github.com/paritytech/substrate-matrix-faucet).
 
 ## Installing the chart
 
