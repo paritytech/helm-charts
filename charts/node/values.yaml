@@ -137,7 +137,9 @@ node:
   chainKeystore:
     ## Mount chain keystore in memory using an emptyDir volume
     ##
-    mountInMemory: false
+    mountInMemory:
+      enabled: false
+      # sizeLimit: 10Mi # Requires K8s >=1.22
     # kubernetesVolumeSnapshot: ""
     # kubernetesVolumeToClone: ""
     ## Storage class to use for persistent volume
@@ -187,7 +189,9 @@ node:
     relayChainKeystore:
       ## Mount relay-chain keystore in memory using an emptyDir volume
       ##
-      mountInMemory: false
+      mountInMemory:
+        enabled: false
+        # sizeLimit: 10Mi # Requires K8s >=1.22
       # kubernetesVolumeSnapshot: ""
       # kubernetesVolumeToClone: ""
       ## Storage class to use for persistent volume
