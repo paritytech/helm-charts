@@ -644,7 +644,7 @@ spec:
         - name: chain-keystore
           emptyDir:
             medium: "Memory"
-            {{- if .Values.node.chainKeystore.mountInMemory.sizeLimit }}
+            {{- if and (.Values.node.chainKeystore.mountInMemory.sizeLimit) (semverCompare ">=1.22-0" .Capabilities.KubeVersion.GitVersion) }}
             sizeLimit: {{ .Values.node.chainKeystore.mountInMemory.sizeLimit }}
             {{- end }}
       {{- end }}
@@ -652,7 +652,7 @@ spec:
         - name: relaychain-keystore
           emptyDir:
             medium: "Memory"
-            {{- if .Values.node.collator.relayChainKeystore.mountInMemory.sizeLimit }}
+            {{- if and (.Values.node.collator.relayChainKeystore.mountInMemory.sizeLimit) (semverCompare ">=1.22-0" .Capabilities.KubeVersion.GitVersion) }}
             sizeLimit: {{ .Values.node.collator.relayChainKeystore.mountInMemory.sizeLimit }}
             {{- end }}
       {{- end }}
