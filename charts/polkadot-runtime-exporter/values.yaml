@@ -50,7 +50,8 @@ diagnosticMode:
 ## @param runtimeExporter.prometheus.enabled Enable exposing the prometheus port
 ## @param runtimeExporter.prometheus.port Set the prometheus port
 ## @param runtimeExporter.prometheus.port Set the prometheus port
-## @param runtimeExporter.tsdbConnectionUrl Connection URL of the TSDB database
+## @param runtimeExporter.secret.tsdbConnectionUrl Connection URL of the TSDB database
+## @param runtimeExporter.existingSecretName Name of an existing Kubernetes secret that should set TSDB_CONN to the Connection URL of the TSDB database.
 runtimeExporter:
   prometheus:
     enabled: true
@@ -59,7 +60,9 @@ runtimeExporter:
     {
       "rpcs": ["wss://rpc.polkadot.io"]
     }
-  tsdbConnectionUrl: ""
+  secret:
+    tsdbConnectionUrl: ""
+  existingSecretName: ""
 
 ## Parity runtime-exporter image
 ## ref: https://hub.docker.com/r/paritytech/polkadot-runtime-prom-exporter/tags/

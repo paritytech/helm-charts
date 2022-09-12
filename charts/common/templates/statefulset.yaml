@@ -18,10 +18,18 @@ spec:
       {{- include "common.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+    {{- if or .Values.config .Values.secrets .Values.podAnnotations }}
       annotations:
+      {{- if .Values.config }}
+        configmap/checksum: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      {{- end }}
+      {{- if .Values.secrets }}
+        secret/checksum: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+      {{- end }}
+      {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
+    {{- end }}
       labels:
         {{- include "common.selectorLabels" . | nindent 8 }}
         {{- with .Values.extraLabels }}
@@ -72,6 +80,9 @@ spec:
             {{- if .Values.persistence.subPath }}
               subPath: {{ .Values.persistence.subPath }}
             {{- end }}
+            {{- with .Values.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -93,6 +104,9 @@ spec:
         persistentVolumeClaim:
           claimName: {{ .Values.persistence.existingClaim }}
       {{- else }}
+      {{- with .Values.extraVolumes }}
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
   volumeClaimTemplates:
     - metadata:
         name: data
