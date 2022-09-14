@@ -12,10 +12,10 @@ server:
     repository: paritytech/faucet-server
     tag: latest
     pullPolicy: Always
-
+  existingConfigMap: ''
+  existingSecret: ''
   secret:
     SMF_BACKEND_FAUCET_ACCOUNT_MNEMONIC: "this is a fake mnemonic"
-
   config:
     SMF_BACKEND_RPC_ENDPOINT: "https://example.com/"
     SMF_BACKEND_NETWORK_DECIMALS: 12
@@ -27,11 +27,11 @@ bot:
     repository: paritytech/faucet-bot
     tag: latest
     pullPolicy: Always
-
+  existingConfigMap: ''
+  existingSecret: ''
   secret:
     # your bot access token here is how to find it https://t2bot.io/docs/access_tokens/
     SMF_BOT_MATRIX_ACCESS_TOKEN: "ThisIsNotARealAccessToken"
-
   config:
     SMF_BOT_MATRIX_SERVER: "https://matrix.org"
     SMF_BOT_MATRIX_BOT_USER_ID: "@test_bot_faucet:matrix.org"
