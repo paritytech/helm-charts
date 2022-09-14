@@ -27,8 +27,8 @@ bot:
     repository: paritytech/faucet-bot
     tag: latest
     pullPolicy: Always
-  existingConfigMap: ''
-  existingSecret: ''
+  existingConfigMap: ""
+  existingSecret: ""
   secret:
     # your bot access token here is how to find it https://t2bot.io/docs/access_tokens/
     SMF_BOT_MATRIX_ACCESS_TOKEN: "ThisIsNotARealAccessToken"
