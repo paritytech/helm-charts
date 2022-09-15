@@ -470,6 +470,9 @@ spec:
                 {{- range .Values.node.logLevels }}
                 --log={{ . | quote }} \
                 {{- end }}
+                {{- range .Values.node.telemetryUrls }}
+                --telemetry-url={{ . | squote }} \
+                {{- end }}
                 {{- join " \\\n" .Values.node.flags | nindent 16 }}{{ if .Values.node.collator.isParachain }} \
                 -- \
                 --base-path=/relaychain-data \
