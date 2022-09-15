@@ -359,6 +359,54 @@ spec:
           volumeMounts:
             - mountPath: /keystore
               name: chain-keystore
+        - name: dump-session-keys
+          image: docker.io/python:3.10.7-slim
+          command: [ "python" ]
+          args:
+            - -c
+            - |
+              import os
+              import logging
+
+              LOGGING_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+
+              logger = logging.getLogger('session_keys_dumper')
+              logger.setLevel(logging.INFO)
+
+              keystore_path = "/keystore"
+
+              def parse_session_key(dir):
+                # variants of key prefixes in the right order
+                key_formats = (
+                  ['6772616e', '62616265', '696d6f6e', '70617261', '61756469'],
+                  ['6772616e', '62616265', '696d6f6e', '70617261', '6173676e', '61756469'])
+                possible_prefixes = list(set([j for i in key_formats for j in i]))
+
+                if os.path.isdir(dir):
+                  os.chdir(dir)
+                  files = os.listdir('.')
+                  files = [i for i in files if len(i) == 72 and i[0:8] in possible_prefixes]
+                  if not files:
+                    return None
+                  # find creation time of the newest key
+                  time_of_last_key = sorted(list(set([int(os.path.getmtime(i)) for i in files])))[-1]
+                  # parse the newest public keys and prefix them with the names of files.
+                  # make sure to only pick up the keys created within 10 seconds interval
+                  keys = {i[0:8]: i[8:] for i in files if int(os.path.getmtime(i)) in [time_of_last_key - 5, time_of_last_key, time_of_last_key + 5]}
+                  logger.INFO('keys were found: ' + str(keys) + ' in the keystore path: ' + dir)
+                  for key_format in key_formats:
+                    if set(keys.keys()) == set(key_format):
+                      # build the session key
+                      session_key = '0x' + ''.join([keys[i] for i in key_format])
+                      return(session_key)
+                  logger.error('Error parsing the session key')
+                return None
+
+              session_key = parse_session_key(keystore_path)
+              print(f"Session key: {session_key}")
+          volumeMounts:
+            - mountPath: /keystore
+              name: chain-keystore
         {{- end }}
         {{- if or $.Values.node.perNodeServices.relayP2pService.enabled $.Values.node.perNodeServices.paraP2pService.enabled }}
         - name: retrieve-node-port
