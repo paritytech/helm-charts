@@ -288,6 +288,28 @@ spec:
           securityContext:
             runAsUser: 0
         {{- end }}
+        {{- if .Values.node.persistGeneratedNodeKey }}
+        - name: persist-generated-node-key
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          command: [ "/bin/sh" ]
+          args:
+            - -c
+            - |
+              set -eu {{ if .Values.initContainer.debug }}-x{{ end }}
+              NODE_KEY_PATH="/keystore/node-key"
+              if [ -f "${NODE_KEY_PATH}" ]; then
+                echo "Node key already exists, skipping node key generation"
+              else
+                {{ $.Values.node.command }} key generate-node-key --file ${NODE_KEY_PATH} \
+                && echo "Generate node key into Keystore" \
+                || echo "Failed to insert key into Keystore."
+              fi
+              NODE_PEER_ID="$(cat ${NODE_KEY_PATH} | {{ .Values.node.command }} key inspect-node-key)"
+              echo "Node key present in ${NODE_KEY_PATH} with peer-id: ${NODE_PEER_ID}"
+          volumeMounts:
+            - mountPath: /keystore
+              name: chain-keystore
+        {{- end }}
         {{- if .Values.node.keys }}
         - name: inject-keys
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -455,7 +477,7 @@ spec:
                 --listen-addr=/ip4/0.0.0.0/tcp/30334 \
                 {{- end }}
                 {{- if .Values.node.persistGeneratedNodeKey }}
-                --node-key-file /chain-data/node-key \
+                --node-key-file /keystore/node-key \
                 {{- else if .Values.node.customNodeKey }}
                 --node-key $(cat /tmp/custom-node-key) \
                 {{- else if .Values.node.vault.nodeKey }}
