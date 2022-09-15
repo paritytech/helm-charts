@@ -394,7 +394,7 @@ spec:
           args:
             - -c
             - |
-              set -eu
+              set -eux
               POD_INDEX="${HOSTNAME##*-}"
               {{- if or $.Values.node.perNodeServices.relayP2pService.enabled $.Values.node.perNodeServices.paraP2pService.enabled }}
               {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
@@ -456,8 +456,7 @@ spec:
                 {{- if .Values.node.tracing.enabled }}
                 --jaeger-agent=127.0.0.1:{{ .Values.jaegerAgent.ports.compactPort }} \
                 {{- end }}
-                {{- join " " .Values.node.flags | nindent 16 }} \
-                {{- if .Values.node.collator.isParachain }}
+                {{- join " \\\n" .Values.node.flags | nindent 16 }}{{ if .Values.node.collator.isParachain }} \
                 -- \
                 --base-path=/relaychain-data \
                 --keystore-path=/relaychain-keystore \
@@ -473,7 +472,6 @@ spec:
                 --prometheus-external \
                 --prometheus-port {{ .Values.node.collator.relayChainPrometheus.port }} \
                 {{- end }}
-                {{- end }}
                 {{- if .Values.node.collator.relayChainCustomChainspecUrl }}
                 --chain={{ .Values.node.collator.relayChainCustomChainspecPath }} \
                 {{- end }}
@@ -484,8 +482,7 @@ spec:
                 --listen-addr=/ip4/0.0.0.0/tcp/${RELAY_CHAIN_P2P_PORT} \
                 {{- end }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30333 \
-
-                {{- join " " .Values.node.collator.relayChainFlags | nindent 16 }}
+                {{- join " \\\n" .Values.node.collator.relayChainFlags | nindent 16 }}{{ end }}
           env:
             - name: CHAIN
               value: {{ .Values.node.chain }}
