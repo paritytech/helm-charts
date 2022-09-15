@@ -416,12 +416,12 @@ spec:
                 {{- if or (eq .Values.node.role "authority") (eq .Values.node.role "validator") }}
                 --validator \
                 {{- end }}
-                {{- if .Values.node.database }}
-                --database={{ .Values.node.database }} \
+                {{- if .Values.node.chainData.database }}
+                --database={{ .Values.node.chainData.database }} \
                 {{- end }}
-                {{- if ge ( int .Values.node.pruning ) 1 }}
-                --pruning={{ .Values.node.pruning }} \
-                {{- else if and ( not ( kindIs "invalid" .Values.node.pruning ) ) ( eq 0 ( int .Values.node.pruning ) ) }}
+                {{- if ge ( int .Values.node.chainData.pruning ) 1 }}
+                --pruning={{ .Values.node.chainData.pruning }} \
+                {{- else if and ( not ( kindIs "invalid" .Values.node.chainData.pruning ) ) ( eq 0 ( int .Values.node.chainData.pruning ) ) }}
                 --pruning=archive \
                 {{- end }}
                 {{- if eq .Values.node.role "collator" }}

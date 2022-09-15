@@ -108,9 +108,6 @@ node:
   replicas: 1
   role: full
 
-  ## Database backend engine to use
-  ##
-  database: rocksdb
 
   ## Node may require custom name for chainspec file.
   ## ref:  moonbeam https://github.com/PureStake/moonbeam/issues/1104#issuecomment-996787548
@@ -121,6 +118,12 @@ node:
   forceDownloadChainspec: false
 
   chainData:
+    ## Database backend engine to use
+    ##
+    database: rocksdb
+    ## Set the amount of blocks to retain
+    ##
+    # pruning: 1000
     ## Configuration to download chain snapshot from remote URL
     ##
     # snapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
@@ -272,10 +275,6 @@ node:
   ##
   persistGeneratedNodeKey: false
   # customNodeKey: ""
-
-  ## Set the amount of blocks to retain
-  ##
-  # pruning: 1000
 
   ## Expose metrics via Prometheus format in /metrics endpoint
   ## Pass the following args:
