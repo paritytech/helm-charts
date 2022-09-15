@@ -434,6 +434,17 @@ spec:
                 --prometheus-external \
                 --prometheus-port {{ .Values.node.prometheus.port }} \
                 {{- end }}
+                {{- /*
+                Those unsafe flags are required to expose the RPC interfaces.
+                This a not security risk if those are not exposed publicly.
+                */}}
+                --unsafe-rpc-external \
+                --unsafe-ws-external \
+                {{- /*
+                CORS must be set to 'all' to allow RPC requests including Kubernetes heathchecks.
+                */}}
+                --rpc-cors=all \
+                --rpc-methods={{ .Values.node.allowedRpcMethods }}
                 {{- if .Values.node.collator.isParachain }}
                 {{- if (or $.Values.node.perNodeServices.paraP2pService.enabled) }}
                 {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
