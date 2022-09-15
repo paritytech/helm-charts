@@ -155,27 +155,23 @@ node:
   ## ref: https://wiki.polkadot.network/docs/learn-collator
   ## If Collator is enabled, collator image must be used
   ##
-  collator:
-    isParachain: false
-
+  isParachain: false
+  collatorRelayChain:
     ## Name of the Relay Chain to connect
     ##
-    relayChain: polkadot
+    chain: polkadot
 
-    ## Database backend engine to use
+    ## Path to the file containing the chainspec of the collator relay-chain
     ##
-    relayChainDatabase: rocksdb
-
-    ## Set the amount of blocks to retain
-    ##
-    # relayChainPruning: 1000
-
-    ## File containing chainspec of relaychain for
-    ##
-    relayChainCustomChainspecPath: "/relaychain-data/relay_chain_chainspec.json"
-    # relayChainCustomChainspecUrl: ""
-
-    relayChainData:
+    customChainspecPath: "/relaychain-data/relay_chain_chainspec.json"
+    customChainspecUrl: ""
+    chainData:
+      ## Database backend engine to use for the collator relay-chain database
+      ##
+      database: rocksdb
+      ## Set the amount of blocks to retain for the collator relay-chain databse
+      ##
+      # pruning: 1000
       ## Configuration to download chain snapshot from remote URL
       ##
       # snapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
@@ -188,8 +184,7 @@ node:
       ##
       storageClass: "default"
       volumeSize: 100Gi
-
-    relayChainKeystore:
+    chainKeystore:
       ## Mount relay-chain keystore in memory using an emptyDir volume
       ##
       mountInMemory:
@@ -201,21 +196,17 @@ node:
       ##
       storageClass: "default"
       volumeSize: 10Mi
-      accessModes: ["ReadWriteOnce"]
+      accessModes: [ "ReadWriteOnce" ]
 
     ## Expose relay chain metrics via Prometheus format in /metrics endpoint
     ## Pass the following args:
     ##   - "--prometheus-external" \
     ##   - "--prometheus-port {{ port }}"
     ##
-    relayChainPrometheus:
+    prometheus:
       enabled: false
       port: 9625
-
-    ## Additional args to use for relay chain node
-    ##
-    # relayChainFlags: []
-
+    flags: []
   ## Additional args to use
   ##
   flags:
@@ -388,6 +379,7 @@ node:
   allowedRpcMethods: "safe"
   logLevels: []
   telemetryUrls: []
+
 ## Configuration of Substrate API
 ## ref: https://github.com/paritytech/substrate-api-sidecar
 ##
