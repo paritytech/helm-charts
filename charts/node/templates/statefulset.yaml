@@ -475,6 +475,7 @@ spec:
                 {{- end }}
                 {{- join " \\\n" .Values.node.flags | nindent 16 }}{{ if .Values.node.isParachain }} \
                 -- \
+                --name=${POD_NAME} \
                 --base-path=/relaychain-data \
                 --keystore-path=/relaychain-keystore \
                 {{- if .Values.node.collatorRelayChain.chainData.database }}
@@ -499,6 +500,9 @@ spec:
                 --listen-addr=/ip4/0.0.0.0/tcp/${RELAY_CHAIN_P2P_PORT} \
                 {{- end }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30333 \
+                {{- range .Values.node.telemetryUrls }}
+                --telemetry-url={{ . | squote }} \
+                {{- end }}
                 {{- join " \\\n" .Values.node.collatorRelayChain.flags | nindent 16 }}{{ end }}
           env:
             - name: CHAIN
