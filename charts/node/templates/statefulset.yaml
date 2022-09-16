@@ -471,7 +471,7 @@ spec:
                 --rpc-methods=unsafe
                 {{- end }}
                 {{- if .Values.node.isParachain }}
-                {{- if (or $.Values.node.perNodeServices.paraP2pService.enabled) }}
+                {{- if .Values.node.perNodeServices.paraP2pService.enabled }}
                 {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
                 --public-addr=/ip4/${EXTERNAL_IP}/tcp/${PARA_CHAIN_P2P_PORT} \
                 {{- end }}
@@ -525,13 +525,6 @@ spec:
                 {{- if .Values.node.collatorRelayChain.customChainspecUrl}}
                 --chain={{ .Values.node.collatorRelayChain.customChainspecPath}} \
                 {{- end }}
-                {{- if (or $.Values.node.perNodeServices.relayP2pService.enabled ) }}
-                {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
-                --public-addr=/ip4/${EXTERNAL_IP}/tcp/${RELAY_CHAIN_P2P_PORT} \
-                {{- end }}
-                --listen-addr=/ip4/0.0.0.0/tcp/${RELAY_CHAIN_P2P_PORT} \
-                {{- end }}
-                --listen-addr=/ip4/0.0.0.0/tcp/30333 \
                 {{- range .Values.node.telemetryUrls }}
                 --telemetry-url={{ . | squote }} \
                 {{- end }}
@@ -543,6 +536,14 @@ spec:
                 {{- end }}
                 {{- end }}
                 {{- end }}
+                {{- if .Values.node.perNodeServices.relayP2pService.enabled }}
+                {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
+                --public-addr=/ip4/${EXTERNAL_IP}/tcp/${RELAY_CHAIN_P2P_PORT} \
+                {{- end }}
+                --listen-addr=/ip4/0.0.0.0/tcp/${RELAY_CHAIN_P2P_PORT} \
+                {{- end }}
+                --listen-addr=/ip4/0.0.0.0/tcp/30333 \
+
           env:
             - name: CHAIN
               value: {{ .Values.node.chain }}
