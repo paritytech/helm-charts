@@ -409,6 +409,9 @@ spec:
             - mountPath: /chain-data
               name: chain-data
         {{- end }}
+        {{- with .Values.extraInitContainers }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       containers:
         - name: {{ .Values.node.chain }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
