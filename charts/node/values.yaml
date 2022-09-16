@@ -196,7 +196,7 @@ node:
       ##
       storageClass: "default"
       volumeSize: 10Mi
-      accessModes: [ "ReadWriteOnce" ]
+      accessModes: ["ReadWriteOnce"]
 
     ## Expose relay chain metrics via Prometheus format in /metrics endpoint
     ## Pass the following args:
