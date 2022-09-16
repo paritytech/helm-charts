@@ -209,11 +209,7 @@ node:
     flags: []
   ## Additional args to use
   ##
-  flags:
-    - "--rpc-external"
-    - "--ws-external"
-    - "--rpc-methods=safe"
-    - "--rpc-cors=all"
+  flags: []
 
   ## Keys to use by the node
   ## ref: https://wiki.polkadot.network/docs/learn-keys
