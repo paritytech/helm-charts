@@ -3,6 +3,7 @@
 {{ $serviceLabels :=  include "node.serviceLabels" .  }}
 {{ $serviceAccountName :=  include "node.serviceAccountName" . }}
 {{ $databasePath := include "node.databasePath" . }}
+{{ $chartManagedFlagsRegex := include "node.chartManagedFlagsRegex" . }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -495,7 +496,14 @@ spec:
                 {{- range .Values.node.telemetryUrls }}
                 --telemetry-url={{ . | squote }} \
                 {{- end }}
-                {{- join " \\\n" .Values.node.flags | nindent 16 }}{{ if .Values.node.isParachain }} \
+                {{- range .Values.node.flags }}
+                {{- if regexMatch $chartManagedFlagsRegex . }}
+                {{- fail (printf "%s should not be set through `node.flags` but with the appropriate chart value" .) }}
+                {{- else }}
+                {{ . }} \
+                {{- end }}
+                {{- end }}
+                {{- if .Values.node.isParachain }}
                 -- \
                 --name=${POD_NAME} \
                 --base-path=/relaychain-data \
@@ -525,7 +533,14 @@ spec:
                 {{- range .Values.node.telemetryUrls }}
                 --telemetry-url={{ . | squote }} \
                 {{- end }}
-                {{- join " \\\n" .Values.node.collatorRelayChain.flags | nindent 16 }}{{ end }}
+                {{- range .Values.node.collatorRelayChain.flags }}
+                {{- if regexMatch $chartManagedFlagsRegex . }}
+                {{- fail (printf "%s should not be set through `node.collatorRelayChain.flags` but with the appropriate chart value" .) }}
+                {{- else }}
+                {{ . }} \
+                {{- end }}
+                {{- end }}
+                {{- end }}
           env:
             - name: CHAIN
               value: {{ .Values.node.chain }}
