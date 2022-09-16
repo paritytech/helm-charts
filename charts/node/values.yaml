@@ -376,7 +376,7 @@ node:
   ## Then on startup, the node will load all runtime files from this directory including previously downloaded runtimes
   ##
   wasmRuntimeUrl: ""
-  allowedRpcMethods: "safe"
+  allowUnsafeRpcMethods: false
   logLevels: []
   telemetryUrls: []
 

@@ -467,7 +467,9 @@ spec:
                 CORS must be set to 'all' to allow RPC requests including Kubernetes heathchecks.
                 */}}
                 --rpc-cors=all \
-                --rpc-methods={{ .Values.node.allowedRpcMethods }}
+                {{- if .Values.node.allowUnsafeRpcMethods }}
+                --rpc-methods=unsafe
+                {{- end }}
                 {{- if .Values.node.isParachain }}
                 {{- if (or $.Values.node.perNodeServices.paraP2pService.enabled) }}
                 {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
