@@ -305,7 +305,11 @@ spec:
               --keystore-path /keystore \
               --key-type $(cat /var/run/secrets/{{ .type }}/type) \
               --scheme $(cat /var/run/secrets/{{ .type }}/scheme) \
+              {{- if .extraDerivation }}
+              --suri "$(cat /var/run/secrets/{{ .type }}/seed){{ .extraDerivation }}" \
+              {{- else }}
               --suri /var/run/secrets/{{ .type }}/seed \
+              {{- end }}
               && echo "Inserted key {{ .type }} into Keystore" \
               || echo "Failed to insert key {{ .type}} into Keystore."
               {{- end }}
