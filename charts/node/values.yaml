@@ -230,7 +230,8 @@ node:
   #   seed: "//Alice//gran"
   # - type: "babe"
   #   scheme: "sr25519"
-  #   seed: "//Alice//babe"
+  #   seed: "//Alice"
+  #   extraDerivation: //babe
 
   ## Component to inject secrets via annotation of Hashicorp Vault
   ## ref: https://www.vaultproject.io/docs/platform/k8s/injector/annotations
