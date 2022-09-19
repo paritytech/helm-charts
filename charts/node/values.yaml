@@ -441,6 +441,10 @@ affinity: {}
 ##
 extraContainers: []
 
+## Additional init containers to run in the pod
+##
+extraInitContainers: []
+
 ## Autoscaling configuration
 autoscaling:
   enabled: false
