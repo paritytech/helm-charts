@@ -373,11 +373,19 @@ spec:
             - |
               set -eu {{ if .Values.initContainer.debug }}-x{{ end }}
               POD_INDEX="${HOSTNAME##*-}"
-              RELAY_CHAIN_P2P_PORT="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-relay-chain-p2p -o jsonpath='{.spec.ports[*].nodePort}')"
+              RELAY_CHAIN_P2P_PORT="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-relay-chain-p2p -o jsonpath='{.spec.ports[?(@.name=="p2p")].nodePort}')"
+              {{- if .Values.node.perNodeServices.relayP2pService.ws.enabled }}
+              RELAY_CHAIN_P2P_PORT_WS="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-relay-chain-p2p -o jsonpath='{.spec.ports[?(@.name=="ws")].nodePort}')"
+              echo "${RELAY_CHAIN_P2P_PORT_WS}" > /chain-data/relay_chain_p2p_port_ws
+              {{- end }}
               echo "${RELAY_CHAIN_P2P_PORT}" > /chain-data/relay_chain_p2p_port
-              echo "Retrieved Kubernetes service node port from {{ $fullname }}-${POD_INDEX}-relay-chain-p2p, saved ${RELAY_CHAIN_P2P_PORT} to /chain-data/relay_chain_p2p_port"
+              echo "Retrieved Kubernetes service node port from {{ $fullname }}-${POD_INDEX}-relay-chain-p2p"
+              echo "Saved ${RELAY_CHAIN_P2P_PORT} to /chain-data/relay_chain_p2p_port"
+              {{- if .Values.node.perNodeServices.relayP2pService.ws.enabled }}
+              echo "Saved ${RELAY_CHAIN_P2P_PORT_WS} to /chain-data/relay_chain_p2p_port_ws"
+              {{- end }}
               {{- if .Values.node.collator.isParachain }}
-              PARA_CHAIN_P2P_PORT="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-para-chain-p2p -o jsonpath='{.spec.ports[*].nodePort}')"
+              PARA_CHAIN_P2P_PORT="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-para-chain-p2p -o jsonpath='{.spec.ports[0].nodePort}')"
               echo "${PARA_CHAIN_P2P_PORT}" > /chain-data/para_chain_p2p_port
               echo "Retrieved Kubernetes service node port from {{ $fullname }}-${POD_INDEX}-para-chain-p2p, saved ${PARA_CHAIN_P2P_PORT} to /chain-data/para_chain_p2p_port"
               {{- end }}
@@ -410,6 +418,10 @@ spec:
               {{- end }}
               RELAY_CHAIN_P2P_PORT="$(cat /chain-data/relay_chain_p2p_port)"
               echo "RELAY_CHAIN_P2P_PORT=${RELAY_CHAIN_P2P_PORT}"
+              {{- if .Values.node.perNodeServices.relayP2pService.ws.enabled }}
+              RELAY_CHAIN_P2P_PORT_WS="$(cat /chain-data/relay_chain_p2p_port_ws)"
+              echo "RELAY_CHAIN_P2P_PORT_WS=${RELAY_CHAIN_P2P_PORT_WS}"
+              {{- end }}
               {{- if .Values.node.collator.isParachain }}
               PARA_CHAIN_P2P_PORT="$(cat /chain-data/para_chain_p2p_port)"
               echo "PARA_CHAIN_P2P_PORT=${PARA_CHAIN_P2P_PORT}"
@@ -484,13 +496,22 @@ spec:
                 {{- if .Values.node.collator.relayChainCustomChainspecUrl }}
                 --chain={{ .Values.node.collator.relayChainCustomChainspecPath }} \
                 {{- end }}
-                {{- if (or $.Values.node.perNodeServices.relayP2pService.enabled ) }}
+                {{- if .Values.node.perNodeServices.relayP2pService.enabled }}
                 {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
                 --public-addr=/ip4/${EXTERNAL_IP}/tcp/${RELAY_CHAIN_P2P_PORT} \
                 {{- end }}
+                {{- if .Values.node.perNodeServices.relayP2pService.ws.enabled }}
+                --public-addr=/ip4/${EXTERNAL_IP}/tcp/${RELAY_CHAIN_P2P_PORT_WS}/ws \
+                {{- end }}
                 --listen-addr=/ip4/0.0.0.0/tcp/${RELAY_CHAIN_P2P_PORT} \
+                {{- if and (not .Values.node.collator.isParachain) .Values.node.perNodeServices.relayP2pService.ws.enabled }}
+                --listen-addr=/ip4/0.0.0.0/tcp/${RELAY_CHAIN_P2P_PORT_WS}/ws \
+                {{- end }}
                 {{- end }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30333 \
+                {{- if and (not .Values.node.collator.isParachain) .Values.node.perNodeServices.relayP2pService.ws.enabled }}
+                --listen-addr=/ip4/0.0.0.0/tcp/30334/ws \
+                {{- end }}
 
                 {{- join " " .Values.node.collator.relayChainFlags | nindent 16 }}
           env:
