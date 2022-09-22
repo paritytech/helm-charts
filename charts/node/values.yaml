@@ -22,6 +22,10 @@ image:
   repository: parity/polkadot
   tag: latest
   pullPolicy: Always
+  ## Add `-x` shell option to container
+  ## Note: passwords and keys used in container can appear in logs
+  ##
+  debug: false
 
 ## Image of Init containers to download chain
 ##
