@@ -504,12 +504,12 @@ spec:
                 --public-addr=/ip4/${EXTERNAL_IP}/tcp/${RELAY_CHAIN_P2P_PORT_WS}/ws \
                 {{- end }}
                 --listen-addr=/ip4/0.0.0.0/tcp/${RELAY_CHAIN_P2P_PORT} \
-                {{- if .Values.node.perNodeServices.relayP2pService.ws.enabled }}
+                {{- if and not .Values.node.collator.isParachain .Values.node.perNodeServices.relayP2pService.ws.enabled }}
                 --listen-addr=/ip4/0.0.0.0/tcp/${RELAY_CHAIN_P2P_PORT_WS}/ws \
                 {{- end }}
                 {{- end }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30333 \
-                {{- if .Values.node.perNodeServices.relayP2pService.ws.enabled }}
+                {{- if and not .Values.node.collator.isParachain .Values.node.perNodeServices.relayP2pService.ws.enabled }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30334/ws \
                 {{- end }}
 
