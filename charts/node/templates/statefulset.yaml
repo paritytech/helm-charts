@@ -227,7 +227,7 @@ spec:
               fi
           env:
             - name: RELAY_CHAIN_PATH
-              value: {{ default .Values.node.collatorRelayChain.chain.Values.node.collatorRelayChain.chainData.chainPath }}
+              value: {{ default .Values.node.collatorRelayChain.chain .Values.node.collatorRelayChain.chainData.chainPath }}
           volumeMounts:
             - mountPath: /relaychain-data
               name: relaychain-data
@@ -547,7 +547,6 @@ spec:
                 {{- range .Values.node.telemetryUrls }}
                 --telemetry-url={{ . | squote }} \
                 {{- end }}
-                {{- if .Values.node.perNodeServices.relayP2pService.enabled }}
                 {{- range .Values.node.collatorRelayChain.flags }}
                 {{- if regexMatch $chartManagedFlagsRegex . }}
                 {{- fail (printf "%s should not be set through `node.collatorRelayChain.flags` but with the appropriate chart value" .) }}
@@ -564,12 +563,12 @@ spec:
                 --public-addr=/ip4/${EXTERNAL_IP}/tcp/${RELAY_CHAIN_P2P_PORT_WS}/ws \
                 {{- end }}
                 --listen-addr=/ip4/0.0.0.0/tcp/${RELAY_CHAIN_P2P_PORT} \
-                {{- if and (not .Values.node.collator.isParachain) .Values.node.perNodeServices.relayP2pService.ws.enabled }}
+                {{- if and (not .Values.node.isParachain) .Values.node.perNodeServices.relayP2pService.ws.enabled }}
                 --listen-addr=/ip4/0.0.0.0/tcp/${RELAY_CHAIN_P2P_PORT_WS}/ws \
                 {{- end }}
                 {{- end }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30333 \
-                {{- if and (not .Values.node.collator.isParachain) .Values.node.perNodeServices.relayP2pService.ws.enabled }}
+                {{- if and (not .Values.node.isParachain) .Values.node.perNodeServices.relayP2pService.ws.enabled }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30334/ws \
                 {{- end }}
 
