@@ -487,7 +487,7 @@ spec:
                 */}}
                 --rpc-cors=all \
                 {{- if .Values.node.allowUnsafeRpcMethods }}
-                --rpc-methods=unsafe
+                --rpc-methods=unsafe \
                 {{- end }}
                 {{- if .Values.node.isParachain }}
                 {{- if .Values.node.perNodeServices.paraP2pService.enabled }}
