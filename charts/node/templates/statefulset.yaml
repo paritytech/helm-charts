@@ -712,7 +712,7 @@ spec:
       {{- if .Values.googleCloudSdk.serviceAccountKey }}
         - name: service-account-key
           secret:
-            secretName: chain-data-gcs-bucket-service-account-key
+            secretName: {{ $fullname }}-gcs-bucket-service-account-key
       {{- end }}
       {{- if .Values.node.persistGeneratedNodeKey }}
       {{- else if .Values.node.customNodeKey }}
