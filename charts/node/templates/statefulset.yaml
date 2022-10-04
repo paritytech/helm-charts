@@ -477,8 +477,8 @@ spec:
                 --prometheus-port {{ .Values.node.prometheus.port }} \
                 {{- end }}
                 {{- /*
-                Those unsafe flags are required to expose the RPC interfaces.
-                This a not security risk if those are not exposed publicly.
+                The unsafe flags are required to expose RPC interfaces.
+                It is not a security risk unless they are exposed publicly.
                 */}}
                 --unsafe-rpc-external \
                 --unsafe-ws-external \
