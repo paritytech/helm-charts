@@ -385,6 +385,10 @@ node:
   logLevels: []
   telemetryUrls: []
 
+  # A list of environment variables to set for the main container:
+  # - name: foo
+  #   value: bar
+  extraEnvVars: []
 ## Configuration of Substrate API
 ## ref: https://github.com/paritytech/substrate-api-sidecar
 ##

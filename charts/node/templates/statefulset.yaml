@@ -582,6 +582,9 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.name
+            {{- with .Values.node.extraEnvVars }}
+            {{- toYaml . | nindent 12 }}
+            {{- end}}
           ports:
             - containerPort: 9933
               name: http-rpc
