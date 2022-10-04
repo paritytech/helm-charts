@@ -305,7 +305,7 @@ spec:
                 && echo "Generate node key into Keystore" \
                 || echo "Failed to insert key into Keystore."
               fi
-              NODE_PEER_ID="$(cat ${NODE_KEY_PATH} | {{ .Values.node.command }} key inspect-node-key)"
+              NODE_PEER_ID="$({{ .Values.node.command }} key inspect-node-key --file ${NODE_KEY_PATH})"
               echo "Node key present in ${NODE_KEY_PATH} with peer-id: ${NODE_PEER_ID}"
           volumeMounts:
             - mountPath: /keystore
