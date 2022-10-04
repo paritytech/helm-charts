@@ -69,9 +69,9 @@ node:
 ```
 
 ## Upgrade
-### From v4.x.x to v4.0.0 (⚠️ breaking changes)
+### From v3.x.x to v4.0.0 (⚠️ breaking changes)
 
-The following charts parameters have been renamed or rearranged:
+The following chart parameters have been renamed or rearranged:
 
 - `node.chainData.pruning` -> `node.chainData.pruning`
 - `node.database` -> `node.chainData.database`
@@ -87,7 +87,7 @@ The following charts parameters have been renamed or rearranged:
 - `node.collator.relayChainPrometheus.*` -> `node.collatorRelayChain.prometheus.*`
 
 The following flags are now invalid if they were previously set in `node.flags` or `node.collator.relayChainFlags`.
-An error will be thrown if any of those flags is set directly.
+An error will be thrown if any of those flags are set directly.
 
 - `--name`
 - `--base-path`
@@ -108,7 +108,7 @@ An error will be thrown if any of those flags is set directly.
 - `--ws-external`
 - `--unsafe-ws-external`
 - `--rpc-cors`
-- `-rpc-port`
+- `--rpc-port`
 - `--ws-port`
 
 ### From v2.x.x to v3.0.0 (⚠️ breaking changes)
