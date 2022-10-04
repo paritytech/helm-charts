@@ -73,7 +73,7 @@ node:
 
 The following chart parameters have been renamed or rearranged:
 
-- `node.chainData.pruning` -> `node.chainData.pruning`
+- `node.pruning` -> `node.chainData.pruning`
 - `node.database` -> `node.chainData.database`
 - `node.collator.isParachain` -> `node.isParachain`
 - `node.collator.relayChain` -> `node.collatorRelayChain.chain`
