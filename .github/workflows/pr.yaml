@@ -61,7 +61,7 @@ jobs:
           if cmp --silent -- "charts/${chart}/README.md" "/tmp/charts/${chart}/README.md"; then
             echo "${chart}/README.md was updated per the values file prior to commit."
           else
-            echo "${chart}"/README.md needs updating according the values.yaml file."
+            echo "${chart}/README.md needs updating according the values.yaml file."
             exit 1
           fi
         done
