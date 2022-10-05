@@ -55,10 +55,10 @@ jobs:
         charts_dirs_changed="$(echo "$files_changed" | xargs dirname | grep -o "charts/[^/]*" | sort | uniq || true)"
         for chart in ${charts_dirs_changed}; do
           echo "comparing README.md to values for ${chart}"
-          mkdir -p /tmp/charts/${chart}
-          cp charts/${chart}/README.md /tmp/charts/${chart}/README.md
-          readme-generator-for-helm/bin/index.js --values "charts/${chart}/values.yaml" --readme "/tmp/charts/${chart}/README.md"
-          if cmp --silent -- "charts/${chart}/README.md" "/tmp/charts/${chart}/README.md"; then
+          mkdir -p /tmp/${chart}
+          cp ${chart}/README.md /tmp/${chart}/README.md
+          readme-generator-for-helm/bin/index.js --values "${chart}/values.yaml" --readme "/tmp/${chart}/README.md"
+          if cmp --silent -- "${chart}/README.md" "/tmp/${chart}/README.md"; then
             echo "${chart}/README.md was updated per the values file prior to commit."
           else
             echo "${chart}/README.md needs updating according the values.yaml file."
