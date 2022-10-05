@@ -38,8 +38,8 @@ initContainer:
 ##
 kubectl:
   image:
-    repository: bitnami/kubectl
-    tag: latest
+    repository: paritytech/kubetools
+    tag: kubectl
 
 ## Used to sync chain from/to GCS bucket
 ##
