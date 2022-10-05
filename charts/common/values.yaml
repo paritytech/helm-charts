@@ -265,7 +265,7 @@ startupProbe: {}
 ## Annotations to add to the pod of statefulset
 ##
 ## @section Statefulset and persistence parameters
-## @param stateful.annotations [object] 
+## @param stateful.annotations [object] annotions to be used for the statefulSet
 stateful:
   annotations: {}
 
