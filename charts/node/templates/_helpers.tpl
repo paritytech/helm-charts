@@ -41,15 +41,15 @@ app.kubernetes.io/version: {{ .Values.image.tag | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 chain: {{ .Values.node.chain }}
 role: {{ .Values.node.role }}
-{{- if or .Values.node.pruning ( not ( kindIs "invalid" .Values.node.pruning ) ) }}
-{{- if ge ( int .Values.node.pruning ) 1 }}
-pruning: {{ .Values.node.pruning | quote }}
-{{- else if and ( not ( kindIs "invalid" .Values.node.pruning ) ) ( eq 0 ( int .Values.node.pruning ) ) }}
+{{- if or .Values.node.chainData.pruning ( not ( kindIs "invalid" .Values.node.chainData.pruning ) ) }}
+{{- if ge ( int .Values.node.chainData.pruning ) 1 }}
+pruning: {{ .Values.node.chainData.pruning | quote }}
+{{- else if and ( not ( kindIs "invalid" .Values.node.chainData.pruning ) ) ( eq 0 ( int .Values.node.chainData.pruning ) ) }}
 pruning: archive
 {{- end }}
 {{- end }}
-{{- if .Values.node.database }}
-database: {{ .Values.node.database }}
+{{- if .Values.node.chainData.database }}
+database: {{ .Values.node.chainData.database }}
 {{- end }}
 {{- end }}
 
@@ -88,9 +88,16 @@ Create the name of the service account to use
 Create the database path depending on the database backend in use (rocksdb or paritydb)
 */}}
 {{- define "node.databasePath" -}}
-{{- if eq .Values.node.database "paritydb" }}
+{{- if eq .Values.node.chainData.database "paritydb" }}
 {{- "paritydb" }}
 {{- else }}
 {{- "db" }}
 {{- end }}
+{{- end }}
+
+{{/*
+Define a regex matcher to check if the passed node flags are managed by the chart already
+*/}}
+{{- define "node.chartManagedFlagsRegex" -}}
+{{- "(\\W|^)(--name|--base-path|--chain|--validator|--collator|--light|--database|--pruning|--prometheus-external|--prometheus-port|--node-key|--wasm-runtime-overrides|--jaeger-agent|--rpc-external|--unsafe-rpc-external|--ws-external|--unsafe-ws-external|--rpc-methods|--rpc-cors|--rpc-port|--ws-port)(\\W|$)" }}
 {{- end }}

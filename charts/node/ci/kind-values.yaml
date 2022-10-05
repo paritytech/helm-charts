@@ -5,10 +5,6 @@ node:
   flags:
   - "--force-authoring"
   - "--alice"
-  - "--rpc-external"
-  - "--ws-external"
-  - "--rpc-methods=safe"
-  - "--rpc-cors=all"
   chainData:
     storageClass: standard
   chainKeystore:

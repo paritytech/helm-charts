@@ -36,17 +36,21 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: {{ $key }}
-                  name: {{ $.Release.Name }}-bot-secret
+                  name: {{ $.Values.bot.existingSecret | default (printf "%s-bot-secret" $.Release.Namespace) }}
           {{- end }}
           {{- range $key, $val := .Values.bot.config }}
             - name: {{ $key }}
               valueFrom:
                 configMapKeyRef:
                   key: {{ $key }}
-                  name: {{ $.Release.Name }}-bot-config
+                  name: {{ $.Values.bot.existingConfigMap | default (printf "%s-bot-config" $.Release.Namespace) }}
           {{- end }}
             - name: SMF_BOT_BACKEND_URL
               value: "http://{{ .Release.Name }}-server:{{ .Values.server.config.SMF_BACKEND_PORT }}"
+            - name: SMF_BOT_DEPLOYED_REF
+              value: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag }}"
+            - name: SMF_BOT_DEPLOYED_TIME
+              value: {{ now | date "2006-01-02T15:04:05" | quote }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

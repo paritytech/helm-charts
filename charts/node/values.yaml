@@ -22,6 +22,10 @@ image:
   repository: parity/polkadot
   tag: latest
   pullPolicy: Always
+  ## Add `-x` shell option to container
+  ## Note: passwords and keys used in container can appear in logs
+  ##
+  debug: false
 
 ## Image of Init containers to download chain
 ##
@@ -108,9 +112,6 @@ node:
   replicas: 1
   role: full
 
-  ## Database backend engine to use
-  ##
-  database: rocksdb
 
   ## Node may require custom name for chainspec file.
   ## ref:  moonbeam https://github.com/PureStake/moonbeam/issues/1104#issuecomment-996787548
@@ -121,6 +122,12 @@ node:
   forceDownloadChainspec: false
 
   chainData:
+    ## Database backend engine to use
+    ##
+    database: rocksdb
+    ## Set the amount of blocks to retain
+    ##
+    # pruning: 1000
     ## Configuration to download chain snapshot from remote URL
     ##
     # snapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
@@ -152,27 +159,23 @@ node:
   ## ref: https://wiki.polkadot.network/docs/learn-collator
   ## If Collator is enabled, collator image must be used
   ##
-  collator:
-    isParachain: false
-
+  isParachain: false
+  collatorRelayChain:
     ## Name of the Relay Chain to connect
     ##
-    relayChain: polkadot
+    chain: polkadot
 
-    ## Database backend engine to use
+    ## Path to the file containing the chainspec of the collator relay-chain
     ##
-    relayChainDatabase: rocksdb
-
-    ## Set the amount of blocks to retain
-    ##
-    # relayChainPruning: 1000
-
-    ## File containing chainspec of relaychain for
-    ##
-    relayChainCustomChainspecPath: "/relaychain-data/relay_chain_chainspec.json"
-    # relayChainCustomChainspecUrl: ""
-
-    relayChainData:
+    customChainspecPath: "/relaychain-data/relay_chain_chainspec.json"
+    customChainspecUrl: ""
+    chainData:
+      ## Database backend engine to use for the collator relay-chain database
+      ##
+      database: rocksdb
+      ## Set the amount of blocks to retain for the collator relay-chain databse
+      ##
+      # pruning: 1000
       ## Configuration to download chain snapshot from remote URL
       ##
       # snapshotUrl: "https://dot-rocksdb.polkashots.io/snapshot"
@@ -185,8 +188,7 @@ node:
       ##
       storageClass: "default"
       volumeSize: 100Gi
-
-    relayChainKeystore:
+    chainKeystore:
       ## Mount relay-chain keystore in memory using an emptyDir volume
       ##
       mountInMemory:
@@ -205,21 +207,13 @@ node:
     ##   - "--prometheus-external" \
     ##   - "--prometheus-port {{ port }}"
     ##
-    relayChainPrometheus:
+    prometheus:
       enabled: false
       port: 9625
-
-    ## Additional args to use for relay chain node
-    ##
-    # relayChainFlags: []
-
+    flags: []
   ## Additional args to use
   ##
-  flags:
-    - "--rpc-external"
-    - "--ws-external"
-    - "--rpc-methods=safe"
-    - "--rpc-cors=all"
+  flags: []
 
   ## Keys to use by the node
   ## ref: https://wiki.polkadot.network/docs/learn-keys
@@ -230,7 +224,8 @@ node:
   #   seed: "//Alice//gran"
   # - type: "babe"
   #   scheme: "sr25519"
-  #   seed: "//Alice//babe"
+  #   seed: "//Alice"
+  #   extraDerivation: //babe
 
   ## Component to inject secrets via annotation of Hashicorp Vault
   ## ref: https://www.vaultproject.io/docs/platform/k8s/injector/annotations
@@ -272,10 +267,6 @@ node:
   ##
   persistGeneratedNodeKey: false
   # customNodeKey: ""
-
-  ## Set the amount of blocks to retain
-  ##
-  # pruning: 1000
 
   ## Expose metrics via Prometheus format in /metrics endpoint
   ## Pass the following args:
@@ -331,6 +322,10 @@ node:
         enabled: false
         hostname: example.com
         ttl: 300
+      # If enabled, additionally expose WebSocket port. Useful for bootnodes
+      ws:
+        enabled: false
+        port: 30334
     ## If enabled, create service to expose parachain P2P
     ##
     paraP2pService:
@@ -386,7 +381,14 @@ node:
   ## Then on startup, the node will load all runtime files from this directory including previously downloaded runtimes
   ##
   wasmRuntimeUrl: ""
+  allowUnsafeRpcMethods: false
+  logLevels: []
+  telemetryUrls: []
 
+  # A list of environment variables to set for the main container:
+  # - name: foo
+  #   value: bar
+  extraEnvVars: []
 ## Configuration of Substrate API
 ## ref: https://github.com/paritytech/substrate-api-sidecar
 ##
@@ -439,6 +441,10 @@ affinity: {}
 ## Additional containers to run in the pod
 ##
 extraContainers: []
+
+## Additional init containers to run in the pod
+##
+extraInitContainers: []
 
 ## Autoscaling configuration
 autoscaling:
