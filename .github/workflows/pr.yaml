@@ -55,7 +55,8 @@ jobs:
         # Adding || true to avoid "Process exited with code 1" errors
         # commenting out charts_dir_changed to test workflow completion"
         # charts_dirs_changed="$(echo "$files_changed" | xargs dirname | grep -o "charts/[^/]*" | sort | uniq || true)"
-        charts_dir_changed="charts/common"
+        echo "${charts_dirs_changed}"
+        # charts_dir_changed="charts/common"
         for chart in ${charts_dirs_changed}; do
           echo "comparing README.md to values for ${chart}"
           mkdir -p /tmp/${chart}
