@@ -43,6 +43,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
+        path: charts
 
     - name: Execute readme-generator-for-helm
       run: |
@@ -56,9 +57,9 @@ jobs:
         for chart in ${charts_dirs_changed}; do
           echo "comparing README.md to values for ${chart}"
           mkdir -p /tmp/${chart}
-          cp ${chart}/README.md /tmp/${chart}/README.md
-          readme-generator-for-helm/bin/index.js --values "${chart}/values.yaml" --readme "/tmp/${chart}/README.md"
-          if cmp --silent -- "${chart}/README.md" "/tmp/${chart}/README.md"; then
+          cp charts/${chart}/README.md /tmp/${chart}/README.md
+          readme-generator-for-helm/bin/index.js --values "charts/${chart}/values.yaml" --readme "/tmp/${chart}/README.md"
+          if cmp --silent -- "charts/${chart}/README.md" "/tmp/${chart}/README.md"; then
             echo "${chart}/README.md was updated per the values file prior to commit."
           else
             echo "${chart}/README.md needs updating according the values.yaml file."
