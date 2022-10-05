@@ -29,7 +29,7 @@ spec:
     - port: {{ .Values.node.prometheus.port | int }}
       name: prometheus
     {{- end }}
-    {{- if $.Values.node.collator.relayChainPrometheus.enabled }}
+    {{- if $.Values.node.collatorRelayChain.prometheus.enabled }}
     - port: {{ $.Values.node.perNodeServices.apiService.relayChainPrometheusPort | int }}
       name: prom-relaychain
     {{- end }}
@@ -73,7 +73,7 @@ spec:
       name: websocket-rpc
     - port: {{ $.Values.node.perNodeServices.apiService.prometheusPort | int }}
       name: prometheus
-    {{- if $.Values.node.collator.relayChainPrometheus.enabled }}
+    {{- if $.Values.node.collatorRelayChain.prometheus.enabled }}
     - port: {{ $.Values.node.perNodeServices.apiService.relayChainPrometheusPort | int }}
       name: prom-relaychain
     {{- end }}
@@ -118,7 +118,7 @@ spec:
     {{- end }}
 {{- end }}
 ---
-{{- if and $.Values.node.collator.isParachain $.Values.node.perNodeServices.paraP2pService.enabled }}
+{{- if and $.Values.node.isParachain $.Values.node.perNodeServices.paraP2pService.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
