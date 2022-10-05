@@ -45,6 +45,10 @@ spec:
                   key: {{ $key }}
                   name: {{ $.Values.server.existingConfigMap | default (printf "%s-server-config" $.Release.Namespace) }}
           {{- end }}
+            - name: SMF_BACKEND_DEPLOYED_REF
+              value: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag }}"
+            - name: SMF_BACKEND_DEPLOYED_TIME
+              value: {{ now | date "2006-01-02T15:04:05" | quote }}
           readinessProbe:
             httpGet:
               path: /ready
