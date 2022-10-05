@@ -53,7 +53,9 @@ jobs:
         files_changed_data=$(curl -s --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' -X GET -G "$URL")
         files_changed="$(echo $files_changed_data | jq -r '.[] | .filename')"
         # Adding || true to avoid "Process exited with code 1" errors
-        charts_dirs_changed="$(echo "$files_changed" | xargs dirname | grep -o "charts/[^/]*" | sort | uniq || true)"
+        # commenting out charts_dir_changed to test workflow completion"
+        # charts_dirs_changed="$(echo "$files_changed" | xargs dirname | grep -o "charts/[^/]*" | sort | uniq || true)"
+        charts_dir_changed="charts/common"
         for chart in ${charts_dirs_changed}; do
           echo "comparing README.md to values for ${chart}"
           mkdir -p /tmp/${chart}
