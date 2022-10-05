@@ -88,7 +88,7 @@
 
 | Name                           | Description                                           | Value               |
 | ------------------------------ | ----------------------------------------------------- | ------------------- |
-| `stateful.annotations`         |                                                       | `{}`                |
+| `stateful.annotations`         | annotions to be used for the statefulSet              | `{}`                |
 | `persistence.enabled`          | Enable persistence on the statefulSet's PVC           | `false`             |
 | `persistence.accessModes`      | The statefulSets persistent volume claim access Modes | `["ReadWriteOnce"]` |
 | `persistence.size`             | The statefulSets persistent volume claim size         | `50Gi`              |
