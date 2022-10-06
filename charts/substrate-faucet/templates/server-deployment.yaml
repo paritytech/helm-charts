@@ -36,14 +36,14 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: {{ $key }}
-                  name: {{ $.Values.server.existingSecret | default (printf "%s-server-secret" $.Release.Namespace) }}
+                  name: {{ $.Values.server.existingSecret | default (printf "%s-server-secret" $.Release.Name) }}
           {{- end }}
           {{- range $key, $val := .Values.server.config }}
             - name: {{ $key }}
               valueFrom:
                 configMapKeyRef:
                   key: {{ $key }}
-                  name: {{ $.Values.server.existingConfigMap | default (printf "%s-server-config" $.Release.Namespace) }}
+                  name: {{ $.Values.server.existingConfigMap | default (printf "%s-server-config" $.Release.Name) }}
           {{- end }}
             - name: SMF_BACKEND_DEPLOYED_REF
               value: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag }}"

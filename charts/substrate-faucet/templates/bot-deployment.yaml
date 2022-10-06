@@ -36,14 +36,14 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: {{ $key }}
-                  name: {{ $.Values.bot.existingSecret | default (printf "%s-bot-secret" $.Release.Namespace) }}
+                  name: {{ $.Values.bot.existingSecret | default (printf "%s-bot-secret" $.Release.Name) }}
           {{- end }}
           {{- range $key, $val := .Values.bot.config }}
             - name: {{ $key }}
               valueFrom:
                 configMapKeyRef:
                   key: {{ $key }}
-                  name: {{ $.Values.bot.existingConfigMap | default (printf "%s-bot-config" $.Release.Namespace) }}
+                  name: {{ $.Values.bot.existingConfigMap | default (printf "%s-bot-config" $.Release.Name) }}
           {{- end }}
             - name: SMF_BOT_BACKEND_URL
               value: "http://{{ .Release.Name }}-server:{{ .Values.server.config.SMF_BACKEND_PORT }}"
