@@ -42,8 +42,8 @@ initContainer:
 ##
 kubectl:
   image:
-    repository: bitnami/kubectl
-    tag: latest
+    repository: paritytech/kubetools-kubectl
+    tag: latest # Set at 1.22.15 Kubectl version
 
 ## Used to sync chain from/to GCS bucket
 ##
