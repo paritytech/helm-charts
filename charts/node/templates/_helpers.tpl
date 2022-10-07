@@ -59,6 +59,7 @@ Selector labels
 {{- define "node.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "node.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/component: substrate-node
 {{- end }}
 
 {{/*
