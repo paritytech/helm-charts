@@ -338,6 +338,10 @@ node:
         enabled: false
         hostname: example.com
         ttl: 300
+      # If enabled, additionally expose WebSocket port. Useful for bootnodes
+      ws:
+        enabled: false
+        port: 30334
     ## If enabled, set `--public-addr` flag to be the NodePort p2p services external address
     ##
     setPublicAddressToExternalIp:
