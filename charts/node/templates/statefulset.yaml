@@ -497,10 +497,10 @@ spec:
                 --rpc-methods=unsafe \
                 {{- end }}
                 {{- if .Values.node.isParachain }}
-                --listen-addr=/ip4/0.0.0.0/tcp/30334 \
+                --listen-addr=/ip4/0.0.0.0/tcp/30444 \
                 {{- if .Values.node.perNodeServices.paraP2pService.enabled }}
                 {{- if .Values.node.perNodeServices.paraP2pService.ws.enabled }}
-                --listen-addr=/ip4/0.0.0.0/tcp/30334/ws \
+                --listen-addr=/ip4/0.0.0.0/tcp/30445/ws \
                 --listen-addr=/ip4/0.0.0.0/tcp/${PARA_CHAIN_P2P_PORT_WS}/ws \
                 {{- end }}
                 {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}

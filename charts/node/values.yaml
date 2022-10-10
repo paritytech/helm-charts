@@ -332,7 +332,7 @@ node:
       enabled: false
       externalTrafficPolicy: Cluster
       type: NodePort # or ClusterIP, LoadBalancer
-      port: 30334
+      port: 30444
       annotations: {}
       externalDns:
         enabled: false
@@ -341,7 +341,7 @@ node:
       # If enabled, additionally expose WebSocket port. Useful for bootnodes
       ws:
         enabled: false
-        port: 30334
+        port: 30445
     ## If enabled, set `--public-addr` flag to be the NodePort p2p services external address
     ##
     setPublicAddressToExternalIp:
