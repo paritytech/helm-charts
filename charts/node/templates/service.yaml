@@ -114,7 +114,7 @@ spec:
     {{- if $.Values.node.perNodeServices.relayP2pService.ws.enabled }}
     - name: ws
       port: {{ $.Values.node.perNodeServices.relayP2pService.ws.port | int }}
-      targetPort: 30334
+      targetPort: 30444
     {{- end }}
 {{- end }}
 ---
@@ -149,11 +149,11 @@ spec:
   ports:
     - name: p2p
       port: {{ $.Values.node.perNodeServices.paraP2pService.port | int }}
-      targetPort: 30444
+      targetPort: 29333
     {{- if $.Values.node.perNodeServices.paraP2pService.ws.enabled }}
     - name: ws
       port: {{ $.Values.node.perNodeServices.paraP2pService.ws.port | int }}
-      targetPort: 30445
+      targetPort: 29444
     {{- end }}
 {{- end }}
 ---

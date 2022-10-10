@@ -325,14 +325,14 @@ node:
       # If enabled, additionally expose WebSocket port. Useful for bootnodes
       ws:
         enabled: false
-        port: 30334
+        port: 30444
     ## If enabled, create service to expose parachain P2P
     ##
     paraP2pService:
       enabled: false
       externalTrafficPolicy: Cluster
       type: NodePort # or ClusterIP, LoadBalancer
-      port: 30444
+      port: 29333
       annotations: {}
       externalDns:
         enabled: false
@@ -341,7 +341,7 @@ node:
       # If enabled, additionally expose WebSocket port. Useful for bootnodes
       ws:
         enabled: false
-        port: 30445
+        port: 29444
     ## If enabled, set `--public-addr` flag to be the NodePort p2p services external address
     ##
     setPublicAddressToExternalIp:
