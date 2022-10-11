@@ -1,44 +1,55 @@
 # Default values for common.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-
 ## Provide a name in place of node for `app:` labels
 ##
+## @section General parameters
+## @param nameOverride A name to partially override .Chart.Name
 nameOverride: ""
 
 ## Provide a name to substitute for the full names of resources
 ##
+## @param fullnameOverride a name to fully override resource naming
 fullnameOverride: ""
 
 ## Provide a name to substitute for the full names of resources
 ##
+## @param namespaceOverride a the namespace to override the deployment namespace
 namespaceOverride: ""
 
 ## Additional common labels on resources
 ##
+## @param extraLabels Additional common labels for resources
 extraLabels: {}
 
 ## Image to use for the chart
 ##
 image:
+  ## @param image.repository The image name to use
   repository: nginx
+  ## @param image.pullPolicy The pull policy to use for the image
   pullPolicy: IfNotPresent
+  ## @param image.tag the tag to use for image
   tag: "latest"
 
 ## Number of replicas for the pod
 ##
+## @param replicaCount The number of replicas for the deployment/statefulSet
 replicaCount: 1
 
 ## Reference to one or more secrets to be used when pulling images
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 ##
+## @param imagePullSecrets an array of the secrets to use when pulling an image
 imagePullSecrets: []
 
 ## Service account for the pod to use
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
 ##
 serviceAccount:
+  ## @param serviceAccount.create Create a serviceAccount
   create: true
+  ## @param serviceAccount.annotations Annotations to use for the serviceAccount
   annotations: {}
     ## uncomment if you're using workload indentity
     ##
@@ -47,21 +58,25 @@ serviceAccount:
   ## The name of the service account to use.
   ## If not set and create is true, a name is generated using the fullname template
   ##
+  ## @param serviceAccount.name the name to use for serviceAccount
   name: ""
 
 ## Annotations to add to the pod
 ##
+## @param podAnnotations Annotations to provide to the pod
 podAnnotations: {}
 
 ## SecurityContext holds pod-level security attributes and common container settings.
 ## This defaults to non root user with uid 1000 and gid 1000.
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
 ##
+## @param podSecurityContext Set the pod security context for the container
 podSecurityContext: {}
   # fsGroup: 1000
   # runAsNonRoot: true
   # runAsUser: 1000
   # runAsGroup: 1000
+## @param containerSecurityContext Set the container security context and capabilities
 containerSecurityContext: {}
   # capabilities:
   #   drop:
@@ -73,11 +88,13 @@ containerSecurityContext: {}
 
 ## Environment variable to add to the pods
 ##
+## @param env Environment variables to add to the pods
 env: {}
   # VAR: value
 
 ## Environment variables from secrets or configmaps to add to the pods
 ##
+## @param envFrom Environment variables from secrets or configmaps to add to the pods
 envFrom: []
 #  - configMapRef:
 #      name: env-configmap
@@ -87,25 +104,80 @@ envFrom: []
 
 ## Additional Pod Spec
 ##
+## @param additionalPodSpec Additional pod spec
 additionalPodSpec: {}
 
 ## Creates a secret resource
 ## The value must be base64 encoded
 ##
+## @param secrets Create secrets (base64 encoded)
 secrets: {}
 # admin: <base64-encoded>
 
 ## Creates a configmap resource
 ##
+## @param config Create a configmap resource
 config: {}
+
+## Resource limits & requests
+##
+
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  ## @param resources.limits The resources limits for the containers
+  ## @param resources.requests The requested resources for the containers
+  limits: {}
+    # cpu: 100m
+    # memory: 128Mi
+  requests: {}
+    # cpu: 100m
+    # memory: 128Mi
+
+## Define which Nodes the Pods are scheduled on.
+##
+## @param nodeSelector Node labels for pods assignment
+nodeSelector: {}
+
+## Tolerations for use with node taints
+##
+## @param tolerations Tolerations for pods assignment
+tolerations: []
+
+## Assign custom affinity rules
+##
+## @param affinity Affinity for pods assignment
+affinity: {}
+
+## See `kubectl explain poddisruptionbudget.spec` for more
+## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+## @param podDisruptionBudget [object] the specification for the pod disruption budget
+podDisruptionBudget: {}
+  # minAvailable: 1
+  # maxUnavailable: 1
+
+# Extra volumes to be added in addition to those specified under `defaultVolumes`.
+## @param extraVolumes Extra volumes
+extraVolumes: []
+
+# Extra volume mounts together. Corresponds to `extraVolumes`.
+## @param extraVolumeMounts Mount extra volume(s)
+extraVolumeMounts: []
 
 ## Creates a service resource
 ##
+## @section Service parameters
 service:
+  ## @param service.annotations Add annotations to the service
   annotations: {}
+  ## @param service.type Type of service to use options are `ClusterIP`, `NodePort`, `LoadBalancer` and `ExternalName`
   type: ClusterIP
+  ## @param service.sessionAffinity Control where client requests go, to the same pod or round-robin (`ClientIP` or `None`)
   sessionAffinity: ""
-  ports:
+  ## @param service.ports Ports for the service to expose
+  ports: []
     # - name: http
     #   port: 80
     #   targetPort: 8080
@@ -116,52 +188,39 @@ service:
     #   protocol: TCP
 
 ## Creates an ingress resource
-##
+## @section Ingress parameters
 ingress:
+  ## @param ingress.enabled Enable ingress record generation
   enabled: false
+  ## @param ingress.className IngressClass that will be be used to implement the Ingress (Kubernetes 1.18+)
   className: ""
+  ## @param ingress.annotations [object] Additional annotations for the Ingress resource. To enable certificate autogeneration, place here your cert-manager annotations.
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls:
-  - secretName: chart-example-tls
-    hosts:
-      - chart-example.local
+  ## @param ingress.hosts An array with hostname(s) to be covered with the ingress record
+  hosts: []
+    # - host: chart-example.local
+    #   paths:
+    #     - path: /
+    #       pathType: ImplementationSpecific
+  ## @param ingress.tls An array with the names of secrets to be assigned to the ingress records.
+  tls: []
+  # - secretName: chart-example-tls
+  #   hosts:
+  #     - chart-example.local
 
-## Resource limits & requests
-##
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
-
-## Define which Nodes the Pods are scheduled on.
-##
-nodeSelector: {}
-
-## Tolerations for use with node taints
-##
-tolerations: []
-
-## Assign custom affinity rules
-##
-affinity: {}
-
+## @section Probe parameters
 ## Controller Container liveness/readiness probe configuration
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 ##
+## @param livenessProbe [object] A livenessProbe
+## @param livenessProbe.tcpSocket.port [string] Port for livenessProbe
+## @param livenessProbe.initialDelaySeconds [string] Initial delay seconds for livenessProbe
+## @param livenessProbe.periodSeconds [string] Period seconds for livenessProbe
+## @param livenessProbe.timeoutSeconds [string] Timeout seconds for livenessProbe
+## @param livenessProbe.failureThreshold [string] Failure threshold for livenessProbe
+## @param livenessProbe.successThreshold [string] Success threshold for livenessProbe
 livenessProbe: {}
   # failureThreshold: 3
   # successThreshold: 1
@@ -171,6 +230,13 @@ livenessProbe: {}
   #   port: 80
   # periodSeconds: 10
 
+## @param readinessProbe [object] a readinessProbe
+## @param readinessProbe.tcpSocket.port [string] Port for readinessProbe
+## @param readinessProbe.initialDelaySeconds [string] Initial delay seconds for readinessProbe
+## @param readinessProbe.periodSeconds [string] Period seconds for readinessProbe
+## @param readinessProbe.timeoutSeconds [string] Timeout seconds for readinessProbe
+## @param readinessProbe.failureThreshold [string] Failure threshold for readinessProbe
+## @param readinessProbe.successThreshold [string] Success threshold for readinessProbe
 readinessProbe: {}
   # failureThreshold: 3
   # successThreshold: 1
@@ -180,6 +246,13 @@ readinessProbe: {}
   #   port: 80
   # periodSeconds: 10
 
+## @param startupProbe [object] a startupProbe
+## @param startupProbe.tcpSocket.port [string] Port for startupProbe
+## @param startupProbe.initialDelaySeconds [string] Initial delay seconds for startupProbe
+## @param startupProbe.periodSeconds [string] Period seconds for startupProbe
+## @param startupProbe.timeoutSeconds [string] Timeout seconds for startupProbe
+## @param startupProbe.failureThreshold [string] Failure threshold for startupProbe
+## @param startupProbe.successThreshold [string] Success threshold for startupProbe
 startupProbe: {}
   # failureThreshold: 3
   # successThreshold: 1
@@ -191,11 +264,18 @@ startupProbe: {}
 
 ## Annotations to add to the pod of statefulset
 ##
+## @section Statefulset and persistence parameters
+## @param stateful.annotations [object] annotions to be used for the statefulSet
 stateful:
   annotations: {}
 
 ## If enabled, creates a PVC and deploy the pod as statefulset
 ##
+## @param persistence.enabled Enable persistence on the statefulSet's PVC
+## @param persistence.accessModes The statefulSets persistent volume claim access Modes
+## @param persistence.size The statefulSets persistent volume claim size
+## @param persistence.annotations the statefulSets persistent volume claim annotations
+## @param persistence.selector [object] Selector to match an existing Persistent Volume
 persistence:
   enabled: false
   accessModes:
@@ -205,19 +285,22 @@ persistence:
   # selector:
   #   matchLabels:
   #     app.kubernetes.io/name: common
+  ## @param persistence.subPath [string] Subdirectory of the volume to mount at
   # subPath: ""
+  ## @param persistence.existingClaim [string] Name of an existing `PersistentVolumeClaim` to use
   # existingClaim:
+  ## @param persistence.storageClassName [string] Persistent volume storage Class Name to use
   # storageClassName:
 
-## See `kubectl explain poddisruptionbudget.spec` for more
-## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
-podDisruptionBudget: {}
-  # minAvailable: 1
-  # maxUnavailable: 1
-
+## @section Autoscaling parameters
 ## Autoscaling should be enabled for statefulsets
 ## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
 ##
+## @param autoscaling.enabled Whether enable horizontal pod autoscaler
+## @param autoscaling.minReplicas Configure a minimum amount of pods
+## @param autoscaling.maxReplicas Configure a maximum amount of pods
+## @param autoscaling.targetCPUUtilizationPercentage Define the CPU target to trigger the scaling actions (utilization percentage)
+## @param autoscaling.targetMemoryUtilizationPercentage [string] Define the memory target to trigger the scaling actions (utilization percentage)
 autoscaling:
   enabled: false
   minReplicas: 1
@@ -225,9 +308,13 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
+## @section Service-monitor parameters
 ## If enabled, create service monitor of Prometheus-Operator
 ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors
 ##
+## @param serviceMonitor.enabled if `true`, creates a Prometheus Operator ServiceMonitor
+## @param serviceMonitor.annotations ServiceMonitor annotations
+## @param serviceMonitor.endpoints [array] The endpoint configuration of the ServiceMonitor. Path is mandatory. Interval, timeout and labellings can be overwritten.
 serviceMonitor:
   enabled: false
   annotations: {}
@@ -242,14 +329,13 @@ serviceMonitor:
     scrapeTimeout: 30s
     honorLabels: true
 
-# Extra volumes to be added in addition to those specified under `defaultVolumes`.
-extraVolumes: []
-
-# Extra volume mounts together. Corresponds to `extraVolumes`.
-extraVolumeMounts: []
-
+## @section CloudSQL parameters
 ## If enabled, create cloudsql proxy resources
 ##
+## @param cloudsql.enabled if `true`, creates a cloudsql proxy deployment
+## @param cloudsql.service.port the port for the service to use
+## @param cloudsql.service.targetPort the target port for the service to access the cloudsql deployment
+## @param cloudsql.commandline.args additional arguments for the cloudsql startup command
 cloudsql:
   enabled: false
   service:
