@@ -625,19 +625,6 @@ spec:
               path: /health
               port: http-rpc
           {{- end }}
-          {{- if .Values.node.enableReadinessProbe }}
-          # Continuously retry the connection to the WS endpoint every 10s for 24h until success before marking the container as ready
-          # If the WS endpoint is still not reachable (ie. node not fully synced) after 24 hours have passed, the container will be stuck in 'Not Ready' state
-          readinessProbe:
-            failureThreshold: 8640
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 1
-            # Important: the readiness probe will only work properly if the WS endpoint is exposed with --ws-external
-            tcpSocket:
-              port: websocket-rpc
-          {{- end }}
           resources:
           {{- toYaml .Values.node.resources | nindent 12 }}
           volumeMounts:
@@ -671,7 +658,7 @@ spec:
             - containerPort: 8080
               name: api-sidecar
               protocol: TCP
-        {{- end}}
+        {{- end }}
         {{- if .Values.node.tracing.enabled }}
         - name: jaeger-agent-sidecar
           image: {{ .Values.jaegerAgent.image.repository }}:{{ .Values.jaegerAgent.image.tag }}
@@ -706,6 +693,19 @@ spec:
               path: /
               port: admin
         {{- end}}
+        {{ if .Values.node.enableSidecarReadinessProbe }}
+        - name: ws-health-exporter
+          image: {{ .Values.wsHealthExporter.image.repository }}:{{ .Values.wsHealthExporter.image.tag }}
+          env:
+            - name: NODE_URL
+              value: ws://127.0.0.1:9944
+          resources:
+          {{- toYaml .Values.wsHealthExporter.resources | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /health/readiness
+              port: 8001
+        {{- end }}
         {{- with .Values.extraContainers }}
         {{- toYaml . | nindent 8 }}
         {{- end}}
