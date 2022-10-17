@@ -363,10 +363,13 @@ node:
   substrateApiSidecar:
     enabled: false
 
-  ## Enable Node container's startup and readiness probes
+  ## Enable Node container's startup probe
   ##
   enableStartupProbe: true
-  enableReadinessProbe: true
+
+  ## Enable Node readiness probe through `paritytech/ws-health-exporter` running as a sidecar container
+  ##
+  enableSidecarReadinessProbe: false
 
   ## Resource limits & requests
   ##
@@ -401,6 +404,15 @@ substrateApiSidecar:
     repository: parity/substrate-api-sidecar
     tag: latest
   env: {}
+  resources: {}
+
+## Configuration of the WS Health exporter
+## ref: https://github.com/paritytech/scripts/tree/master/dockerfiles/ws-health-exporter
+##
+wsHealthExporter:
+  image:
+    repository: paritytech/ws-health-exporter
+    tag: latest
   resources: {}
 
 ## Configuration of Jaeger agent
