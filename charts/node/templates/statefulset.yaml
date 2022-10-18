@@ -459,9 +459,9 @@ spec:
               {{- else }}
               PARA_CHAIN_P2P_PORT={{ $.Values.node.perNodeServices.paraP2pService.port | quote }}
               PARA_CHAIN_P2P_PORT_WS={{ $.Values.node.perNodeServices.paraP2pService.ws.port | quote }}
+              {{- end }}
               echo "PARA_CHAIN_P2P_PORT=${PARA_CHAIN_P2P_PORT}"
               echo "PARA_CHAIN_P2P_PORT_WS=${PARA_CHAIN_P2P_PORT_WS}"
-              {{- end }}
               {{- end }}
               {{- end }}
               exec {{ .Values.node.command }} \
