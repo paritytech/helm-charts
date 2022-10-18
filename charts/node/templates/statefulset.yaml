@@ -453,15 +453,19 @@ spec:
               {{- if .Values.node.isParachain }}
               {{- if eq .Values.node.perNodeServices.paraP2pService.type "NodePort" }}
               PARA_CHAIN_P2P_PORT="$(cat /chain-data/para_chain_p2p_port)"
+              echo "PARA_CHAIN_P2P_PORT=${PARA_CHAIN_P2P_PORT}"
               {{- if .Values.node.perNodeServices.paraP2pService.ws.enabled }}
               PARA_CHAIN_P2P_PORT_WS="$(cat /chain-data/para_chain_p2p_port_ws)"
+              echo "PARA_CHAIN_P2P_PORT_WS=${PARA_CHAIN_P2P_PORT_WS}"
               {{- end }}
               {{- else }}
               PARA_CHAIN_P2P_PORT={{ $.Values.node.perNodeServices.paraP2pService.port | quote }}
-              PARA_CHAIN_P2P_PORT_WS={{ $.Values.node.perNodeServices.paraP2pService.ws.port | quote }}
-              {{- end }}
               echo "PARA_CHAIN_P2P_PORT=${PARA_CHAIN_P2P_PORT}"
+              {{- if .Values.node.perNodeServices.paraP2pService.ws.enabled }}
+              PARA_CHAIN_P2P_PORT_WS={{ $.Values.node.perNodeServices.paraP2pService.ws.port | quote }}
               echo "PARA_CHAIN_P2P_PORT_WS=${PARA_CHAIN_P2P_PORT_WS}"
+              {{- end }}
+              {{- end }}
               {{- end }}
               {{- end }}
               exec {{ .Values.node.command }} \
