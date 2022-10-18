@@ -410,9 +410,11 @@ spec:
               echo "${PARA_CHAIN_P2P_PORT}" > /chain-data/para_chain_p2p_port
               echo "Retrieved Kubernetes service node port from {{ $fullname }}-${POD_INDEX}-para-chain-p2p, saved ${PARA_CHAIN_P2P_PORT} to /chain-data/para_chain_p2p_port"
               {{- if .Values.node.perNodeServices.paraP2pService.ws.enabled }}
+              {{- if eq .Values.node.perNodeServices.paraP2pService.type "NodePort" }}
               PARA_CHAIN_P2P_PORT_WS="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-para-chain-p2p -o jsonpath='{.spec.ports[?(@.name=="ws")].nodePort}')"
               echo "${PARA_CHAIN_P2P_PORT_WS}" > /chain-data/para_chain_p2p_port_ws
               echo "Saved ${PARA_CHAIN_P2P_PORT_WS} to /chain-data/para_chain_p2p_port_ws"
+              {{- end }}
               {{- end }}
               {{- end }}
               {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
@@ -452,7 +454,11 @@ spec:
               PARA_CHAIN_P2P_PORT="$(cat /chain-data/para_chain_p2p_port)"
               echo "PARA_CHAIN_P2P_PORT=${PARA_CHAIN_P2P_PORT}"
               {{- if .Values.node.perNodeServices.paraP2pService.ws.enabled }}
+              {{- if eq .Values.node.perNodeServices.paraP2pService.type "NodePort" }}
               PARA_CHAIN_P2P_PORT_WS="$(cat /chain-data/para_chain_p2p_port_ws)"
+              {{- else }}
+              PARA_CHAIN_P2P_PORT_WS={{ $.Values.node.perNodeServices.paraP2pService.ws.port | quote }}
+              {{- end }}
               echo "PARA_CHAIN_P2P_PORT_WS=${PARA_CHAIN_P2P_PORT_WS}"
               {{- end }}
               {{- end }}
