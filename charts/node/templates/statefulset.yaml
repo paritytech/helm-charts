@@ -188,7 +188,7 @@ spec:
                   exit 1
                 fi
                 mkdir -p /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}
-                gsutil {{ .Values.googleCloudSdk.gsutilFlags }} cp -r ${BUCKET_URL}/${LATEST} /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
+                gsutil {{ .Values.googleCloudSdk.gsutilFlags }} cp -r "${BUCKET_URL}/${LATEST}/*" /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
               fi
           env:
             - name: CHAIN_PATH
@@ -223,7 +223,7 @@ spec:
                   exit 1
                 fi
                 mkdir -p /relaychain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}
-                gsutil {{ .Values.googleCloudSdk.gsutilFlags }} cp -r ${BUCKET_URL}/${LATEST} /relaychain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
+                gsutil {{ .Values.googleCloudSdk.gsutilFlags }} cp -r "${BUCKET_URL}/${LATEST}/*" /relaychain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
               fi
           env:
             - name: RELAY_CHAIN_PATH
