@@ -1,0 +1,76 @@
+replicaCount: 1
+
+image:
+  repository: paritytech/substrate-relay
+  pullPolicy: IfNotPresent
+  tag: latest
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+extraLabels: {}
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+relayHeaders:
+  enabled: true
+  name: rococo-to-bridge-hub-wococo
+  source:
+    host: localhost
+    port: 9955
+  target:
+    host: localhost
+    port: 9944
+    signer: //Bob
+
+env: {}
+  # RUST_LOG: 'runtime=trace'
+
+extraArgs: []
+
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+prometheus:
+  enabled: true
+  port: 9615
+
+serviceMonitor:
+  enabled: true
+  interval: 1m
+  scrapeTimeout: 30s
+  targetLabels: []
