@@ -52,6 +52,7 @@ spec:
             - name: "{{ $key }}"
               value: "{{ $value }}"
           {{- end }}
+          {{- if .Values.prometheus.enabled }}
           ports:
             - name: prometheus
               containerPort: {{ .Values.prometheus.port }}
@@ -64,6 +65,7 @@ spec:
             httpGet:
               path: /metrics
               port: prometheus
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
