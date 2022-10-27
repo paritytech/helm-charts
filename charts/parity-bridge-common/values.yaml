@@ -17,13 +17,13 @@ serviceAccount:
   name: ""
 
 relayHeaders:
-  enabled: true
+  enabled: false
   name: rococo-to-bridge-hub-wococo
   source:
-    host: localhost
+    host: ws://rpc.example
     port: 9955
   target:
-    host: localhost
+    host: ws://rpc.example
     port: 9944
     signer: //Bob
 
@@ -66,11 +66,11 @@ tolerations: []
 affinity: {}
 
 prometheus:
-  enabled: true
+  enabled: false
   port: 9615
 
 serviceMonitor:
-  enabled: true
+  enabled: false
   interval: 1m
   scrapeTimeout: 30s
   targetLabels: []
