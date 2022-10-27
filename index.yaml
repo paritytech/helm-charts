@@ -1171,6 +1171,19 @@ entries:
     urls:
     - https://github.com/paritytech/node-helm-chart/releases/download/node-0.1.0/node-0.1.0.tgz
     version: 0.1.0
+  parity-bridge-common:
+  - apiVersion: v2
+    created: "2022-10-27T05:19:08.015924549Z"
+    description: A Helm chart for parity-bridge-common
+    digest: afee3f2a2a1c86d0c687387db7222c99b2f1abc926e8aa4edfe831060054758f
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: parity-bridge-common
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/parity-bridge-common-0.1.0/parity-bridge-common-0.1.0.tgz
+    version: 0.1.0
   polkadot-basic-notification:
   - apiVersion: v2
     appVersion: 0.1.0
@@ -1670,4 +1683,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/testnet-manager-1.0.0/testnet-manager-1.0.0.tgz
     version: 1.0.0
-generated: "2022-10-19T06:12:26.057008693Z"
+generated: "2022-10-27T05:19:08.016943865Z"
