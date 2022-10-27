@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: paritytech/substrate-relay
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   tag: latest
 
 imagePullSecrets: []
@@ -31,7 +31,6 @@ env: {}
   # RUST_LOG: 'runtime=trace'
 
 extraArgs: []
-
 
 podAnnotations: {}
 
