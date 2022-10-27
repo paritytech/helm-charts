@@ -6,6 +6,7 @@ Parity's [Kubernetes Helm](https://helm.sh/) charts collection.
 
 - [Common](charts/common/README.md): a generic helm chart for kubernetes
 - [Node](charts/node/README.md): deploy Substrate/Polkadot nodes
+- [Parity Bridge Common](charts/parity-bridge-common/README.md): deploy parity-bridge-common service
 - [Polkadot Basic Notification](charts/polkadot-basic-notification/README.md): deploy a chain notification bot
 - [Polkadot Introspector](charts/polkadot-introspector/README.md): deploy a chain monitoring and introspection service
 - [Polkadot Runtime Exporter](charts/polkadot-runtime-exporter/README.md): deploy a tool to collect runtime statistics

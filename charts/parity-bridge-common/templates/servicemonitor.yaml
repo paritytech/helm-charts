@@ -1,0 +1,36 @@
+{{- if .Values.serviceMonitor.enabled }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "parity-bridge-common.fullname" . }}
+  labels:
+    {{- include "parity-bridge-common.labels" . | nindent 4 }}
+  {{- if .Values.serviceMonitor.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  endpoints:
+  - port: {{ .Values.service.portName }}
+    {{- with .Values.serviceMonitor.interval }}
+    interval: {{ . }}
+    {{- end }}
+    {{- with .Values.serviceMonitor.scrapeTimeout }}
+    scrapeTimeout: {{ . }}
+    {{- end }}
+    honorLabels: true
+    path: /metrics
+    scheme: http
+  {{- with .Values.serviceMonitor.targetLabels }}
+  targetLabels:
+  {{ toYaml .| nindent 6 }}
+  {{- end}}
+  jobLabel: "{{ .Release.Name }}"
+  selector:
+    matchLabels:
+      {{- include "parity-bridge-common.selectorLabels" . | nindent 6 }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+{{- end }}

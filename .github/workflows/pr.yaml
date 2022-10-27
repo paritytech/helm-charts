@@ -79,4 +79,5 @@ jobs:
         ct install \
         --target-branch ${{ github.event.repository.default_branch }} \
         --excluded-charts charts/common
+        --excluded-charts charts/parity-bridge-common
       if: steps.list-changed.outputs.changed == 'true'
