@@ -94,6 +94,9 @@ additionalPodSpec: {}
 ##
 secrets: {}
 # admin: <base64-encoded>
+# https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+# privateRegistry:
+#   dockerconfigjson: <base64-encoded>
 
 ## Creates a configmap resource
 ##
