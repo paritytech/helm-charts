@@ -147,8 +147,7 @@ spec:
                 echo -e "\nStart gsutil backup\n"
                 gsutil {{ .Values.googleCloudSdk.gsutilFlags }} cp -r /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/ ${BUCKET_URL}/${NOW}
                 size=$(gsutil du -s ${BUCKET_URL}/${NOW} | awk '{ print $1 }' )
-                echo -e "size:
-                  ${size}\nversion: {{ .Values.image.tag }}" > /chain-data/now.meta.txt
+                echo "size: ${size}\nversion: {{ .Values.image.tag }}" > /chain-data/now.meta.txt
                 gsutil cp /chain-data/now.meta.txt ${BUCKET_URL}/${NOW}.meta.txt
                 rm -f /chain-data/now.meta.txt
                 echo "${NOW}" > /chain-data/latest_version.meta.txt
