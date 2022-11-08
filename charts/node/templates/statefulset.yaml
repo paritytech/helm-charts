@@ -386,7 +386,7 @@ spec:
             - mountPath: /keystore
               name: chain-keystore
         {{- end }}
-        {{- if or $.Values.node.perNodeServices.relayP2pService.enabled $.Values.node.perNodeServices.paraP2pService.enabled }}
+        {{- if or (eq .Values.node.perNodeServices.relayP2pService.type "NodePort") (eq .Values.node.perNodeServices.paraP2pService.type "NodePort") .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
         - name: retrieve-service-info
           image: {{ .Values.kubectl.image.repository }}:{{ .Values.kubectl.image.tag }}
           command: [ "/bin/sh" ]
