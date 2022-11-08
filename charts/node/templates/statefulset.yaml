@@ -395,7 +395,7 @@ spec:
             - |
               set -eu {{ if .Values.initContainer.debug }}-x{{ end }}
               POD_INDEX="${HOSTNAME##*-}"
-              {{- if eq .Values.node.perNodeServices.relayP2pService.type "NodePort" }}
+              {{- if and .Values.node.perNodeServices.relayP2pService.enabled (eq .Values.node.perNodeServices.relayP2pService.type "NodePort") }}
               RELAY_CHAIN_P2P_PORT="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-relay-chain-p2p -o jsonpath='{.spec.ports[?(@.name=="p2p")].nodePort}')"
               {{- if .Values.node.perNodeServices.relayP2pService.ws.enabled }}
               RELAY_CHAIN_P2P_PORT_WS="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-relay-chain-p2p -o jsonpath='{.spec.ports[?(@.name=="ws")].nodePort}')"
@@ -406,7 +406,7 @@ spec:
               echo "Retrieved Kubernetes service node port from {{ $fullname }}-${POD_INDEX}-relay-chain-p2p"
               echo "Saved ${RELAY_CHAIN_P2P_PORT} to /chain-data/relay_chain_p2p_port"
               {{- end }}
-              {{- if and .Values.node.isParachain (eq .Values.node.perNodeServices.paraP2pService.type "NodePort") }}
+              {{- if and .Values.node.perNodeServices.paraP2pService.enabled  (eq .Values.node.perNodeServices.paraP2pService.type "NodePort") }}
               PARA_CHAIN_P2P_PORT="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-para-chain-p2p -o jsonpath='{.spec.ports[0].nodePort}')"
               echo "${PARA_CHAIN_P2P_PORT}" > /chain-data/para_chain_p2p_port
               echo "Retrieved Kubernetes service node port from {{ $fullname }}-${POD_INDEX}-para-chain-p2p, saved ${PARA_CHAIN_P2P_PORT} to /chain-data/para_chain_p2p_port"
@@ -442,16 +442,16 @@ spec:
               EXTERNAL_IP="$(cat /chain-data/node_external_ip)"
               echo "EXTERNAL_IP=${EXTERNAL_IP}"
               {{- end }}
+              {{- if and .Values.node.perNodeServices.relayP2pService.enabled (eq .Values.node.perNodeServices.relayP2pService.type "NodePort") }}
               {{- /* For NodePort services, set the p2p port to the value saved in the retrieve-service-info init container */}}
-              {{- if eq .Values.node.perNodeServices.relayP2pService.type "NodePort" }}
               RELAY_CHAIN_P2P_PORT="$(cat /chain-data/relay_chain_p2p_port)"
               echo "RELAY_CHAIN_P2P_PORT=${RELAY_CHAIN_P2P_PORT}"
               {{- if .Values.node.perNodeServices.relayP2pService.ws.enabled }}
               RELAY_CHAIN_P2P_PORT_WS="$(cat /chain-data/relay_chain_p2p_port_ws)"
               echo "RELAY_CHAIN_P2P_PORT_WS=${RELAY_CHAIN_P2P_PORT_WS}"
               {{- end }}
-              {{- /* For non NodePort services, set the p2p port to value configured in `relayP2pService.port`*/}}
               {{- else }}
+              {{- /* For non NodePort services, set the p2p port to value configured in `relayP2pService.port`*/}}
               RELAY_CHAIN_P2P_PORT={{ $.Values.node.perNodeServices.relayP2pService.port | quote }}
               echo "RELAY_CHAIN_P2P_PORT=${RELAY_CHAIN_P2P_PORT}"
               {{- if .Values.node.perNodeServices.relayP2pService.ws.enabled }}
@@ -460,16 +460,16 @@ spec:
               {{- end }}
               {{- end }}
               {{- if .Values.node.isParachain }}
+              {{- if and .Values.node.perNodeServices.paraP2pService.enabled  (eq .Values.node.perNodeServices.paraP2pService.type "NodePort") }}
               {{- /* For NodePort services, set the p2p port to the value saved in the retrieve-service-info init container */}}
-              {{- if eq .Values.node.perNodeServices.paraP2pService.type "NodePort" }}
               PARA_CHAIN_P2P_PORT="$(cat /chain-data/para_chain_p2p_port)"
               echo "PARA_CHAIN_P2P_PORT=${PARA_CHAIN_P2P_PORT}"
               {{- if .Values.node.perNodeServices.paraP2pService.ws.enabled }}
               PARA_CHAIN_P2P_PORT_WS="$(cat /chain-data/para_chain_p2p_port_ws)"
               echo "PARA_CHAIN_P2P_PORT_WS=${PARA_CHAIN_P2P_PORT_WS}"
               {{- end }}
-              {{- /* For non NodePort services, set the p2p port to value configured in `paraP2pService.port` */}}
               {{- else }}
+              {{- /* For non NodePort services, set the p2p port to value configured in `paraP2pService.port` */}}
               PARA_CHAIN_P2P_PORT={{ $.Values.node.perNodeServices.paraP2pService.port | quote }}
               echo "PARA_CHAIN_P2P_PORT=${PARA_CHAIN_P2P_PORT}"
               {{- if .Values.node.perNodeServices.paraP2pService.ws.enabled }}
