@@ -345,6 +345,37 @@ spec:
             - mountPath: /var/run/secrets/{{ .type }}
               name: {{ .type }}
           {{- end }}
+        {{ else if .Values.node.keysExistingSecrets }}
+        - name: inject-existing-keys
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          command: [ "/bin/sh" ]
+          args:
+            - -c
+            - |
+              set -eu {{ if .Values.initContainer.debug }}-x{{ end }}
+              {{- range $keys := .Values.node.keysExistingSecrets }}
+              if [ ! -f /var/run/secrets/{{ $keys }}/type ]; then
+                 echo "Error: File /var/run/secrets/{{ $keys }}/type does not exist"
+                 exit 1
+              fi
+              {{ $.Values.node.command }} key insert \
+              --keystore-path /keystore \
+              --key-type $(cat /var/run/secrets/{{ $keys }}/type) \
+              --scheme $(cat /var/run/secrets/{{ $keys }}/scheme) \
+              --suri /var/run/secrets/{{ $keys }}/seed \
+              && echo "Inserted key {{ $keys }} into Keystore" \
+              || echo "Failed to insert key {{ $keys }} into Keystore."
+              {{- end }}
+          env:
+            - name: CHAIN
+              value: {{ .Values.node.chain }}
+          volumeMounts:
+            - mountPath: /keystore
+              name: chain-keystore
+          {{- range $keys := .Values.node.keysExistingSecrets }}
+            - mountPath: /var/run/secrets/{{ $keys }}
+              name: {{ $keys }}
+          {{- end }}
         {{ else if .Values.node.vault.keys }}
         - name: inject-vault-keys
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -655,6 +686,11 @@ spec:
             - mountPath: /relaychain-keystore
               name: relaychain-keystore
             {{- end }}
+          {{- range $keys := .Values.node.extraConfigmapMounts }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+              readOnly: {{ .readOnly }}
+          {{- end }}
           {{- if .Values.node.persistGeneratedNodeKey }}
           {{- else if .Values.node.customNodeKey }}
             - mountPath: /tmp/
@@ -743,6 +779,12 @@ spec:
       {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
+      {{- range $keys := .Values.node.extraConfigmapMounts }}
+        - name: {{ .name }}
+          configMap:
+            name: {{ .configMap }}
+            optional: {{ .optional }}
+      {{- end }}
       {{- if .Values.googleCloudSdk.serviceAccountKey }}
         - name: service-account-key
           secret:
@@ -760,6 +802,14 @@ spec:
             secretName: {{ $fullname }}-{{ .type }}
             defaultMode: 0400
       {{- end }}
+
+      {{- range $keys := .Values.node.keysExistingSecrets }}
+        - name: {{ $keys }}
+          secret:
+            secretName: {{ $keys }}
+            defaultMode: 0400
+      {{- end }}
+
       {{- if .Values.node.chainKeystore.mountInMemory.enabled }}
         - name: chain-keystore
           emptyDir:

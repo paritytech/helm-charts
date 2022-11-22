@@ -227,6 +227,9 @@ node:
   #   seed: "//Alice"
   #   extraDerivation: //babe
 
+  ## Inject keys from already existing kubernetes secrets
+  keysExistingSecrets: []
+
   ## Component to inject secrets via annotation of Hashicorp Vault
   ## ref: https://www.vaultproject.io/docs/platform/k8s/injector/annotations
   ##
@@ -396,6 +399,16 @@ node:
   # - name: foo
   #   value: bar
   extraEnvVars: []
+
+  ## Mount already existing ConfigMaps into main container.
+  ## https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#populate-a-volume-with-data-stored-in-a-configmap
+  extraConfigmapMounts: []
+    # - name: extra-configmap
+    #   configMap: my-configmap
+    #   optional: true
+    #   mountPath: /etc/config/
+    #   readOnly: true
+
 ## Configuration of Substrate API
 ## ref: https://github.com/paritytech/substrate-api-sidecar
 ##
