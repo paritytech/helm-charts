@@ -228,7 +228,14 @@ node:
   #   extraDerivation: //babe
 
   ## Inject keys from already existing kubernetes secrets
-  keysExistingSecrets: []
+  existingSecrets:
+    ## List of keys to be added to keystore
+    keys: []
+
+    ## K8s secret with node key
+    nodeKey: {}
+      # secretName: existing-node-secret
+      # secretKey: my-node-key
 
   ## Component to inject secrets via annotation of Hashicorp Vault
   ## ref: https://www.vaultproject.io/docs/platform/k8s/injector/annotations
