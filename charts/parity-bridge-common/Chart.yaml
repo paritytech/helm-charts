@@ -2,7 +2,7 @@ apiVersion: v2
 name: parity-bridge-common
 description: A Helm chart for parity-bridge-common
 type: application
-version: 0.1.0
+version: 0.1.1
 maintainers:
   - name: Parity
     url: https://github.com/paritytech/helm-charts
