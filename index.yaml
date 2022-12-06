@@ -1221,6 +1221,18 @@ entries:
     version: 0.1.0
   parity-bridge-common:
   - apiVersion: v2
+    created: "2022-12-06T16:59:46.490983378Z"
+    description: A Helm chart for parity-bridge-common
+    digest: 596a9a04f395c7538fd5f744c57597b0b0d98a72ff1be65bd87c5c8004e6b34f
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: parity-bridge-common
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/parity-bridge-common-0.1.1/parity-bridge-common-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
     created: "2022-10-27T05:19:08.015924549Z"
     description: A Helm chart for parity-bridge-common
     digest: afee3f2a2a1c86d0c687387db7222c99b2f1abc926e8aa4edfe831060054758f
@@ -1731,4 +1743,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/testnet-manager-1.0.0/testnet-manager-1.0.0.tgz
     version: 1.0.0
-generated: "2022-12-06T16:58:16.4618931Z"
+generated: "2022-12-06T16:59:46.491385981Z"
