@@ -229,10 +229,13 @@ node:
 
   ## Inject keys from already existing kubernetes secrets
   existingSecrets:
-    ## List of keys to be added to keystore
+    ## List of kubernetes secret names to be added to the keystore
+    ## Each secret should contain 3 keys: type, scheme and seed
+    ## Supercedes node.vault.keys
     keys: []
 
     ## K8s secret with node key
+    ## Supercedes node.vault.nodeKey
     nodeKey: {}
       # secretName: existing-node-secret
       # secretKey: my-node-key

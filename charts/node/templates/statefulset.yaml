@@ -688,7 +688,7 @@ spec:
             - mountPath: /relaychain-keystore
               name: relaychain-keystore
             {{- end }}
-          {{- range $keys := .Values.node.extraConfigmapMounts }}
+          {{- range .Values.node.extraConfigmapMounts }}
             - name: {{ .name }}
               mountPath: {{ .mountPath }}
               readOnly: {{ .readOnly }}
@@ -785,7 +785,7 @@ spec:
       {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-      {{- range $keys := .Values.node.extraConfigmapMounts }}
+      {{- range .Values.node.extraConfigmapMounts }}
         - name: {{ .name }}
           configMap:
             name: {{ .configMap }}
