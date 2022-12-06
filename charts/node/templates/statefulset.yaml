@@ -345,6 +345,37 @@ spec:
             - mountPath: /var/run/secrets/{{ .type }}
               name: {{ .type }}
           {{- end }}
+        {{ else if .Values.node.existingSecrets.keys }}
+        - name: inject-existing-keys
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          command: [ "/bin/sh" ]
+          args:
+            - -c
+            - |
+              set -eu {{ if .Values.initContainer.debug }}-x{{ end }}
+              {{- range $keys := .Values.node.existingSecrets.keys }}
+              if [ ! -f /var/run/secrets/{{ $keys }}/type ]; then
+                 echo "Error: File /var/run/secrets/{{ $keys }}/type does not exist"
+                 exit 1
+              fi
+              {{ $.Values.node.command }} key insert \
+              --keystore-path /keystore \
+              --key-type $(cat /var/run/secrets/{{ $keys }}/type) \
+              --scheme $(cat /var/run/secrets/{{ $keys }}/scheme) \
+              --suri /var/run/secrets/{{ $keys }}/seed \
+              && echo "Inserted key {{ $keys }} into Keystore" \
+              || echo "Failed to insert key {{ $keys }} into Keystore."
+              {{- end }}
+          env:
+            - name: CHAIN
+              value: {{ .Values.node.chain }}
+          volumeMounts:
+            - mountPath: /keystore
+              name: chain-keystore
+          {{- range $keys := .Values.node.existingSecrets.keys }}
+            - mountPath: /var/run/secrets/{{ $keys }}
+              name: {{ $keys }}
+          {{- end }}
         {{ else if .Values.node.vault.keys }}
         - name: inject-vault-keys
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -537,6 +568,8 @@ spec:
                 --node-key-file /keystore/node-key \
                 {{- else if .Values.node.customNodeKey }}
                 --node-key $(cat /tmp/custom-node-key) \
+                {{- else if .Values.node.existingSecrets.nodeKey }}
+                --node-key $(cat /tmp/{{ .Values.node.existingSecrets.nodeKey.secretKey }}) \
                 {{- else if .Values.node.vault.nodeKey }}
                 --node-key $(cat /vault/secrets/{{ .Values.node.vault.nodeKey.name }}{{ if .Values.node.vault.nodeKey.vaultKeyAppendPodIndex }}-${POD_INDEX}{{ end }}) \
                 {{- end }}
@@ -655,10 +688,19 @@ spec:
             - mountPath: /relaychain-keystore
               name: relaychain-keystore
             {{- end }}
+          {{- range .Values.node.extraConfigmapMounts }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+              readOnly: {{ .readOnly }}
+          {{- end }}
           {{- if .Values.node.persistGeneratedNodeKey }}
           {{- else if .Values.node.customNodeKey }}
             - mountPath: /tmp/
               name: custom-node-key
+              readOnly: true
+          {{- else if .Values.node.existingSecrets.nodeKey }}
+            - mountPath: /tmp/
+              name: node-key
               readOnly: true
           {{- end }}
         {{- if .Values.node.substrateApiSidecar.enabled }}
@@ -743,6 +785,12 @@ spec:
       {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
+      {{- range .Values.node.extraConfigmapMounts }}
+        - name: {{ .name }}
+          configMap:
+            name: {{ .configMap }}
+            optional: {{ .optional }}
+      {{- end }}
       {{- if .Values.googleCloudSdk.serviceAccountKey }}
         - name: service-account-key
           secret:
@@ -753,11 +801,21 @@ spec:
         - name: custom-node-key
           secret:
             secretName: {{ $fullname }}-custom-node-key
+      {{- else if .Values.node.existingSecrets.nodeKey }}
+        - name: node-key
+          secret:
+            secretName: {{ .Values.node.existingSecrets.nodeKey.secretName }}
       {{- end }}
       {{- range $keys := .Values.node.keys }}
         - name: {{ .type }}
           secret:
             secretName: {{ $fullname }}-{{ .type }}
+            defaultMode: 0400
+      {{- end }}
+      {{- range $keys := .Values.node.existingSecrets.keys }}
+        - name: {{ $keys }}
+          secret:
+            secretName: {{ $keys }}
             defaultMode: 0400
       {{- end }}
       {{- if .Values.node.chainKeystore.mountInMemory.enabled }}
