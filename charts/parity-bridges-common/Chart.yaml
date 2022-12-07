@@ -1,6 +1,6 @@
 apiVersion: v2
-name: parity-bridge-common
-description: A Helm chart for parity-bridge-common
+name: parity-bridges-common
+description: A Helm chart for parity-bridges-common
 type: application
 version: 0.1.1
 maintainers:

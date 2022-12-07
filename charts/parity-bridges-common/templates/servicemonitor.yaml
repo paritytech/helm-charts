@@ -3,9 +3,9 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "parity-bridge-common.fullname" . }}
+  name: {{ include "parity-bridges-common.fullname" . }}
   labels:
-    {{- include "parity-bridge-common.labels" . | nindent 4 }}
+    {{- include "parity-bridges-common.labels" . | nindent 4 }}
   {{- if .Values.serviceMonitor.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -29,7 +29,7 @@ spec:
   jobLabel: "{{ .Release.Name }}"
   selector:
     matchLabels:
-      {{- include "parity-bridge-common.selectorLabels" . | nindent 6 }}
+      {{- include "parity-bridges-common.selectorLabels" . | nindent 6 }}
   namespaceSelector:
     matchNames:
       - {{ .Release.Namespace }}
