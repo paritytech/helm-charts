@@ -9,7 +9,6 @@ Parity's [Kubernetes Helm](https://helm.sh/) charts collection.
 - [Bridges Common Relay](charts/bridges-common-relay/README.md): deploy bridges-common-relay service
 - [Polkadot Basic Notification](charts/polkadot-basic-notification/README.md): deploy a chain notification bot
 - [Polkadot Introspector](charts/polkadot-introspector/README.md): deploy a chain monitoring and introspection service
-- [Polkadot Runtime Exporter](charts/polkadot-runtime-exporter/README.md): deploy a tool to collect runtime statistics
 - [Staking miner](charts/staking-miner/README.md): deploy the staking-miner for submitting solutions to NPoS elections
 - [Substrate faucet](charts/substrate-faucet/README.md): deploy Substrate Faucet service
 - [Substrate telemetry](charts/substrate-telemetry/README.md): deploy the Substrate Telemetry service

@@ -1,5 +1,7 @@
 # Polkadot Runtime Exporter Helm Chart
 
+DEPRECATED: This chart is no longer maintained.
+
 ## TL;DR
 
 ```console
