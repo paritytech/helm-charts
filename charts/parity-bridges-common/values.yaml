@@ -46,7 +46,7 @@ relayHeadersAndMessages:
     rococo-headers-to-bridge-hub-wococo-signer: //Bob
     rococo-parachains-to-bridge-hub-wococo-signer: //Bob
     bridge-hub-wococo-transactions-mortality: 4
-    lane: [ "00000001", "00000002" ]
+    lane: ["00000001", "00000002"]
 
 env: {}
   # RUST_LOG: 'runtime=trace'
