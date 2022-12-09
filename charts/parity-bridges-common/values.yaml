@@ -27,7 +27,7 @@ relayHeaders:
     target-signer: //Bob
 
 relayHeadersAndMessages:
-  enabled: true
+  enabled: false
   name: bridge-hub-rococo-bridge-hub-wococo
   params:
     rococo-host: localhost
