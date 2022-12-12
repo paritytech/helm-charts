@@ -11,8 +11,9 @@ spec:
       {{- include "parity-bridge-common.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
@@ -34,15 +35,25 @@ spec:
           args:
             {{- if .Values.relayHeaders.enabled }}
             - "relay-headers {{ .Values.relayHeaders.name }}"
-            - "--source-host {{ .Values.relayHeaders.source.host }}"
-            - "--source-port {{ .Values.relayHeaders.source.port }}"
-            - "--target-host {{ .Values.relayHeaders.target.host }}"
-            - "--target-port {{ .Values.relayHeaders.target.port }}"
-            - "--target-signer {{ .Values.relayHeaders.target.signer }}"
+            {{- range $key, $value := .Values.relayHeaders.params }}
+            - "--{{ $key }} {{ $value }}"
+            {{- end }}
+            {{- end }}
+            {{- if .Values.relayHeadersAndMessages.enabled }}
+            - "relay-headers-and-messages {{ .Values.relayHeadersAndMessages.name }}"
+            {{- range $key, $value := .Values.relayHeadersAndMessages.params }}
+            {{- if kindIs "slice" $value }}
+            {{- range $param := $value }}
+            - "--{{ $key }} {{ $param  }}"
+            {{- end }}
+            {{- else }}
+            - "--{{ $key }} {{ $value }}"
+            {{- end }}
+            {{- end }}
+            {{- end }}
             {{- if .Values.prometheus.enabled }}
             - "--prometheus-host 0.0.0.0"
             - "--prometheus-port {{ .Values.prometheus.port }}"
-            {{- end }}
             {{- end }}
             {{- if .Values.extraArgs }}
             {{- toYaml .Values.extraArgs | nindent 12 }}
@@ -68,6 +79,17 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          {{- if .Values.secrets }}
+          volumeMounts:
+          - name: secrets
+            mountPath: "/secrets"
+            readOnly: true
+      volumes:
+      - name: secrets
+        secret:
+          secretName: {{ include "parity-bridges-common.fullname" . }}
+          optional: false
+          {{- end}}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
