@@ -54,6 +54,9 @@ relayHeadersAndMessages:
 secrets: {}
   # bridge-hub-wococo-signer-file: //Charlie
 
+# override secrets with already existing secret name.
+existingSecretName: ""
+
 env: {}
   # RUST_LOG: 'runtime=trace'
 

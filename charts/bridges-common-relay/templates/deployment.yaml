@@ -79,7 +79,7 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- if .Values.secrets }}
+          {{- if or .Values.secrets .Values.existingSecretName }}
           volumeMounts:
           - name: secrets
             mountPath: "/secrets"
@@ -87,7 +87,7 @@ spec:
       volumes:
       - name: secrets
         secret:
-          secretName: {{ include "parity-bridge-common.fullname" . }}
+          secretName: {{ include "bridges-common-relay.secretName" . }}
           optional: false
           {{- end}}
       {{- with .Values.nodeSelector }}
