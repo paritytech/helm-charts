@@ -11,8 +11,9 @@ spec:
       {{- include "parity-bridges-common.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
@@ -78,6 +79,17 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          {{- if .Values.secrets }}
+          volumeMounts:
+          - name: secrets
+            mountPath: "/secrets"
+            readOnly: true
+      volumes:
+      - name: secrets
+        secret:
+          secretName: {{ include "parity-bridges-common.fullname" . }}
+          optional: false
+          {{- end}}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

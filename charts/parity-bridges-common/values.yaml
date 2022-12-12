@@ -42,11 +42,15 @@ relayHeadersAndMessages:
     wococo-port: 9945
     bridge-hub-wococo-host: localhost
     bridge-hub-wococo-port: 8945
-    bridge-hub-wococo-signer: //Charlie
+    bridge-hub-wococo-signer-file: /secrets/bridge-hub-wococo-signer-file
     rococo-headers-to-bridge-hub-wococo-signer: //Bob
     rococo-parachains-to-bridge-hub-wococo-signer: //Bob
     bridge-hub-wococo-transactions-mortality: 4
     lane: ["00000001", "00000002"]
+
+# secrets will be mounted to pod /secrets/{key}
+secrets: {}
+  # bridge-hub-wococo-signer-file: //Charlie
 
 env: {}
   # RUST_LOG: 'runtime=trace'
