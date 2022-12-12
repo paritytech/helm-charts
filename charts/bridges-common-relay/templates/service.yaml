@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "parity-bridge-common.fullname" . }}
+  name: {{ include "bridges-common-relay.fullname" . }}
   labels:
-    {{- include "parity-bridge-common.labels" . | nindent 4 }}
+    {{- include "bridges-common-relay.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -13,5 +13,5 @@ spec:
       targetPort: {{ .Values.prometheus.port }}
       protocol: TCP
   selector:
-    {{- include "parity-bridge-common.selectorLabels" . | nindent 4 }}
+    {{- include "bridges-common-relay.selectorLabels" . | nindent 4 }}
 {{- end }}
