@@ -6,7 +6,7 @@ The helm chart installs the [Parity Bridges Common](https://github.com/paritytec
 
 ```console
 helm repo add parity https://paritytech.github.io/helm-charts/
-helm install parity-bridges-common parity/parity-bridges-common
+helm install bridges-common-relay parity/bridges-common-relay
 ```
 
 ## This is an experimental chart
