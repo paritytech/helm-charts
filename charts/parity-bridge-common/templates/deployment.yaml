@@ -87,7 +87,7 @@ spec:
       volumes:
       - name: secrets
         secret:
-          secretName: {{ include "parity-bridges-common.fullname" . }}
+          secretName: {{ include "parity-bridge-common.fullname" . }}
           optional: false
           {{- end}}
       {{- with .Values.nodeSelector }}
