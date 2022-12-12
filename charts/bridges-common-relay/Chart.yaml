@@ -1,6 +1,6 @@
 apiVersion: v2
-name: parity-bridge-common
-description: A Helm chart for parity-bridge-common
+name: bridges-common-relay
+description: A Helm chart for bridges-common-relay
 type: application
 version: 0.1.1
 maintainers:
