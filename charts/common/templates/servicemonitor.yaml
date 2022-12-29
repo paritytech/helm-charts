@@ -21,4 +21,6 @@ spec:
   namespaceSelector:
     matchNames:
       - {{ .Release.Namespace }}
+  targetLabels:
+{{ toYaml .Values.serviceMonitor.targetLabels | indent 4 }}
 {{- end }}
