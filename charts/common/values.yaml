@@ -246,6 +246,9 @@ serviceMonitor:
     scrapeTimeout: 30s
     honorLabels: true
 
+  ## Propagate certain service labels to Prometheus.
+  targetLabels: []
+
 # Extra volumes to be added in addition to those specified under `defaultVolumes`.
 extraVolumes: []
 
