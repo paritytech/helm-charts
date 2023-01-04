@@ -3,7 +3,7 @@ name: testnet-manager
 description: A Helm chart to deploy testnet-manager
 type: application
 version: 1.1.1
-appVersion: "1.0.0"
+appVersion: "1.1.0"
 maintainers:
   - name: Parity
     url: https://github.com/paritytech/helm-charts
