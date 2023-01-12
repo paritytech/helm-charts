@@ -1770,6 +1770,19 @@ entries:
     version: 0.1.0
   testnet-manager:
   - apiVersion: v2
+    appVersion: 1.2.1
+    created: "2023-01-12T15:18:23.941087581Z"
+    description: A Helm chart to deploy testnet-manager
+    digest: d1cb6dd51a60e90739e17525139ca4a1659c7c963b975dc21e713f87439fd7ee
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: testnet-manager
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/testnet-manager-1.1.2/testnet-manager-1.1.2.tgz
+    version: 1.1.2
+  - apiVersion: v2
     appVersion: 1.0.0
     created: "2022-09-01T08:50:02.891307411Z"
     description: A Helm chart to deploy testnet-manager
@@ -1808,4 +1821,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/testnet-manager-1.0.0/testnet-manager-1.0.0.tgz
     version: 1.0.0
-generated: "2023-01-12T15:05:04.374657126Z"
+generated: "2023-01-12T15:18:23.941417781Z"
