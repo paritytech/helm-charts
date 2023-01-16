@@ -19,6 +19,12 @@ spec:
   replicas: {{ .Values.node.replicas | int }}
   {{- end }}
   serviceName: {{ $fullname }}
+  {{- if and (.Values.RollingUpdateStrategy.enabled) (semverCompare ">=1.24-0" .Capabilities.KubeVersion.GitVersion) }}
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: {{ .Values.RollingUpdateStrategy.maxUnavailable  | default 1 }}
+   {{- end }}
   template:
     metadata:
     {{- if or .Values.podAnnotations .Values.node.vault.keys .Values.node.vault.nodeKey }}
@@ -834,6 +840,8 @@ spec:
             sizeLimit: {{ .Values.node.collatorRelayChain.chainKeystore.mountInMemory.sizeLimit }}
             {{- end }}
       {{- end }}
+
+
   volumeClaimTemplates:
     - apiVersion: v1
       kind: PersistentVolumeClaim
@@ -857,6 +865,7 @@ spec:
           requests:
             storage: {{ .Values.node.chainData.volumeSize }}
     {{- if not .Values.node.chainKeystore.mountInMemory.enabled }}
+
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
@@ -880,6 +889,8 @@ spec:
             storage: {{ .Values.node.chainKeystore.volumeSize }}
     {{- end }}
     {{- if .Values.node.isParachain }}
+
+
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
@@ -902,6 +913,7 @@ spec:
           requests:
             storage: {{ .Values.node.collatorRelayChain.chainData.volumeSize }}
     {{- if not .Values.node.collatorRelayChain.chainKeystore.mountInMemory.enabled }}
+
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:

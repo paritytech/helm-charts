@@ -86,6 +86,11 @@ podDisruptionBudget:
   #minAvailable:
   #maxUnavailable:
 
+#maxUnavailable can be an int or a %
+RollingUpdateStrategy:
+  enabled: false
+  maxUnavailable: 1
+
 ## Creates an ingress resource
 ##
 ingress:
