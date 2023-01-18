@@ -693,6 +693,11 @@ spec:
               mountPath: {{ .mountPath }}
               readOnly: {{ .readOnly }}
           {{- end }}
+          {{- range .Values.node.extraSecretMounts }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+              readOnly: {{ .readOnly }}
+          {{- end }}
           {{- if .Values.node.persistGeneratedNodeKey }}
           {{- else if .Values.node.customNodeKey }}
             - mountPath: /tmp/
@@ -800,6 +805,13 @@ spec:
           configMap:
             name: {{ .configMap }}
             optional: {{ .optional }}
+      {{- end }}
+      {{- range .Values.node.extraSecretMounts }}
+        - name: {{ .name }}
+          secret:
+            secretName: {{ .secretName }}
+            optional: {{ .optional }}
+            defaultMode: {{ .defaultMode }}
       {{- end }}
       {{- if .Values.googleCloudSdk.serviceAccountKey }}
         - name: service-account-key

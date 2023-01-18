@@ -420,6 +420,17 @@ node:
     #   mountPath: /etc/config/
     #   readOnly: true
 
+  ## Mount already existing k8s Secrets into main container.
+  ## https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-files-from-a-pod
+  ## NOTE: This is NOT used to inject keys to the keystore or add node key.
+  extraSecretMounts: []
+    # - name: extra-secret
+    #   secretName: my-secret
+    #   optional: true
+    #   defaultMode: 0400
+    #   mountPath: /etc/config/
+    #   readOnly: true
+
 ## Configuration of Substrate API
 ## ref: https://github.com/paritytech/substrate-api-sidecar
 ##
