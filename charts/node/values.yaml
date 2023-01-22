@@ -86,11 +86,6 @@ podDisruptionBudget:
   #minAvailable:
   #maxUnavailable:
 
-#maxUnavailable can be an int or a %
-RollingUpdateStrategy:
-  enabled: false
-  maxUnavailable: 1
-
 ## Creates an ingress resource
 ##
 ingress:
@@ -116,6 +111,14 @@ node:
   command: "polkadot"
   replicas: 1
   role: full
+  updateStrategy:
+    ## How node updates should be applied
+    ## Tpye supports RollingUpdate or OnDelete
+    ## maxUnavailable can be an int or a %
+    ##
+    type: "RollingUpdate"
+    enabled: false
+    maxUnavailable: 1
 
 
   ## Node may require custom name for chainspec file.
