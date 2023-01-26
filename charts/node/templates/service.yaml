@@ -33,6 +33,10 @@ spec:
     - port: {{ $.Values.node.perNodeServices.apiService.relayChainPrometheusPort | int }}
       name: prom-relaychain
     {{- end }}
+    {{- if or .Values.node.enableSidecarReadinessProbe .Values.node.enableSidecarLivenessProbe }}
+    - port: 8001
+      name: http-ws-health-exporter
+    {{- end }}
 ---
 {{range $i := until (max .Values.autoscaling.maxReplicas .Values.node.replicas | int) }}
 {{- if $.Values.node.perNodeServices.apiService.enabled }}
