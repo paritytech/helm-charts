@@ -11,5 +11,5 @@ bot:
     SMF_BOT_MATRIX_ACCESS_TOKEN: "__GITHUB_SECRET_SMF_BOT_MATRIX_ACCESS_TOKEN"
 
   config:
-    SMF_BOT_MATRIX_SERVER: "https://matrix.org"
-    SMF_BOT_MATRIX_BOT_USER_ID: "@parity_ci_bot:matrix.org"
+    SMF_BOT_MATRIX_SERVER: "https://m.parity.io"
+    SMF_BOT_MATRIX_BOT_USER_ID: "@helm-charts-bot:parity.io"
