@@ -643,7 +643,6 @@ spec:
                 --listen-addr=/ip4/0.0.0.0/tcp/${RELAY_CHAIN_P2P_PORT_WS}/ws \
                 {{- end }}
                 {{- end }}
-
           env:
             - name: CHAIN
               value: {{ .Values.node.chain }}
@@ -842,8 +841,6 @@ spec:
             sizeLimit: {{ .Values.node.collatorRelayChain.chainKeystore.mountInMemory.sizeLimit }}
             {{- end }}
       {{- end }}
-
-
   volumeClaimTemplates:
     - apiVersion: v1
       kind: PersistentVolumeClaim
@@ -867,7 +864,6 @@ spec:
           requests:
             storage: {{ .Values.node.chainData.volumeSize }}
     {{- if not .Values.node.chainKeystore.mountInMemory.enabled }}
-
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
@@ -891,8 +887,6 @@ spec:
             storage: {{ .Values.node.chainKeystore.volumeSize }}
     {{- end }}
     {{- if .Values.node.isParachain }}
-
-
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
@@ -915,7 +909,6 @@ spec:
           requests:
             storage: {{ .Values.node.collatorRelayChain.chainData.volumeSize }}
     {{- if not .Values.node.collatorRelayChain.chainKeystore.mountInMemory.enabled }}
-
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
