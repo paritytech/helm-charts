@@ -643,14 +643,10 @@ spec:
                 --listen-addr=/ip4/0.0.0.0/tcp/${RELAY_CHAIN_P2P_PORT_WS}/ws \
                 {{- end }}
                 {{- end }}
-<<<<<<< HEAD
-=======
                 --listen-addr=/ip4/0.0.0.0/tcp/30333 \
                 {{- if and (not .Values.node.isParachain) .Values.node.perNodeServices.relayP2pService.ws.enabled }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30334/ws \
                 {{- end }}
-
->>>>>>> 38e325e4d55b7b002bddad0868c87a401b7e5dc7
           env:
             - name: CHAIN
               value: {{ .Values.node.chain }}
