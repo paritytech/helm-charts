@@ -647,6 +647,7 @@ spec:
                 {{- if and (not .Values.node.isParachain) .Values.node.perNodeServices.relayP2pService.ws.enabled }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30334/ws \
                 {{- end }}
+                
           env:
             - name: CHAIN
               value: {{ .Values.node.chain }}
