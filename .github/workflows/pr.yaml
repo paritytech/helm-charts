@@ -45,7 +45,7 @@ jobs:
       run: |
         changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }})
         if [[ -n "$changed" ]]; then
-          echo "changed=true" >> $GITHUB_OUTPUT
+          echo "changed=$changed" >> $GITHUB_OUTPUT
         fi
 
     - name: Run chart-testing (lint)
@@ -53,14 +53,14 @@ jobs:
         ct lint \
           --target-branch ${{ github.event.repository.default_branch }} \
           --lint-conf chart-testing/lintconf.yaml \
-          --excluded-charts charts/common
-      if: steps.list-changed.outputs.changed == 'true'
+          --charts ${{ steps.list-changed.outputs.changed }}
+      if: steps.list-changed.outputs.changed
 
     - name: Create kind cluster
       uses: helm/kind-action@v1.4.0
       with:
         node_image: kindest/node:v1.21.10
-      if: steps.list-changed.outputs.changed == 'true'
+      if: steps.list-changed.outputs.changed
 
     - name: Replace secrets in Helm charts
       env:
@@ -72,12 +72,11 @@ jobs:
           sed -i "s/__GITHUB_SECRET_SMF_BOT_MATRIX_ACCESS_TOKEN/$SMF_BOT_MATRIX_ACCESS_TOKEN/g" $f
           sed -i "s/__GITHUB_SECRET_STAKING_MINER_CONFIG_SEED/$STAKING_MINER_CONFIG_SEED/g" $f
         done
-      if: steps.list-changed.outputs.changed == 'true'
+      if: steps.list-changed.outputs.changed
 
     - name: Run chart-testing (install)
       run: |
         ct install \
         --target-branch ${{ github.event.repository.default_branch }} \
-        --excluded-charts charts/common \
-        --excluded-charts charts/polkadot-runtime-exporter
-      if: steps.list-changed.outputs.changed == 'true'
+        --charts ${{ steps.list-changed.outputs.changed }}
+      if: steps.list-changed.outputs.changed
