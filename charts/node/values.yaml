@@ -113,7 +113,7 @@ node:
   role: full
   updateStrategy:
     ## How node updates should be applied
-    ## Tpye supports RollingUpdate or OnDelete
+    ## Type supports RollingUpdate or OnDelete
     ## maxUnavailable can be an int or a %
     ##
     type: "RollingUpdate"
