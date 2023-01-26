@@ -643,6 +643,14 @@ spec:
                 --listen-addr=/ip4/0.0.0.0/tcp/${RELAY_CHAIN_P2P_PORT_WS}/ws \
                 {{- end }}
                 {{- end }}
+<<<<<<< HEAD
+=======
+                --listen-addr=/ip4/0.0.0.0/tcp/30333 \
+                {{- if and (not .Values.node.isParachain) .Values.node.perNodeServices.relayP2pService.ws.enabled }}
+                --listen-addr=/ip4/0.0.0.0/tcp/30334/ws \
+                {{- end }}
+
+>>>>>>> 38e325e4d55b7b002bddad0868c87a401b7e5dc7
           env:
             - name: CHAIN
               value: {{ .Values.node.chain }}
@@ -759,7 +767,7 @@ spec:
               path: /
               port: admin
         {{- end}}
-        {{ if .Values.node.enableSidecarReadinessProbe }}
+        {{- if or .Values.node.enableSidecarReadinessProbe .Values.node.enableSidecarLivenessProbe }}
         - name: ws-health-exporter
           image: {{ .Values.wsHealthExporter.image.repository }}:{{ .Values.wsHealthExporter.image.tag }}
           env:
@@ -767,10 +775,20 @@ spec:
               value: ws://127.0.0.1:9944
           resources:
           {{- toYaml .Values.wsHealthExporter.resources | nindent 12 }}
+          {{- if .Values.node.enableSidecarReadinessProbe }}
           readinessProbe:
             httpGet:
               path: /health/readiness
               port: 8001
+          {{- end }}
+          {{- if .Values.node.enableSidecarLivenessProbe }}
+          livenessProbe:
+            httpGet:
+              path: /health/readiness
+              port: 8001
+            failureThreshold: 10
+            periodSeconds: 60
+          {{- end }}
         {{- end }}
         {{- with .Values.extraContainers }}
         {{- toYaml . | nindent 8 }}
