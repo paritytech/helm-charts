@@ -19,6 +19,14 @@ spec:
   replicas: {{ .Values.node.replicas | int }}
   {{- end }}
   serviceName: {{ $fullname }}
+  {{- if and (.Values.node.updateStrategy.enabled) (or (and (eq .Values.node.updateStrategy.type "RollingUpdate") (semverCompare ">=1.24-0" .Capabilities.KubeVersion.GitVersion)) (eq .Values.node.updateStrategy.type "OnDelete")) }}
+  updateStrategy:
+    type: {{ .Values.node.updateStrategy.type }}
+    {{- if eq .Values.node.updateStrategy.type "RollingUpdate" }}
+    rollingUpdate:
+      maxUnavailable: {{ .Values.node.updateStrategy.maxUnavailable  | default 1 }}
+    {{- end }}
+   {{- end }}
   template:
     metadata:
     {{- if or .Values.podAnnotations .Values.node.vault.keys .Values.node.vault.nodeKey }}
@@ -690,6 +698,11 @@ spec:
               mountPath: {{ .mountPath }}
               readOnly: {{ .readOnly }}
           {{- end }}
+          {{- range .Values.node.extraSecretMounts }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+              readOnly: {{ .readOnly }}
+          {{- end }}
           {{- if .Values.node.persistGeneratedNodeKey }}
           {{- else if .Values.node.customNodeKey }}
             - mountPath: /tmp/
@@ -797,6 +810,13 @@ spec:
           configMap:
             name: {{ .configMap }}
             optional: {{ .optional }}
+      {{- end }}
+      {{- range .Values.node.extraSecretMounts }}
+        - name: {{ .name }}
+          secret:
+            secretName: {{ .secretName }}
+            optional: {{ .optional }}
+            defaultMode: {{ .defaultMode }}
       {{- end }}
       {{- if .Values.googleCloudSdk.serviceAccountKey }}
         - name: service-account-key

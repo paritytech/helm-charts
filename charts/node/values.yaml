@@ -111,6 +111,14 @@ node:
   command: "polkadot"
   replicas: 1
   role: full
+  updateStrategy:
+    ## How node updates should be applied
+    ## Type supports RollingUpdate or OnDelete
+    ## maxUnavailable can be an int or a %
+    ##
+    type: "RollingUpdate"
+    enabled: false
+    maxUnavailable: 1
 
 
   ## Node may require custom name for chainspec file.
@@ -417,6 +425,17 @@ node:
     # - name: extra-configmap
     #   configMap: my-configmap
     #   optional: true
+    #   mountPath: /etc/config/
+    #   readOnly: true
+
+  ## Mount already existing k8s Secrets into main container.
+  ## https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-files-from-a-pod
+  ## NOTE: This is NOT used to inject keys to the keystore or add node key.
+  extraSecretMounts: []
+    # - name: extra-secret
+    #   secretName: my-secret
+    #   optional: true
+    #   defaultMode: 0400
     #   mountPath: /etc/config/
     #   readOnly: true
 
