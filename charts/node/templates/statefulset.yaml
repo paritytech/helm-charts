@@ -19,6 +19,14 @@ spec:
   replicas: {{ .Values.node.replicas | int }}
   {{- end }}
   serviceName: {{ $fullname }}
+  {{- if and (.Values.node.updateStrategy.enabled) (or (and (eq .Values.node.updateStrategy.type "RollingUpdate") (semverCompare ">=1.24-0" .Capabilities.KubeVersion.GitVersion)) (eq .Values.node.updateStrategy.type "OnDelete")) }}
+  updateStrategy:
+    type: {{ .Values.node.updateStrategy.type }}
+    {{- if eq .Values.node.updateStrategy.type "RollingUpdate" }}
+    rollingUpdate:
+      maxUnavailable: {{ .Values.node.updateStrategy.maxUnavailable  | default 1 }}
+    {{- end }}
+   {{- end }}
   template:
     metadata:
     {{- if or .Values.podAnnotations .Values.node.vault.keys .Values.node.vault.nodeKey }}
