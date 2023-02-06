@@ -7,9 +7,9 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: {{ .Values.server.config.SMF_BACKEND_PORT }}
-      name: metrics
+    - name: http
+      port: 5555
+      targetPort: 5555
       protocol: TCP
   selector:
-    {{- include "faucet.serverSelectorLabels" . | nindent 8 }}
-
+    {{ include "faucet.serverSelectorLabels" . | nindent 4 }}
