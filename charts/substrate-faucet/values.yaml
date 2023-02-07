@@ -14,6 +14,7 @@ server:
     pullPolicy: Always
   existingConfigMap: ''
   existingSecret: ''
+  externalAccess: false
   secret:
     SMF_BACKEND_FAUCET_ACCOUNT_MNEMONIC: "this is a fake mnemonic"
   config:
@@ -21,8 +22,10 @@ server:
     SMF_BACKEND_NETWORK_DECIMALS: 12
     SMF_BACKEND_INJECTED_TYPES: '{}'
     SMF_BACKEND_PORT: 5555
-
+    SMF_BACKEND_DRIP_AMOUNT: 10
+    SMF_BACKEND_RECAPTCHA_SECRET: ''
 bot:
+  enabled: true
   image:
     repository: paritytech/faucet-bot
     tag: latest
@@ -39,6 +42,11 @@ bot:
     SMF_BOT_NETWORK_DECIMALS: 12
     SMF_BOT_NETWORK_UNIT: "UNIT"
     SMF_BOT_FAUCET_IGNORE_LIST: ''
+ingress:
+  enabled: false
+#    annotations:
+#    host: example.com
+#    tls:
 
 extraLabels: []
 
