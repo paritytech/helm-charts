@@ -46,6 +46,9 @@ spec:
             {{- toYaml .Values.containerSecurityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.args }}
+          args: {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
           {{- range $keys := .Values.service.ports }}
             - name: {{ .name }}
@@ -69,7 +72,11 @@ spec:
           env:
           {{- range $key, $value := .Values.env }}
             - name: "{{ $key }}"
+              {{- if  eq ( typeOf $value  ) "string" }}
               value: "{{ $value }}"
+              {{- else }}
+              {{- toYaml $value | nindent 14 }}
+              {{- end }}
           {{- end }}
           {{- with .Values.envFrom }}
           envFrom:

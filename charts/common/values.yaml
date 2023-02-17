@@ -25,6 +25,10 @@ image:
   pullPolicy: IfNotPresent
   tag: "latest"
 
+## Override default container args
+##
+args: []
+
 ## Number of replicas for the pod
 ##
 replicaCount: 1
@@ -74,7 +78,12 @@ containerSecurityContext: {}
 ## Environment variable to add to the pods
 ##
 env: {}
-  # VAR: value
+  # VAR: "value"
+  # VAR2:
+  #   valueFrom:
+  #     secretKeyRef:
+  #       key: my-key
+  #       name: env-secret
 
 ## Environment variables from secrets or configmaps to add to the pods
 ##
