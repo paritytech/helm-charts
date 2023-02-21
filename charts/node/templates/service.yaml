@@ -50,7 +50,11 @@ metadata:
     instance: {{ $fullname }}-{{ $i }}
   annotations:
 {{- if $.Values.node.perNodeServices.apiService.externalDns.enabled }}
+  {{- if $.Values.node.perNodeServices.apiService.externalDns.customPrefix }}
+    external-dns.alpha.kubernetes.io/hostname: {{ $.Values.node.perNodeServices.apiService.externalDns.customPrefix }}-{{ $i }}.{{ $.Values.node.perNodeServices.apiService.externalDns.hostname }}
+  {{- else }}
     external-dns.alpha.kubernetes.io/hostname: {{ $fullname }}-{{ $i }}.{{ $.Values.node.perNodeServices.apiService.externalDns.hostname }}
+  {{- end }}
     external-dns.alpha.kubernetes.io/ttl: {{ $.Values.node.perNodeServices.apiService.externalDns.ttl | squote }}
 {{- end }}
 {{- with $.Values.node.perNodeServices.apiService.annotations }}
@@ -92,7 +96,11 @@ metadata:
     {{- $serviceLabels | nindent 4 }}
   annotations:
 {{- if $.Values.node.perNodeServices.relayP2pService.externalDns.enabled }}
+  {{- if $.Values.node.perNodeServices.relayP2pService.externalDns.customPrefix }}
+    external-dns.alpha.kubernetes.io/hostname: {{ $.Values.node.perNodeServices.relayP2pService.externalDns.customPrefix }}-{{ $i }}.{{ $.Values.node.perNodeServices.relayP2pService.externalDns.hostname }}
+  {{- else }}
     external-dns.alpha.kubernetes.io/hostname: {{ $fullname }}-{{ $i }}.{{ $.Values.node.perNodeServices.relayP2pService.externalDns.hostname }}
+  {{- end }}
     external-dns.alpha.kubernetes.io/ttl: {{ $.Values.node.perNodeServices.relayP2pService.externalDns.ttl | squote }}
 {{- end }}
 {{- with merge $.Values.node.perNodeServices.relayP2pService.annotations $.Values.node.perNodeServices.paraP2pService.annotations }}
@@ -131,7 +139,11 @@ metadata:
     {{- $serviceLabels | nindent 4 }}
   annotations:
 {{- if $.Values.node.perNodeServices.paraP2pService.externalDns.enabled }}
+  {{- if $.Values.node.perNodeServices.paraP2pService.externalDns.customPrefix }}
+    external-dns.alpha.kubernetes.io/hostname: {{ $.Values.node.perNodeServices.paraP2pService.externalDns.customPrefix }}-{{ $i }}.{{ $.Values.node.perNodeServices.paraP2pService.externalDns.hostname }}
+  {{- else }}
     external-dns.alpha.kubernetes.io/hostname: {{ $fullname }}-{{ $i }}.{{ $.Values.node.perNodeServices.paraP2pService.externalDns.hostname }}
+  {{- end }}
     external-dns.alpha.kubernetes.io/ttl: {{ $.Values.node.perNodeServices.paraP2pService.externalDns.ttl | squote }}
 {{- end }}
 {{- with merge $.Values.node.perNodeServices.relayP2pService.annotations $.Values.node.perNodeServices.paraP2pService.annotations }}
