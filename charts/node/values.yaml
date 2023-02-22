@@ -331,6 +331,8 @@ node:
         enabled: false
         hostname: example.com
         ttl: 300
+        # Custom prefix to use instead of prefixing the hostname with the name of the Pod
+        customPrefix: ""
     ## If enabled, create service to expose relay chain P2P
     ##
     relayP2pService:
@@ -343,6 +345,8 @@ node:
         enabled: false
         hostname: example.com
         ttl: 300
+        # Custom prefix to use instead of prefixing the hostname with the name of the Pod
+        customPrefix: ""
       # If enabled, additionally expose WebSocket port. Useful for bootnodes
       ws:
         enabled: false
@@ -359,6 +363,8 @@ node:
         enabled: false
         hostname: example.com
         ttl: 300
+        # Custom prefix to use instead of prefixing the hostname with the name of the Pod
+        customPrefix: ""
       # If enabled, additionally expose WebSocket port. Useful for bootnodes
       ws:
         enabled: false
