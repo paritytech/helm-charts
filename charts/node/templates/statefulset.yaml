@@ -866,6 +866,9 @@ spec:
       kind: PersistentVolumeClaim
       metadata:
         name: chain-data
+        {{- with .Values.node.chainData.annotations }}
+        annotations: {{ toYaml . | nindent 10 }}
+        {{- end }}
       spec:
         accessModes: [ "ReadWriteOnce" ]
         {{- if or .Values.node.chainData.kubernetesVolumeSnapshot .Values.node.chainData.kubernetesVolumeToClone }}
@@ -888,6 +891,9 @@ spec:
       kind: PersistentVolumeClaim
       metadata:
         name: chain-keystore
+        {{- with .Values.node.chainKeystore.annotations }}
+        annotations: {{ toYaml . | nindent 10 }}
+        {{- end }}
       spec:
         accessModes: {{ .Values.node.chainKeystore.accessModes }}
         {{- if or .Values.node.chainKeystore.kubernetesVolumeSnapshot .Values.node.chainKeystore.kubernetesVolumeToClone }}
@@ -911,6 +917,9 @@ spec:
       kind: PersistentVolumeClaim
       metadata:
         name: relaychain-data
+        {{- with .Values.node.collatorRelayChain.chainData.annotations }}
+        annotations: {{ toYaml . | nindent 10 }}
+        {{- end }}
       spec:
         accessModes: [ "ReadWriteOnce" ]
         {{- if or .Values.node.collatorRelayChain.chainData.kubernetesVolumeSnapshot .Values.node.collatorRelayChain.chainData.kubernetesVolumeToClone }}
@@ -933,6 +942,9 @@ spec:
       kind: PersistentVolumeClaim
       metadata:
         name: relaychain-keystore
+        {{- with .Values.node.collatorRelayChain.chainKeystore.annotations }}
+        annotations: {{ toYaml . | nindent 10 }}
+        {{- end }}
       spec:
         accessModes: {{ .Values.node.collatorRelayChain.chainKeystore.accessModes }}
         {{- if or .Values.node.collatorRelayChain.chainKeystore.kubernetesVolumeSnapshot .Values.node.collatorRelayChain.chainKeystore.kubernetesVolumeToClone }}

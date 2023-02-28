@@ -148,6 +148,7 @@ node:
     ##
     storageClass: "default"
     volumeSize: 100Gi
+    annotations: {}
 
   chainKeystore:
     ## Mount chain keystore in memory using an emptyDir volume
@@ -162,6 +163,7 @@ node:
     storageClass: "default"
     volumeSize: 10Mi
     accessModes: ["ReadWriteOnce"]
+    annotations: {}
 
   ## Deploy a collator node
   ## ref: https://wiki.polkadot.network/docs/learn-collator
@@ -196,6 +198,7 @@ node:
       ##
       storageClass: "default"
       volumeSize: 100Gi
+      annotations: {}
     chainKeystore:
       ## Mount relay-chain keystore in memory using an emptyDir volume
       ##
@@ -209,6 +212,7 @@ node:
       storageClass: "default"
       volumeSize: 10Mi
       accessModes: ["ReadWriteOnce"]
+      annotations: {}
 
     ## Expose relay chain metrics via Prometheus format in /metrics endpoint
     ## Pass the following args:
