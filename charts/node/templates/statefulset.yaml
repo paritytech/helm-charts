@@ -598,6 +598,9 @@ spec:
                 {{ . }} \
                 {{- end }}
                 {{- end }}
+                {{- if .Values.node.offchainIndexing }}
+                --enable-offchain-indexing true \
+                {{- end }}
                 {{- if .Values.node.isParachain }}
                 -- \
                 --name=${POD_NAME} \
