@@ -449,6 +449,10 @@ node:
     #   mountPath: /etc/config/
     #   readOnly: true
 
+  # Enable Offchain Indexing.
+  # https://docs.substrate.io/fundamentals/offchain-operations/
+  enableOffchainIndexing: false
+
 ## Configuration of Substrate API
 ## ref: https://github.com/paritytech/substrate-api-sidecar
 ##
