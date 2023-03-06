@@ -598,7 +598,7 @@ spec:
                 {{ . }} \
                 {{- end }}
                 {{- end }}
-                {{- if .Values.node.offchainIndexing }}
+                {{- if .Values.node.enableOffchainIndexing }}
                 --enable-offchain-indexing true \
                 {{- end }}
                 {{- if .Values.node.isParachain }}
