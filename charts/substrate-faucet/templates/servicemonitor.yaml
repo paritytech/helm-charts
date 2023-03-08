@@ -2,11 +2,11 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ .Release.Name }}-server
+  name: {{ .Release.Name }}
 spec:
   selector:
     matchLabels:
-    {{- include "faucet.serverSelectorLabels" . | nindent 8 }}
+    {{- include "faucet.selectorLabels" . | nindent 8 }}
   endpoints:
     - port: http
       interval: 15s

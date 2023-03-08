@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-server
+  name: {{ .Release.Name }}
   labels:
-    {{- include "faucet.serverLabels" . | nindent 4 }}
+    {{- include "faucet.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   strategy:
     type: RollingUpdate
   selector:
     matchLabels:
-      {{- include "faucet.serverSelectorLabels" . | nindent 6 }}
+      {{- include "faucet.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "faucet.serverSelectorLabels" . | nindent 8 }}
+        {{- include "faucet.selectorLabels" . | nindent 8 }}
       annotations:
-        configmap/checksum: {{ include (print $.Template.BasePath "/server-configmap.yaml") . | sha256sum }}
-        secret/checksum: {{ include (print $.Template.BasePath "/server-secret.yaml") . | sha256sum }}
+        configmap/checksum: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        secret/checksum: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -27,30 +27,30 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: faucet-server
-          image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag }}"
-          imagePullPolicy: {{ .Values.server.image.pullPolicy }}
+        - name: faucet
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-          {{- range $key, $val := .Values.server.secret }}
+          {{- range $key, $val := .Values.faucet.secret }}
             - name: {{ $key }}
               valueFrom:
                 secretKeyRef:
                   key: {{ $key }}
-                  name: {{ $.Values.server.existingSecret | default (printf "%s-server-secret" $.Release.Name) }}
+                  name: {{ $.Values.faucet.existingSecret | default (printf "%s-secret" $.Release.Name) }}
           {{- end }}
-          {{- range $key, $val := .Values.server.config }}
+          {{- range $key, $val := .Values.faucet.config }}
             - name: {{ $key }}
               valueFrom:
                 configMapKeyRef:
                   key: {{ $key }}
-                  name: {{ $.Values.server.existingConfigMap | default (printf "%s-server-config" $.Release.Name) }}
+                  name: {{ $.Values.faucet.existingConfigMap | default (printf "%s-config" $.Release.Name) }}
           {{- end }}
             - name: SMF_BACKEND_DEPLOYED_REF
-              value: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag }}"
+              value: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
             - name: SMF_BACKEND_DEPLOYED_TIME
               value: {{ now | date "2006-01-02T15:04:05" | quote }}
             - name: SMF_BACKEND_EXTERNAL_ACCESS
-              value: {{ .Values.server.externalAccess | quote }}
+              value: {{ .Values.faucet.externalAccess | quote }}
           ports:
             - name: http
               containerPort: 5555

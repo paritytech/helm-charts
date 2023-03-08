@@ -8,16 +8,16 @@ To deploy a Westend faucet:
 ```console
 helm repo add parity https://paritytech.github.io/helm-charts/
 helm install substrate-faucet parity/substrate-faucet \
-    --set node.chain="westend" \
-    --set server.secret.SMF_BACKEND_FAUCET_ACCOUNT_MNEMONIC="//Alice" \
-    --set server.config.SMF_BACKEND_RPC_ENDPOINT="https://westend-rpc.polkadot.io/" \
-    --set server.config.SMF_BACKEND_INJECTED_TYPES='{}' \
-    --set server.config.SMF_BACKEND_PORT=5555 \
-    --set bot.secret.SMF_BOT_MATRIX_ACCESS_TOKEN="******" \
-    --set bot.config.SMF_BOT_MATRIX_SERVER="https://matrix.org" \
-    --set bot.config.SMF_BOT_MATRIX_BOT_USER_ID="@test_bot_faucet:matrix.org" \
-    --set bot.config.SMF_BOT_NETWORK_UNIT="WND" \
-    --set bot.config.SMF_BOT_DRIP_AMOUNT="0.1"
+    --set chain.name="westend" \
+    --set faucet.secret.SMF_BACKEND_FAUCET_ACCOUNT_MNEMONIC="//Alice" \
+    --set faucet.secret.SMF_BOT_MATRIX_ACCESS_TOKEN="******" \
+    --set faucet.config.SMF_BACKEND_RPC_ENDPOINT="https://westend-rpc.polkadot.io/" \
+    --set faucet.config.SMF_BACKEND_INJECTED_TYPES='{}' \
+    --set faucet.config.SMF_BACKEND_NETWORK_DECIMALS='12' \
+    --set faucet.config.SMF_BOT_MATRIX_SERVER="https://matrix.org" \
+    --set faucet.config.SMF_BOT_MATRI[ingress.yaml](templates%2Fingress.yaml)X_BOT_USER_ID="@test_bot_faucet:matrix.org" \
+    --set faucet.config.SMF_BOT_NETWORK_UNIT="WND" \
+    --set faucet.config.SMF_BOT_DRIP_AMOUNT="1"
 ```
 
 ## Parameters

@@ -46,27 +46,11 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
-Common labels
-*/}}
-{{- define "faucet.botLabels" -}}
-{{ include "faucet.labels" . }}
-{{ include "faucet.botSelectorLabels" . }}
-{{- end -}}
-{{- define "faucet.serverLabels" -}}
-{{ include "faucet.labels" . }}
-{{ include "faucet.serverSelectorLabels" . }}
-{{- end -}}
-
-{{/*
 Selector labels
 */}}
-{{- define "faucet.botSelectorLabels" -}}
-app.kubernetes.io/name: {{ include "faucet.name" . }}-bot
-app.kubernetes.io/instance: {{ .Release.Name }}-bot
-{{- end -}}
-{{- define "faucet.serverSelectorLabels" -}}
-app.kubernetes.io/name: {{ include "faucet.name" . }}-server
-app.kubernetes.io/instance: {{ .Release.Name }}-server
+{{- define "faucet.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "faucet.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 
 {{/*
