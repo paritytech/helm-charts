@@ -19,7 +19,7 @@ spec:
         configmap/checksum: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         secret/checksum: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
     spec:
-    {{- with .Values.imagePullSecrets }}
+    {{- with .Values.image.pullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
@@ -31,6 +31,8 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
+            - name: SMF_BACKEND_PORT
+              value: "5555"
           {{- range $key, $val := .Values.faucet.secret }}
             - name: {{ $key }}
               valueFrom:
