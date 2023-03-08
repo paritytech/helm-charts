@@ -4,7 +4,7 @@ kind: Ingress
 metadata:
   name: {{ .Release.Name }}
   labels:
-    {{- include "faucet.serverLabels" . | nindent 4 }}
+    {{- include "faucet.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
   {{- toYaml . | nindent 4 }}
@@ -21,7 +21,7 @@ spec:
             path: /
             backend:
               service:
-                name: {{ .Release.Name }}-server
+                name: {{ .Release.Name }}
                 port:
                   name: http
   tls:

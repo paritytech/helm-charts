@@ -1,0 +1,10 @@
+{{- if (not .Values.faucet.existingConfigMap) -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+data:
+  {{- range $key, $val := .Values.faucet.config }}
+  {{ $key }}: {{ $val | quote }}
+  {{- end }}
+{{- end }}

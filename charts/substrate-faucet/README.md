@@ -8,46 +8,62 @@ To deploy a Westend faucet:
 ```console
 helm repo add parity https://paritytech.github.io/helm-charts/
 helm install substrate-faucet parity/substrate-faucet \
-    --set node.chain="westend" \
-    --set server.secret.SMF_BACKEND_FAUCET_ACCOUNT_MNEMONIC="//Alice" \
-    --set server.config.SMF_BACKEND_RPC_ENDPOINT="https://westend-rpc.polkadot.io/" \
-    --set server.config.SMF_BACKEND_INJECTED_TYPES='{}' \
-    --set server.config.SMF_BACKEND_PORT=5555 \
-    --set bot.secret.SMF_BOT_MATRIX_ACCESS_TOKEN="******" \
-    --set bot.config.SMF_BOT_MATRIX_SERVER="https://matrix.org" \
-    --set bot.config.SMF_BOT_MATRIX_BOT_USER_ID="@test_bot_faucet:matrix.org" \
-    --set bot.config.SMF_BOT_NETWORK_UNIT="WND" \
-    --set bot.config.SMF_BOT_DRIP_AMOUNT="0.1"
+    --set faucet.secret.SMF_BACKEND_FAUCET_ACCOUNT_MNEMONIC="//Alice" \
+    --set faucet.secret.SMF_BOT_MATRIX_ACCESS_TOKEN="******" \
+    --set faucet.config.SMF_BACKEND_RPC_ENDPOINT="https://westend-rpc.polkadot.io/" \
+    --set faucet.config.SMF_BACKEND_INJECTED_TYPES='{}' \
+    --set faucet.config.SMF_BACKEND_NETWORK_DECIMALS='12' \
+    --set faucet.config.SMF_BOT_MATRIX_SERVER="https://matrix.org" \
+    --set faucet.config.SMF_BOT_MATRIX_BOT_USER_ID="@test_bot_faucet:matrix.org" \
+    --set faucet.config.SMF_BOT_NETWORK_UNIT="WND" \
+    --set faucet.config.SMF_BOT_DRIP_AMOUNT="1"
 ```
 
 ## Parameters
 
+### Global parameters
+
+| Name                | Description                                | Value                      |
+| ------------------- | ------------------------------------------ | -------------------------- |
+| `image.repository`  | Image repository                           | `paritytech/faucet-server` |
+| `image.tag`         | Image tag (immutable tags are recommended) | `latest`                   |
+| `image.pullPolicy`  | Image pull policy                          | `Always`                   |
+| `image.pullSecrets` | Image pull policy                          | `[]`                       |
+
+### Faucet parameters
+
+| Name                                                | Description                                                                                             | Value                         |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| `faucet.existingConfigMap`                          | existingConfigMap                                                                                       | `""`                          |
+| `faucet.existingSecret`                             | existingSecret                                                                                          | `""`                          |
+| `faucet.externalAccess`                             | externalAccess                                                                                          | `false`                       |
+| `faucet.secret.SMF_BACKEND_FAUCET_ACCOUNT_MNEMONIC` | Mnemonic seed for the faucet account                                                                    | `this is a fake mnemonic`     |
+| `faucet.secret.SMF_BACKEND_RECAPTCHA_SECRET`        | A secret recaptcha token used to validate external requests                                             | `fakeRecaptchaSecret`         |
+| `faucet.secret.SMF_BOT_MATRIX_ACCESS_TOKEN`         | Matrix Bot access token                                                                                 | `ThisIsNotARealAccessToken`   |
+| `faucet.config.SMF_BACKEND_RPC_ENDPOINT`            | WS RPC node endpoint                                                                                    | `https://example.com/`        |
+| `faucet.config.SMF_BACKEND_NETWORK_DECIMALS`        | Number of decimal for the network                                                                       | `12`                          |
+| `faucet.config.SMF_BACKEND_INJECTED_TYPES`          | To set if any type must be overriden                                                                    | `{}`                          |
+| `faucet.config.SMF_BOT_DRIP_AMOUNT`                 | Default amount of tokens to send                                                                        | `10`                          |
+| `faucet.config.SMF_BOT_MATRIX_SERVER`               | Matrix server URL                                                                                       | `https://matrix.org`          |
+| `faucet.config.SMF_BOT_MATRIX_BOT_USER_ID`          | Bot user ID                                                                                             | `@test_bot_faucet:matrix.org` |
+| `faucet.config.SMF_BOT_NETWORK_UNIT`                | Token unit for the network                                                                              | `UNIT`                        |
+| `faucet.config.SMF_BOT_FAUCET_IGNORE_LIST`          | A list of Matrix accounts that will be silently ignored. Example: \"@alice:matrix.org,@bob:domain.com\" | `""`                          |
+
 ### Common parameters
 
-| Parameter            | Description                                | Default                        |
-|----------------------|--------------------------------------------|--------------------------------|
-| `imagePullSecrets`   | Labels to add to all deployed objects      | `[]`                           |
-| `nameOverride`       | String to partially override node.fullname | `nil`                          |
-| `fullnameOverride`   | String to fully override node.fullname     | `nil`                          |
-| `podSecurityContext` | Specify the pod security settings          | `{}`                           |  
-| `resources`          | Resources to set on pods                   | `{}`                           |  
-| `nodeSelector`       | Node labels for pod assignment             | `{}`                           |  
-| `tolerations`        | Tolerations for pod assignment             | `[]`                           |  
-| `affinity`           | Affinity for pod assignment                | `{}`                           |  
-
-### Substrate-faucet parameters
-
-| Parameter                 | Description                                                                  | Default     |
-|---------------------------|------------------------------------------------------------------------------|-------------|
-| `chain.name`              | Chain name                                                                   | `substrate` |
-| `replicaCount`            | Number of replicas for the bot and server pods (recommended to keep it at 1) | `1`         |
-| `server.image.repository` | Server image repository                                                      | `9615`      |
-| `server.image.tag`        | Server image tag                                                             | `9615`      |
-| `server.image.pullPolicy` | Server image pull policy                                                     | `9615`      |
-| `server.secret`           | Server secret environment variable map                                       | `{}`        |
-| `server.config`           | Server config environment variable map                                       | `{}`        |
-| `bot.image.repository`    | Bot image repository                                                         | `9615`      |
-| `bot.image.tag`           | Bot image tag                                                                | `9615`      |
-| `bot.image.pullPolicy`    | Bot image pull policy                                                        | `9615`      |
-| `bot.secret`              | Bot secret environment variable map                                          | `9615`      |
-| `bot.config`              | Bot config environment variable map                                          | `9615`      |
+| Name                     | Description                                                          | Value   |
+| ------------------------ | -------------------------------------------------------------------- | ------- |
+| `replicaCount`           | Number of replicas pods for the faucet (recommended to keep it at 1) | `1`     |
+| `extraLabels`            | Labels to add to all deployed objects                                | `[]`    |
+| `nameOverride`           | String to partially override common.names.name                       | `""`    |
+| `fullnameOverride`       | String to fully override common.names.fullname                       | `""`    |
+| `serviceAccount.create`  | Specifies whether a ServiceAccount should be created                 | `true`  |
+| `serviceAccount.name`    | The name of the ServiceAccount to use.                               | `""`    |
+| `podSecurityContext`     | Set pods' Security Context                                           | `{}`    |
+| `resources.limits`       | The resources limits for containers                                  | `{}`    |
+| `resources.requests`     | The requested resources for containers                               | `{}`    |
+| `nodeSelector`           | Node labels for pods assignment                                      | `{}`    |
+| `tolerations`            | Tolerations for pods assignment                                      | `[]`    |
+| `affinity`               | Affinity for pods assignment                                         | `{}`    |
+| `ingress.enabled`        | Specifies whether a ServiceMonitor should be created                 | `false` |
+| `serviceMonitor.enabled` | Specifies whether as INgress should be created                       | `true`  |
