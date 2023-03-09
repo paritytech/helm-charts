@@ -1677,6 +1677,18 @@ entries:
     version: 1.0.0
   substrate-faucet:
   - apiVersion: v2
+    created: "2023-03-09T09:41:43.408703888Z"
+    description: A Helm chart to deploy substrate-faucet
+    digest: d3e738025ffb77ac6122e5f65078244051adf078feeeb6c8ddae031826d0b836
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: substrate-faucet
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/substrate-faucet-2.0.1/substrate-faucet-2.0.1.tgz
+    version: 2.0.1
+  - apiVersion: v2
     created: "2023-03-08T17:47:21.975755008Z"
     description: A Helm chart to deploy substrate-faucet
     digest: e466b994f38f27729522d766a4be1a5feac36f603e949e76e9e30492bfe77b0b
@@ -1965,4 +1977,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/testnet-manager-1.0.0/testnet-manager-1.0.0.tgz
     version: 1.0.0
-generated: "2023-03-08T17:47:21.976205211Z"
+generated: "2023-03-09T09:41:43.409032587Z"
