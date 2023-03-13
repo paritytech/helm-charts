@@ -118,13 +118,13 @@ affinity: {}
 ## ServiceMonitor configuration
 ##
 serviceMonitor:
-  ## @param ingress.enabled Specifies whether a ServiceMonitor should be created
+  ## @param serviceMonitor.enabled Specifies whether a ServiceMonitor should be created
   ##
   enabled: false
 
 ## Ingress configuration
 ##
 ingress:
-  ## @param serviceMonitor.enabled Specifies whether as INgress should be created
+  ## @param ingress.enabled Specifies whether as Ingress should be created
   ##
   enabled: false
