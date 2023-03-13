@@ -41,6 +41,17 @@ spec:
               --ws {{ join "," .Values.introspector.rpcNodes }} \
               prometheus --port {{ .Values.introspector.prometheusPort }}
               {{- end }}
+              {{-  if eq .Values.introspector.role "parachain-commander"}}
+              parachain-commander \
+              --ws {{ join "," .Values.introspector.rpcNodes }} \
+              {{- range .Values.introspector.paraIds }}
+              --para-id {{ . }} \
+              {{- end }}
+              prometheus --port {{ .Values.introspector.prometheusPort }}
+              {{- end }}
+              {{- range .Values.introspector.extraArgs }}
+              {{ . }} \
+              {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.introspector.prometheusPort }}
