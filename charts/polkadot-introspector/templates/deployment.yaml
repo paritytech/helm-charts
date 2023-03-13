@@ -35,7 +35,7 @@ spec:
           args:
             - -c
             - |
-              exec polkadot-introspector \
+              exec polkadot-introspector/polkadot/polkadot-introspector \
               {{-  if eq .Values.introspector.role "block-time-monitor"}}
               block-time-monitor \
               --ws {{ join "," .Values.introspector.rpcNodes }} \
