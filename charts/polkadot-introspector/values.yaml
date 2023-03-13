@@ -2,7 +2,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 image:
-  repository: lazam/introspector #To be replaced once public image is available
+  repository: paritytech/polkadot-introspector
   pullPolicy: Always
   tag: latest
 
@@ -15,7 +15,9 @@ introspector:
   rpcNodes:
     - wss://rpc.polkadot.io:443
     - wss://kusama-rpc.polkadot.io:443
+  paraIds: []
   prometheusPort: 9615
+  extraArgs: []
 
 serviceAccount:
   create: true
