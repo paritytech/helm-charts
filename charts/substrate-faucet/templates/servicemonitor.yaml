@@ -2,12 +2,30 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ include "faucet.fullname" . }}
+  labels:
+    {{- include "faucet.labels" . | nindent 4 }}
 spec:
+  endpoints:
+  - port: http
+    {{- with .Values.serviceMonitor.interval }}
+    interval: {{ . }}
+    {{- end }}
+    {{- with .Values.serviceMonitor.scrapeTimeout }}
+    scrapeTimeout: {{ . }}
+    {{- end }}
+    honorLabels: true
+    path: /metrics
+    scheme: http
+  {{- with .Values.serviceMonitor.targetLabels }}
+  targetLabels:
+  {{ toYaml .| nindent 6 }}
+  {{- end }}
+  jobLabel: "{{ .Release.Name }}"
   selector:
     matchLabels:
     {{- include "faucet.selectorLabels" . | nindent 8 }}
-  endpoints:
-    - port: http
-      interval: 15s
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
 {{- end }}
