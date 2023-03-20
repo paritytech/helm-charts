@@ -1,6 +1,6 @@
 ## @section Global parameters
 ## Global Docker image parameters
-## Official image tags: https://hub.docker.com/r/paritytech/faucet-server/tags/
+## Official image tags: https://hub.docker.com/r/paritytech/faucet/tags/
 ##
 
 image:
@@ -121,6 +121,15 @@ serviceMonitor:
   ## @param serviceMonitor.enabled Specifies whether a ServiceMonitor should be created
   ##
   enabled: false
+  ## @param serviceMonitor.interval Duration between scrapes of the target endpoint
+  ##
+  interval: 1m
+  ## @param serviceMonitor.scrapeTimeout Timeout for each scrape request
+  ##
+  scrapeTimeout: 30s
+  ## @param serviceMonitor.targetLabels List of target labels to be added to all metrics collected from this service monitor
+  ##
+  targetLabels: []
 
 ## Ingress configuration
 ##

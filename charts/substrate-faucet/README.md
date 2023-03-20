@@ -23,12 +23,13 @@ helm install substrate-faucet parity/substrate-faucet \
 
 ### Global parameters
 
-| Name                | Description                                | Value                      |
-| ------------------- | ------------------------------------------ | -------------------------- |
-| `image.repository`  | Image repository                           | `paritytech/faucet-server` |
-| `image.tag`         | Image tag (immutable tags are recommended) | `latest`                   |
-| `image.pullPolicy`  | Image pull policy                          | `Always`                   |
-| `image.pullSecrets` | Image pull policy                          | `[]`                       |
+| Name                | Description                                | Value               |
+| ------------------- | ------------------------------------------ | ------------------- |
+| `image.repository`  | Image repository                           | `paritytech/faucet` |
+| `image.tag`         | Image tag (immutable tags are recommended) | `latest`            |
+| `image.pullPolicy`  | Image pull policy                          | `Always`            |
+| `image.pullSecrets` | Image pull policy                          | `[]`                |
+
 
 ### Faucet parameters
 
@@ -49,21 +50,25 @@ helm install substrate-faucet parity/substrate-faucet \
 | `faucet.config.SMF_BOT_NETWORK_UNIT`                | Token unit for the network                                                                              | `UNIT`                        |
 | `faucet.config.SMF_BOT_FAUCET_IGNORE_LIST`          | A list of Matrix accounts that will be silently ignored. Example: \"@alice:matrix.org,@bob:domain.com\" | `""`                          |
 
+
 ### Common parameters
 
-| Name                     | Description                                                          | Value   |
-| ------------------------ | -------------------------------------------------------------------- | ------- |
-| `replicaCount`           | Number of replicas pods for the faucet (recommended to keep it at 1) | `1`     |
-| `extraLabels`            | Labels to add to all deployed objects                                | `[]`    |
-| `nameOverride`           | String to partially override common.names.name                       | `""`    |
-| `fullnameOverride`       | String to fully override common.names.fullname                       | `""`    |
-| `serviceAccount.create`  | Specifies whether a ServiceAccount should be created                 | `true`  |
-| `serviceAccount.name`    | The name of the ServiceAccount to use.                               | `""`    |
-| `podSecurityContext`     | Set pods' Security Context                                           | `{}`    |
-| `resources.limits`       | The resources limits for containers                                  | `{}`    |
-| `resources.requests`     | The requested resources for containers                               | `{}`    |
-| `nodeSelector`           | Node labels for pods assignment                                      | `{}`    |
-| `tolerations`            | Tolerations for pods assignment                                      | `[]`    |
-| `affinity`               | Affinity for pods assignment                                         | `{}`    |
-| `ingress.enabled`        | Specifies whether a ServiceMonitor should be created                 | `false` |
-| `serviceMonitor.enabled` | Specifies whether as INgress should be created                       | `true`  |
+| Name                           | Description                                                                          | Value   |
+| ------------------------------ | ------------------------------------------------------------------------------------ | ------- |
+| `replicaCount`                 | Number of replicas pods for the faucet (recommended to keep it at 1)                 | `1`     |
+| `extraLabels`                  | Labels to add to all deployed objects                                                | `[]`    |
+| `nameOverride`                 | String to partially override common.names.name                                       | `""`    |
+| `fullnameOverride`             | String to fully override common.names.fullname                                       | `""`    |
+| `serviceAccount.create`        | Specifies whether a ServiceAccount should be created                                 | `true`  |
+| `serviceAccount.name`          | The name of the ServiceAccount to use.                                               | `""`    |
+| `podSecurityContext`           | Set pods' Security Context                                                           | `{}`    |
+| `resources.limits`             | The resources limits for containers                                                  | `{}`    |
+| `resources.requests`           | The requested resources for containers                                               | `{}`    |
+| `nodeSelector`                 | Node labels for pods assignment                                                      | `{}`    |
+| `tolerations`                  | Tolerations for pods assignment                                                      | `[]`    |
+| `affinity`                     | Affinity for pods assignment                                                         | `{}`    |
+| `serviceMonitor.enabled`       | Specifies whether a ServiceMonitor should be created                                 | `false` |
+| `serviceMonitor.interval`      | Duration between scrapes of the target endpoint                                      | `1m`    |
+| `serviceMonitor.scrapeTimeout` | Timeout for each scrape request                                                      | `30s`   |
+| `serviceMonitor.targetLabels`  | List of target labels to be added to all metrics collected from this service monitor | `[]`    |
+| `ingress.enabled`              | Specifies whether as Ingress should be created                                       | `false` |
