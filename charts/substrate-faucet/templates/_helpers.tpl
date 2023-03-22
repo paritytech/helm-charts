@@ -36,6 +36,7 @@ Common labels
 */}}
 {{- define "faucet.labels" -}}
 helm.sh/chart: {{ include "faucet.chart" . }}
+{{ include "faucet.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
