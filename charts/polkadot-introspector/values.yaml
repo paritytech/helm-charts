@@ -15,8 +15,12 @@ introspector:
   rpcNodes:
     - wss://rpc.polkadot.io:443
     - wss://kusama-rpc.polkadot.io:443
+  enableAllParas: false
   paraIds: []
   prometheusPort: 9615
+  # See https://github.com/paritytech/polkadot-introspector/blob/f0d77dc58b405e73b92b7dbb64252a8a76bd1984/README.md#building
+  # Value should be `polkadot` or `rococo`
+  runtime: polkadot
   extraArgs: []
 
 serviceAccount:
