@@ -191,8 +191,6 @@ Attempting to send queued to-device messages
 Got saved sync token
 Got reply from saved sync, exists? false
 All queued to-device messages sent
-2023-03-31 18:19:34        API/INIT: RPC methods not decorated: assets_balanceOf, assets_listAssets, crowdloanRewards_amountAvailableToClaimFor, ibc_clientUpdateTimeAndHeight, ibc_generateConnectionHandshakeProof, ibc_queryBalanceWithAddress, ibc_queryChannel, ibc_queryChannelClient, ibc_queryChannels, ibc_queryClientConsensusState, ibc_queryClientState, ibc_queryClients, ibc_queryConnection, ibc_queryConnectionChannels, ibc_queryConnectionUsingClient, ibc_queryConnections, ibc_queryDenomTrace, ibc_queryDenomTraces, ibc_queryEvents, ibc_queryLatestHeight, ibc_queryNewlyCreatedClient, ibc_queryNextSeqRecv, ibc_queryPacketAcknowledgement, ibc_queryPacketAcknowledgements, ibc_queryPacketCommitment, ibc_queryPacketCommitments, ibc_queryPacketReceipt, ibc_queryProof, ibc_queryRecvPackets, ibc_querySendPackets, ibc_queryUnreceivedAcknowledgement, ibc_queryUnreceivedPackets, ibc_queryUpgradedClient, ibc_queryUpgradedConnectionState, pablo_pricesFor, pablo_simulateAddLiquidity, pablo_simulateRemoveLiquidity
-2023-03-31 18:19:34        API/INIT: picasso/10013: Not decorating unknown runtime apis: 0x9c53906fa888fe7c/1, 0x5c497be959ff24ab/1, 0xf60c4a6e7ca253cc/1, 0xa74824145d05c12a/1
 Got push rules
 Adding default global override for .org.matrix.msc3786.rule.room.server_acl
 Checking lazy load status...
