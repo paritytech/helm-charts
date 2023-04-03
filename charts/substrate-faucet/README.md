@@ -85,6 +85,45 @@ helm install substrate-faucet parity/substrate-faucet \
 ### How to get matrix API access token
 
 To create a Matrix access token for your user, follow instructions on the [matrix.org Client Server API guide] (https://matrix.org/docs/guides/client-server-api#login).
+create a script called `get_matrix_api_access_token.sh`
+```bash
+cat get_matrix_api_access_token.sh 
+#!/bin/bash
+
+# script based on https://www.matrix.org/docs/guides/client-server-api#login
+
+# you need first to export MATRIX_USER and MATRIX_PASS values in your shell
+# get values from 1password/SRE/composablefi_faucet matrix bot
+
+# export MATRIX_USER=
+# export MATRIX_PASS=
+
+cat <<EOF | curl -X POST \
+  https://matrix.org/_matrix/client/r0/login \
+  -H "Content-Type: application/json" \
+  --data-binary @-
+{
+  "type": "m.login.password",
+  "identifier": {
+    "type": "m.id.user",
+    "user": "${MATRIX_USER}"
+  },
+  "password": "${MATRIX_PASS}"
+}
+EOF
+```
+
+
+```bash
+# you need first to export MATRIX_USER and MATRIX_PASS values in your shell
+# get values from 1password/SRE/composablefi_faucet matrix bot
+
+# export MATRIX_USER=
+# export MATRIX_PASS=
+./get_matrix_api_access_token.sh
+```
+https://spec.matrix.org/latest/client-server-api/
+
 https://www.matrix.org/docs/guides/client-server-api 
 
 ### How to use the faucet
