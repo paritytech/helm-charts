@@ -75,6 +75,56 @@ helm install substrate-faucet parity/substrate-faucet \
 
 
 
+### How to create a matrix bot account
+
+  - go to https://app.element.io/#/welcome
+  - create account
+  - pickup username and pass
+  - set an email used to create the bot account
+
+### How to get matrix API access token
+
+create a script called `get_matrix_api_access_token.sh`
+```
+cat get_matrix_api_access_token.sh 
+#!/bin/bash
+
+# script based on https://www.matrix.org/docs/guides/client-server-api#login
+
+# you need first to export MATRIX_USER and MATRIX_PASS values in your shell
+# get values from 1password/SRE/composablefi_faucet matrix bot
+
+# export MATRIX_USER=
+# export MATRIX_PASS=
+
+cat <<EOF | curl -X POST \
+  https://matrix.org/_matrix/client/r0/login \
+  -H "Content-Type: application/json" \
+  --data-binary @-
+{
+  "type": "m.login.password",
+  "identifier": {
+    "type": "m.id.user",
+    "user": "${MATRIX_USER}"
+  },
+  "password": "${MATRIX_PASS}"
+}
+EOF
+
+```
+
+```bash
+# you need first to export MATRIX_USER and MATRIX_PASS values in your shell
+# get values from 1password/SRE/composablefi_faucet matrix bot
+
+# export MATRIX_USER=
+# export MATRIX_PASS=
+./get_matrix_api_access_token.sh
+```
+https://spec.matrix.org/latest/client-server-api/
+
+https://www.matrix.org/docs/guides/client-server-api 
+
 ### How to use the faucet
 
 Once deployed, you would want to test the faucet.
