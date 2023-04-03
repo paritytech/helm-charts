@@ -84,60 +84,25 @@ helm install substrate-faucet parity/substrate-faucet \
 
 ### How to get matrix API access token
 
-create a script called `get_matrix_api_access_token.sh`
-```
-cat get_matrix_api_access_token.sh 
-#!/bin/bash
-
-# script based on https://www.matrix.org/docs/guides/client-server-api#login
-
-# you need first to export MATRIX_USER and MATRIX_PASS values in your shell
-# get values from 1password/SRE/composablefi_faucet matrix bot
-
-# export MATRIX_USER=
-# export MATRIX_PASS=
-
-cat <<EOF | curl -X POST \
-  https://matrix.org/_matrix/client/r0/login \
-  -H "Content-Type: application/json" \
-  --data-binary @-
-{
-  "type": "m.login.password",
-  "identifier": {
-    "type": "m.id.user",
-    "user": "${MATRIX_USER}"
-  },
-  "password": "${MATRIX_PASS}"
-}
-EOF
-
-```
-
-```bash
-# you need first to export MATRIX_USER and MATRIX_PASS values in your shell
-# get values from 1password/SRE/composablefi_faucet matrix bot
-
-# export MATRIX_USER=
-# export MATRIX_PASS=
-./get_matrix_api_access_token.sh
-```
-https://spec.matrix.org/latest/client-server-api/
-
+To create a Matrix access token for your user, follow instructions on the [matrix.org Client Server API guide] (https://matrix.org/docs/guides/client-server-api#login).
 https://www.matrix.org/docs/guides/client-server-api 
 
 ### How to use the faucet
 
 Once deployed, you would want to test the faucet.
 
-  - Impersonate the matrix bot and login using the web app element
-https://app.element.io/#/room/#picasso-rococo-faucet:matrix.org 
-  - while loged in as  the bot, using  the UI create a new public room
+  - Create a matrix bot account on your matrix server and login using the element web app
+https://app.element.io/#/room/#test_bot_faucet:matrix.org
+  - while logged in as  the bot, use the UI to create a new public room
   - with a new matrix user, join the room
-  - have account that can receive pica ready and run this cmd
+  - set up an account ready to receive tokens on your chain and send this message command:
 ```
 !drip 5vFiJ56meRz883MRPkK2TnigBKCAr99x9DZUMotwTBLBmEM3
 ```
-![how_to_test_the_faucet.png](.img/how_to_test_the_faucet.png)
+The bot should respond:
+
+    Sent @user:matrix.org 1 UNIT. Extrinsic hash:
+    0xffaf7fc6ddda98c2467658527b39c9e775b7e02dd76cd139ff183090659fd7c4
 
 
 
