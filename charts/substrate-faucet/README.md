@@ -40,10 +40,11 @@ helm install substrate-faucet parity/substrate-faucet \
 | `faucet.externalAccess`                             | externalAccess                                                                                          | `false`                       |
 | `faucet.secret.SMF_BACKEND_FAUCET_ACCOUNT_MNEMONIC` | Mnemonic seed for the faucet account                                                                    | `this is a fake mnemonic`     |
 | `faucet.secret.SMF_BACKEND_RECAPTCHA_SECRET`        | A secret recaptcha token used to validate external requests                                             | `fakeRecaptchaSecret`         |
-| `faucet.secret.SMF_BOT_MATRIX_ACCESS_TOKEN`         | Matrix Bot access token                                                                                 | `ThisIsNotARealAccessToken`   |
 | `faucet.config.SMF_BACKEND_RPC_ENDPOINT`            | WS RPC node endpoint                                                                                    | `https://example.com/`        |
 | `faucet.config.SMF_BACKEND_NETWORK_DECIMALS`        | Number of decimal for the network                                                                       | `12`                          |
 | `faucet.config.SMF_BACKEND_INJECTED_TYPES`          | To set if any type must be overriden                                                                    | `{}`                          |
+| `faucet.config.SMF_BACKEND_FAUCET_BALANCE_CAP`      | The bot wil verify this limit before sending tokens. If the account requesting tokens has more then the bot will not send tokens                                                                    | `100`                          |
+| `faucet.secret.SMF_BOT_MATRIX_ACCESS_TOKEN`         | Matrix Bot access token                                                                                 | `ThisIsNotARealAccessToken`   |
 | `faucet.config.SMF_BOT_DRIP_AMOUNT`                 | Default amount of tokens to send                                                                        | `10`                          |
 | `faucet.config.SMF_BOT_MATRIX_SERVER`               | Matrix server URL                                                                                       | `https://matrix.org`          |
 | `faucet.config.SMF_BOT_MATRIX_BOT_USER_ID`          | Bot user ID                                                                                             | `@test_bot_faucet:matrix.org` |
