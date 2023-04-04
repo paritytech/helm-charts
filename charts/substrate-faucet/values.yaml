@@ -51,7 +51,7 @@ faucet:
     ## @param faucet.config.SMF_BOT_DRIP_AMOUNT Default amount of tokens to send
     ##
     SMF_BACKEND_FAUCET_BALANCE_CAP: 100
-    ## @param faucet.config.SMF_BACKEND_FAUCET_BALANCE_CAP The bot wil verify this limit before 
+    ## @param faucet.config.SMF_BACKEND_FAUCET_BALANCE_CAP The bot wil verify this limit before
     # sending tokens. If the account requesting tokens has more then the bot will not send tokens
     ##
     SMF_BOT_DRIP_AMOUNT: 10
