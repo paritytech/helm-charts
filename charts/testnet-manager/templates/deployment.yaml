@@ -41,6 +41,10 @@ spec:
           env:
           - name: NAMESPACE
             value: {{ .Release.Namespace | quote }}
+          {{ if .Values.externalValidators }}
+          - name: EXTERNAL_VALIDATORS_CONFIGMAP
+            value: {{ include "testnet-manager.external-validators-configmap" . }}
+          {{- end }}
           {{- with .Values.extraEnv }}
           {{- toYaml . | nindent 10 }}
           {{- end }}

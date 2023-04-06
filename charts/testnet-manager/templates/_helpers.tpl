@@ -68,3 +68,10 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Create the name of the external-validators configmap to use
+*/}}
+{{- define "testnet-manager.external-validators-configmap" -}}
+{{- printf "%s-external-validators" (include "testnet-manager.fullname" .) }}
+{{- end }}
