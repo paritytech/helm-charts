@@ -1,0 +1,10 @@
+{{ if .Values.externalValidators }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "testnet-manager.external-validators-configmap" . }}
+data:
+{{- range $validatorName, $validatorAddress := .Values.externalValidators }}
+  {{ $validatorName }}: {{ $validatorAddress | quote }}
+{{- end }}
+{{- end }}

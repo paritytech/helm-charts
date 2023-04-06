@@ -25,6 +25,8 @@ args:
     - "--enable-stdio-inheritance"
     - "--workers=1"
 
+externalValidators: []
+
 ## Extra Environment variables
 ##
 extraEnv: []
