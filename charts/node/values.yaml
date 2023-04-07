@@ -146,7 +146,7 @@ node:
     # chainPath: ""
     ## Storage class to use for persistent volume
     ##
-    storageClass: "default"
+    storageClass: ""
     volumeSize: 100Gi
     annotations: {}
 
@@ -160,7 +160,7 @@ node:
     # kubernetesVolumeToClone: ""
     ## Storage class to use for persistent volume
     ##
-    storageClass: "default"
+    storageClass: ""
     volumeSize: 10Mi
     accessModes: ["ReadWriteOnce"]
     annotations: {}
@@ -196,7 +196,7 @@ node:
       # chainPath: ""
       ## Storage class to use for persistent volume
       ##
-      storageClass: "default"
+      storageClass: ""
       volumeSize: 100Gi
       annotations: {}
     chainKeystore:
@@ -209,7 +209,7 @@ node:
       # kubernetesVolumeToClone: ""
       ## Storage class to use for persistent volume
       ##
-      storageClass: "default"
+      storageClass: ""
       volumeSize: 10Mi
       accessModes: ["ReadWriteOnce"]
       annotations: {}
