@@ -146,7 +146,7 @@ spec:
             - |
               set -eu {{ if .Values.initContainer.debug }}-x{{ end }}
               {{- if .Values.googleCloudSdk.serviceAccountKey }}
-              gcloud auth activate-service-account --key-file /tmp/service-account-key.json
+              gcloud auth activate-service-account --key-file /gc-service-account-key/service-account-key.json
               {{- end }}
               if [ -d "/chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}" ]; then
                 echo "Chain database directory exists, starting GCS backup sync"
@@ -170,7 +170,7 @@ spec:
               name: chain-data
             {{- if .Values.googleCloudSdk.serviceAccountKey }}
             - name: service-account-key
-              mountPath: /tmp
+              mountPath: /gc-service-account-key
               readOnly: true
             {{- end }}
         {{- end }}
@@ -183,7 +183,7 @@ spec:
             - |
               set -eu {{ if .Values.initContainer.debug }}-x{{ end }}
               {{- if .Values.googleCloudSdk.serviceAccountKey }}
-              gcloud auth activate-service-account --key-file /tmp/service-account-key.json
+              gcloud auth activate-service-account --key-file /gc-service-account-key/service-account-key.json
               {{- end }}
               if [ -d "/chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}" ]; then
                 echo "Chain database directory already exists, skipping GCS sync"
@@ -205,7 +205,7 @@ spec:
               name: chain-data
             {{- if .Values.googleCloudSdk.serviceAccountKey }}
             - name: service-account-key
-              mountPath: /tmp
+              mountPath: /gc-service-account-key
               readOnly: true
             {{- end }}
         {{- end }}
@@ -218,7 +218,7 @@ spec:
             - |
               set -eu {{ if .Values.initContainer.debug }}-x{{ end }}
               {{- if .Values.googleCloudSdk.serviceAccountKey }}
-              gcloud auth activate-service-account --key-file /tmp/service-account-key.json
+              gcloud auth activate-service-account --key-file /gc-service-account-key/service-account-key.json
               {{- end }}
               if [ -d "/relaychain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}" ]; then
                 echo "Relay-chain database directory already exists, skipping GCS sync"
@@ -240,7 +240,7 @@ spec:
               name: relaychain-data
              {{- if .Values.googleCloudSdk.serviceAccountKey }}
             - name: service-account-key
-              mountPath: /tmp
+              mountPath: /gc-service-account-key
               readOnly: true
              {{- end }}
          {{- end }}
@@ -573,9 +573,9 @@ spec:
                 {{- if .Values.node.persistGeneratedNodeKey }}
                 --node-key-file /keystore/node-key \
                 {{- else if .Values.node.customNodeKey }}
-                --node-key $(cat /tmp/custom-node-key) \
+                --node-key $(cat /custom-node-key/custom-node-key) \
                 {{- else if .Values.node.existingSecrets.nodeKey }}
-                --node-key $(cat /tmp/{{ .Values.node.existingSecrets.nodeKey.secretKey }}) \
+                --node-key $(cat /custom-node-key/{{ .Values.node.existingSecrets.nodeKey.secretKey }}) \
                 {{- else if .Values.node.vault.nodeKey }}
                 --node-key $(cat /vault/secrets/{{ .Values.node.vault.nodeKey.name }}{{ if .Values.node.vault.nodeKey.vaultKeyAppendPodIndex }}-${POD_INDEX}{{ end }}) \
                 {{- end }}
@@ -708,11 +708,11 @@ spec:
           {{- end }}
           {{- if .Values.node.persistGeneratedNodeKey }}
           {{- else if .Values.node.customNodeKey }}
-            - mountPath: /tmp/
+            - mountPath: /custom-node-key/
               name: custom-node-key
               readOnly: true
           {{- else if .Values.node.existingSecrets.nodeKey }}
-            - mountPath: /tmp/
+            - mountPath: /custom-node-key/
               name: node-key
               readOnly: true
           {{- end }}
