@@ -69,6 +69,17 @@ node:
 ```
 
 ## Upgrade
+
+### v4.5.0 (⚠️ small change)
+
+The storage classes are now set to `""` by default instead of `"default"`.
+Make sure that the following values are set to the storage classes you are using if not already set (before 4.5.0, those were set explicitly to `default`) :
+
+- `node.chainData.storageClass`
+- `node.chainKeystore.storageClass`
+- `node.collatorRelayChain.chainData.storageClass`
+- `node.collatorRelayChain.chainKeystore.storageClass`
+
 ### From v3.x.x to v4.0.0 (⚠️ breaking changes)
 
 The following chart parameters have been renamed or rearranged:
