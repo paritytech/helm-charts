@@ -63,3 +63,10 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Define a regex matcher to check if the role is supported
+*/}}
+{{- define "introspector.rolesSupported" -}}
+{{- "^(block-time|parachain-tracer)$" }}
+{{- end }}
