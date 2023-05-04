@@ -11,7 +11,7 @@ imagePullSecrets: []
 replicas: 1
 
 introspector:
-  role: block-time-monitor
+  role: block-time
   rpcNodes:
     - wss://rpc.polkadot.io:443
     - wss://kusama-rpc.polkadot.io:443

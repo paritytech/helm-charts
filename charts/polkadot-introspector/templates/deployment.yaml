@@ -1,3 +1,4 @@
+{{ $rolesSupported := include "introspector.rolesSupported" . }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -35,15 +36,13 @@ spec:
           args:
             - -c
             - |
-              exec polkadot-introspector/{{ .Values.introspector.runtime }}/polkadot-introspector \
-              {{-  if eq .Values.introspector.role "block-time-monitor"}}
-              block-time-monitor \
-              --ws {{ join "," .Values.introspector.rpcNodes }} \
-              prometheus --port {{ .Values.introspector.prometheusPort }}
-              {{- end }}
-              {{-  if eq .Values.introspector.role "parachain-commander"}}
-              parachain-commander \
-              --ws {{ join "," .Values.introspector.rpcNodes }} \
+              {{- if not (regexMatch $rolesSupported .Values.introspector.role) }}
+              {{- fail (printf "Error: introspector.role='%s' is not supported, it must be validated by this regex '%s'" .Values.introspector.role $rolesSupported) }}
+              {{- else }}
+              {{-  if eq .Values.introspector.role "block-time"}}
+              exec polkadot-introspector/{{ .Values.introspector.runtime }}/polkadot-block-time \
+              {{- else if eq .Values.introspector.role "parachain-tracer"}}
+              exec polkadot-introspector/{{ .Values.introspector.runtime }}/polkadot-parachain-tracer \
               {{- if .Values.introspector.enableAllParas }}
               --all \
               {{- else }}
@@ -51,10 +50,12 @@ spec:
               --para-id {{ . }} \
               {{- end }}
               {{- end }}
-              prometheus --port {{ .Values.introspector.prometheusPort }}
               {{- end }}
+              --ws {{ join "," .Values.introspector.rpcNodes }} \
+              prometheus --port {{ .Values.introspector.prometheusPort }}
               {{- range .Values.introspector.extraArgs }}
               {{ . }} \
+              {{- end }}
               {{- end }}
           ports:
             - name: http
