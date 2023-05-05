@@ -550,12 +550,13 @@ spec:
                 --unsafe-rpc-external \
                 {{- if .Values.node.legacyRpcFlags }}
                 --unsafe-ws-external \
+                {{- else }}
+                --rpc-port=9944 \
                 {{- end }}
                 {{- /*
                 CORS must be set to 'all' to allow RPC requests including Kubernetes heathchecks.
                 */}}
                 --rpc-cors=all \
-                --rpc-port=9944 \
                 {{- if .Values.node.allowUnsafeRpcMethods }}
                 --rpc-methods=unsafe \
                 {{- end }}
@@ -609,7 +610,9 @@ spec:
                 --name=${POD_NAME} \
                 --base-path=/relaychain-data \
                 --keystore-path=/relaychain-keystore \
+                {{- if not .Values.node.legacyRpcFlags }}
                 --rpc-port=9945 \
+                {{- end }}
                 {{- if .Values.node.collatorRelayChain.chainData.database }}
                 --database={{ .Values.node.collatorRelayChain.chainData.database }} \
                 {{- end }}
