@@ -548,7 +548,11 @@ spec:
                 It is not a security risk unless they are exposed publicly.
                 */}}
                 --unsafe-rpc-external \
+                {{- if .Values.node.legacyRpcFlags }}
                 --unsafe-ws-external \
+                {{- else }}
+                --rpc-port=9944 \
+                {{- end }}
                 {{- /*
                 CORS must be set to 'all' to allow RPC requests including Kubernetes heathchecks.
                 */}}
@@ -606,6 +610,9 @@ spec:
                 --name=${POD_NAME} \
                 --base-path=/relaychain-data \
                 --keystore-path=/relaychain-keystore \
+                {{- if not .Values.node.legacyRpcFlags }}
+                --rpc-port=9945 \
+                {{- end }}
                 {{- if .Values.node.collatorRelayChain.chainData.database }}
                 --database={{ .Values.node.collatorRelayChain.chainData.database }} \
                 {{- end }}
@@ -658,9 +665,11 @@ spec:
             {{- toYaml . | nindent 12 }}
             {{- end}}
           ports:
+            {{- if .Values.node.legacyRpcFlags }}
             - containerPort: 9933
               name: http-rpc
               protocol: TCP
+            {{- end }}
             - containerPort: 9944
               name: websocket-rpc
               protocol: TCP
@@ -681,7 +690,11 @@ spec:
             periodSeconds: 10
             httpGet:
               path: /health
+              {{- if .Values.node.legacyRpcFlags }}
               port: http-rpc
+              {{- else }}
+              port: websocket-rpc
+              {{- end }}
           {{- end }}
           resources:
           {{- toYaml .Values.node.resources | nindent 12 }}
