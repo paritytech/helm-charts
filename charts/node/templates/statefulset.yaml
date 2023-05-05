@@ -555,6 +555,7 @@ spec:
                 CORS must be set to 'all' to allow RPC requests including Kubernetes heathchecks.
                 */}}
                 --rpc-cors=all \
+                --rpc-port=9944 \
                 {{- if .Values.node.allowUnsafeRpcMethods }}
                 --rpc-methods=unsafe \
                 {{- end }}
@@ -608,6 +609,7 @@ spec:
                 --name=${POD_NAME} \
                 --base-path=/relaychain-data \
                 --keystore-path=/relaychain-keystore \
+                --rpc-port=9945 \
                 {{- if .Values.node.collatorRelayChain.chainData.database }}
                 --database={{ .Values.node.collatorRelayChain.chainData.database }} \
                 {{- end }}
@@ -685,7 +687,11 @@ spec:
             periodSeconds: 10
             httpGet:
               path: /health
+              {{- if .Values.node.legacyRpcFlags }}
               port: http-rpc
+              {{- else }}
+              port: websocket-rpc
+              {{- end }}
           {{- end }}
           resources:
           {{- toYaml .Values.node.resources | nindent 12 }}

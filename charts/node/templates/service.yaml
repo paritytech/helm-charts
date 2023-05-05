@@ -21,7 +21,7 @@ spec:
     - port: 8080
       name: api-sidecar
     {{- end }}
-    {{- if .Values.node.legacyRpcFlags }}
+    {{- if $.Values.node.legacyRpcFlags }}
     - port: 9933
       name: http-rpc
     {{- end}}
@@ -77,7 +77,7 @@ spec:
     {{- $selectorLabels | nindent 4 }}
     statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
   ports:
-    {{- if .Values.node.legacyRpcFlags }}
+    {{- if $.Values.node.legacyRpcFlags }}
     - port: {{ $.Values.node.perNodeServices.apiService.httpPort | int }}
       name: http-rpc
     {{- end }}
