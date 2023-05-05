@@ -21,8 +21,10 @@ spec:
     - port: 8080
       name: api-sidecar
     {{- end }}
+    {{- if .Values.node.legacyRpcFlags }}
     - port: 9933
       name: http-rpc
+    {{- end}}
     - port: 9944
       name: websocket-rpc
     {{- if and $.Values.node.serviceMonitor.enabled (not $.Values.node.perNodeServices.apiService.enabled) }}
@@ -75,8 +77,10 @@ spec:
     {{- $selectorLabels | nindent 4 }}
     statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
   ports:
+    {{- if .Values.node.legacyRpcFlags }}
     - port: {{ $.Values.node.perNodeServices.apiService.httpPort | int }}
       name: http-rpc
+    {{- end }}
     - port: {{ $.Values.node.perNodeServices.apiService.wsPort | int }}
       name: websocket-rpc
     - port: {{ $.Values.node.perNodeServices.apiService.prometheusPort | int }}

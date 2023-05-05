@@ -70,6 +70,25 @@ node:
 
 ## Upgrade
 
+### v4.6.0 (⚠️ breaking change)
+
+Substrate changed the default rpc flags: https://github.com/paritytech/substrate/pull/13384 \
+Port `9933` was replaced by combined port `9944`
+Flags replaced:
+```
+--rpc-max--payload (replaced by --rpc--max-request-size and --rpc-max-response-size)
+--ws-max-out-buffer-capacity (removed)
+--ws-external (replaced by --rpc-external)
+--unsafe-ws--external (replaced by --unsafe-rpc-external)
+--ipc-path (removed)
+--ws-port (replaced by --rpc-port)
+--ws-max-connections (replaced by --rpc-max-connections)
+--rpc-http (replaced by --rpc-addr)
+--rpc-ws (replaced by --rpc-addr)
+```
+New value was added to support this change:
+- `node.legacyRpcFlags`
+
 ### v4.5.0 (⚠️ small change)
 
 The storage classes are now set to `""` by default instead of `"default"`.
@@ -231,6 +250,7 @@ If you're running a collator node:
 | `node.resources.limits`                                                   | The resources limits (cpu/memory) for nodes                                                                                                                                                                                                          | `{}`                                                                |
 | `node.podManagementPolicy`                                                | The pod management policy to apply to the StatefulSet, set it to `Parallel` to launch or terminate all Pods in parallel, and not to wait for pods to become Running and Ready or completely terminated prior to launching or terminating another pod | `{}`                                                                |
 | `node.chainData.pruning`                                                  | The amount of blocks to retain. Set to a number or set to 0 for `--pruning=archive` .                                                                                                                                                                | `nil`                                                               |
+| `node.legacyRpcFlags`                                                     | Use deprecated   rpc flags.                                                                                                                                                                                                                          | `false`                                                             |
 | `node.perNodeServices.apiService.enabled`                                 | If true, creates a an API Service for every node in the statefulset exposing the HTTP, WS and Prometheus endpoints                                                                                                                                   | `true`                                                              |
 | `node.perNodeServices.apiService.type`                                    | Define the type of the API Services (`ClusterIP`, `NodePort` or `LoadBalancer`)                                                                                                                                                                      | `ClusterIP`                                                         |
 | `node.perNodeServices.apiService.annotations`                             | Annotations to be set on API Services                                                                                                                                                                                                                | `{}`                                                                |

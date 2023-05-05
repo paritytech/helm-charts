@@ -317,6 +317,11 @@ node:
 
   serviceAnnotations: {}
 
+  ## Use deprecated ws/rpc flags.
+  ## ref: https://github.com/paritytech/substrate/pull/13384
+  ##
+  legacyRpcFlags: false
+
   ## Configuration of individual services of node
   ##
   perNodeServices:

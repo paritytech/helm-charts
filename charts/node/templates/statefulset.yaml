@@ -548,7 +548,9 @@ spec:
                 It is not a security risk unless they are exposed publicly.
                 */}}
                 --unsafe-rpc-external \
+                {{- if .Values.node.legacyRpcFlags }}
                 --unsafe-ws-external \
+                {{- end }}
                 {{- /*
                 CORS must be set to 'all' to allow RPC requests including Kubernetes heathchecks.
                 */}}
@@ -658,9 +660,11 @@ spec:
             {{- toYaml . | nindent 12 }}
             {{- end}}
           ports:
+            {{- if .Values.node.legacyRpcFlags }}
             - containerPort: 9933
               name: http-rpc
               protocol: TCP
+            {{- end }}
             - containerPort: 9944
               name: websocket-rpc
               protocol: TCP
