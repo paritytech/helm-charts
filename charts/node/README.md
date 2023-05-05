@@ -89,6 +89,8 @@ Flags replaced:
 New value was added to support this change:
 - `node.legacyRpcFlags`
 
+If your node is still using the old RPC flags, please set `node.legacyRpcFlags=true`
+
 ### v4.5.0 (⚠️ small change)
 
 The storage classes are now set to `""` by default instead of `"default"`.
