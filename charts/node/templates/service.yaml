@@ -32,9 +32,11 @@ spec:
     {{- /* Legacy RPC port, to be removed in the next major chart version */}}
     - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
       name: http-rpc
+      targetPort: rpc
     {{- /* Legacy RPC port, to be removed in the next major chart version */}}
     - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
       name: websocket-rpc
+      targetPort: rpc
     {{- end }}
     {{- if and $.Values.node.serviceMonitor.enabled (not $.Values.node.perNodeServices.apiService.enabled) }}
     - port: {{ .Values.node.prometheus.port | int }}
@@ -97,9 +99,11 @@ spec:
     {{- /* Legacy RPC port, to be removed in the next major chart version */}}
     - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
       name: http-rpc
+      targetPort: rpc
     {{- /* Legacy RPC port, to be removed in the next major chart version */}}
     - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
       name: websocket-rpc
+      targetPort: rpc
     {{- end }}
       name: prometheus
     {{- if $.Values.node.collatorRelayChain.prometheus.enabled }}

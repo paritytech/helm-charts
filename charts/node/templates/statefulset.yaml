@@ -670,12 +670,6 @@ spec:
             {{- else }}
             - containerPort: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
               name: rpc
-            {{- /* Legacy RPC port, to be removed in the next major chart version */}}
-            - containerPort: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
-              name: http-rpc
-            {{- /* Legacy RPC port, to be removed in the next major chart version */}}
-            - containerPort: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
-              name: websocket-rpc
             {{- end }}
             - containerPort: {{ .Values.node.prometheus.port }}
               name: prometheus
