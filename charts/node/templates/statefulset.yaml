@@ -610,9 +610,6 @@ spec:
                 --name=${POD_NAME} \
                 --base-path=/relaychain-data \
                 --keystore-path=/relaychain-keystore \
-                {{- if not .Values.node.legacyRpcFlags }}
-                --rpc-port=9945 \
-                {{- end }}
                 {{- if .Values.node.collatorRelayChain.chainData.database }}
                 --database={{ .Values.node.collatorRelayChain.chainData.database }} \
                 {{- end }}
