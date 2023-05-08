@@ -336,7 +336,7 @@ node:
       # deprecated, use rpcPort
       httpPort: 9933
       # deprecated, use rpcPort
-      wsPort: 9944
+      wsPort: 9955
       prometheusPort: 9615
       relayChainPrometheusPort: 9625
       externalDns:

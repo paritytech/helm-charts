@@ -30,11 +30,11 @@ spec:
     - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
       name: rpc
     {{- /* Legacy RPC port, to be removed in the next major chart version */}}
-    - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
+    - port: {{ $.Values.node.perNodeServices.apiService.httpPort | int }}
       name: http-rpc
       targetPort: rpc
     {{- /* Legacy RPC port, to be removed in the next major chart version */}}
-    - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
+    - port: {{ $.Values.node.perNodeServices.apiService.wsPort | int }}
       name: websocket-rpc
       targetPort: rpc
     {{- end }}
@@ -97,11 +97,11 @@ spec:
     - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
       name: rpc
     {{- /* Legacy RPC port, to be removed in the next major chart version */}}
-    - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
+    - port: {{ $.Values.node.perNodeServices.apiService.httpPort | int }}
       name: http-rpc
       targetPort: rpc
     {{- /* Legacy RPC port, to be removed in the next major chart version */}}
-    - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
+    - port: {{ $.Values.node.perNodeServices.apiService.wsPort | int }}
       name: websocket-rpc
       targetPort: rpc
     {{- end }}
