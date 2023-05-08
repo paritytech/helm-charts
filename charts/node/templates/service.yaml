@@ -24,9 +24,18 @@ spec:
     {{- if $.Values.node.legacyRpcFlags }}
     - port: 9933
       name: http-rpc
-    {{- end}}
     - port: 9944
       name: websocket-rpc
+    {{- else }}
+    - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
+      name: rpc
+    {{- /* Legacy RPC port, to be removed in the next major chart version */}}
+    - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
+      name: http-rpc
+    {{- /* Legacy RPC port, to be removed in the next major chart version */}}
+    - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
+      name: websocket-rpc
+    {{- end }}
     {{- if and $.Values.node.serviceMonitor.enabled (not $.Values.node.perNodeServices.apiService.enabled) }}
     - port: {{ .Values.node.prometheus.port | int }}
       name: prometheus
@@ -80,10 +89,18 @@ spec:
     {{- if $.Values.node.legacyRpcFlags }}
     - port: {{ $.Values.node.perNodeServices.apiService.httpPort | int }}
       name: http-rpc
-    {{- end }}
     - port: {{ $.Values.node.perNodeServices.apiService.wsPort | int }}
       name: websocket-rpc
-    - port: {{ $.Values.node.perNodeServices.apiService.prometheusPort | int }}
+    {{- else }}
+    - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
+      name: rpc
+    {{- /* Legacy RPC port, to be removed in the next major chart version */}}
+    - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
+      name: http-rpc
+    {{- /* Legacy RPC port, to be removed in the next major chart version */}}
+    - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
+      name: websocket-rpc
+    {{- end }}
       name: prometheus
     {{- if $.Values.node.collatorRelayChain.prometheus.enabled }}
     - port: {{ $.Values.node.perNodeServices.apiService.relayChainPrometheusPort | int }}

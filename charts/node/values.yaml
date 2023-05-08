@@ -332,7 +332,10 @@ node:
       externalTrafficPolicy: Cluster
       type: ClusterIP # or NodePort, LoadBalancer
       annotations: {}
+      rpcPort: 9944
+      # deprecated, use rpcPort
       httpPort: 9933
+      # deprecated, use rpcPort
       wsPort: 9944
       prometheusPort: 9615
       relayChainPrometheusPort: 9625

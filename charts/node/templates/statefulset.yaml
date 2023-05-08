@@ -551,7 +551,7 @@ spec:
                 {{- if .Values.node.legacyRpcFlags }}
                 --unsafe-ws-external \
                 {{- else }}
-                --rpc-port=9944 \
+                --rpc-port={{ .Values.node.perNodeServices.apiService.rpcPort | int }} \
                 {{- end }}
                 {{- /*
                 CORS must be set to 'all' to allow RPC requests including Kubernetes heathchecks.
@@ -665,14 +665,21 @@ spec:
             {{- toYaml . | nindent 12 }}
             {{- end}}
           ports:
-            {{- if .Values.node.legacyRpcFlags }}
-            - containerPort: 9933
+            {{- if $.Values.node.legacyRpcFlags }}
+            - port: {{ $.Values.node.perNodeServices.apiService.httpPort | int }}
               name: http-rpc
-              protocol: TCP
-            {{- end }}
-            - containerPort: 9944
+            - port: {{ $.Values.node.perNodeServices.apiService.wsPort | int }}
               name: websocket-rpc
-              protocol: TCP
+            {{- else }}
+            - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
+              name: rpc
+            {{- /* Legacy RPC port, to be removed in the next major chart version */}}
+            - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
+              name: http-rpc
+            {{- /* Legacy RPC port, to be removed in the next major chart version */}}
+            - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
+              name: websocket-rpc
+            {{- end }}
             - containerPort: {{ .Values.node.prometheus.port }}
               name: prometheus
               protocol: TCP
@@ -783,7 +790,7 @@ spec:
           image: {{ .Values.wsHealthExporter.image.repository }}:{{ .Values.wsHealthExporter.image.tag }}
           env:
             - name: NODE_URL
-              value: ws://127.0.0.1:9944
+              value: ws://127.0.0.1:{{ .Values.node.perNodeServices.apiService.rpcPort | int }}
           resources:
           {{- toYaml .Values.wsHealthExporter.resources | nindent 12 }}
           {{- if .Values.node.enableSidecarReadinessProbe }}
