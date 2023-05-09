@@ -689,7 +689,7 @@ spec:
               {{- if .Values.node.legacyRpcFlags }}
               port: http-rpc
               {{- else }}
-              port: websocket-rpc
+              port: rpc
               {{- end }}
           {{- end }}
           resources:
