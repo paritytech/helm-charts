@@ -105,6 +105,7 @@ spec:
       name: websocket-rpc
       targetPort: rpc
     {{- end }}
+    - port: {{ $.Values.node.perNodeServices.apiService.prometheusPort | int }}
       name: prometheus
     {{- if $.Values.node.collatorRelayChain.prometheus.enabled }}
     - port: {{ $.Values.node.perNodeServices.apiService.relayChainPrometheusPort | int }}
