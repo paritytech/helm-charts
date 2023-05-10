@@ -89,9 +89,9 @@ spec:
     statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
   ports:
     {{- if $.Values.node.legacyRpcFlags }}
-    - port: {{ $.Values.node.perNodeServices.apiService.httpPort | int }}
+    - port: 9933
       name: http-rpc
-    - port: {{ $.Values.node.perNodeServices.apiService.wsPort | int }}
+    - port: 9944
       name: websocket-rpc
     {{- else }}
     - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
