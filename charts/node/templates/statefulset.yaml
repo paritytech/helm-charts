@@ -551,7 +551,7 @@ spec:
                 {{- if .Values.node.legacyRpcFlags }}
                 --unsafe-ws-external \
                 {{- else }}
-                --rpc-port=9944 \
+                --rpc-port={{ .Values.node.perNodeServices.apiService.rpcPort | int }} \
                 {{- end }}
                 {{- /*
                 CORS must be set to 'all' to allow RPC requests including Kubernetes heathchecks.
@@ -610,9 +610,6 @@ spec:
                 --name=${POD_NAME} \
                 --base-path=/relaychain-data \
                 --keystore-path=/relaychain-keystore \
-                {{- if not .Values.node.legacyRpcFlags }}
-                --rpc-port=9945 \
-                {{- end }}
                 {{- if .Values.node.collatorRelayChain.chainData.database }}
                 --database={{ .Values.node.collatorRelayChain.chainData.database }} \
                 {{- end }}
@@ -668,21 +665,20 @@ spec:
             {{- if .Values.node.legacyRpcFlags }}
             - containerPort: 9933
               name: http-rpc
-              protocol: TCP
-            {{- end }}
             - containerPort: 9944
               name: websocket-rpc
-              protocol: TCP
+            {{- else }}
+            - containerPort: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
+              name: rpc
+            {{- end }}
             - containerPort: {{ .Values.node.prometheus.port }}
               name: prometheus
-              protocol: TCP
             {{- if and .Values.node.isParachain .Values.node.collatorRelayChain.prometheus.enabled }}
             - containerPort: {{ .Values.node.collatorRelayChain.prometheus.port }}
               name: prom-relaychain
             {{- end }}
             - containerPort: 30333
               name: p2p
-              protocol: TCP
           {{- if .Values.node.enableStartupProbe }}
           # On startup, retry the connection to the /health endpoint every 10s for 5 min before killing the container
           startupProbe:
@@ -693,7 +689,7 @@ spec:
               {{- if .Values.node.legacyRpcFlags }}
               port: http-rpc
               {{- else }}
-              port: websocket-rpc
+              port: rpc
               {{- end }}
           {{- end }}
           resources:
@@ -783,7 +779,7 @@ spec:
           image: {{ .Values.wsHealthExporter.image.repository }}:{{ .Values.wsHealthExporter.image.tag }}
           env:
             - name: NODE_URL
-              value: ws://127.0.0.1:9944
+              value: ws://127.0.0.1:{{ .Values.node.perNodeServices.apiService.rpcPort | int }}
           resources:
           {{- toYaml .Values.wsHealthExporter.resources | nindent 12 }}
           {{- if .Values.node.enableSidecarReadinessProbe }}
