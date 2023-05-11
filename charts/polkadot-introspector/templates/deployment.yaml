@@ -52,7 +52,9 @@ spec:
               {{- end }}
               {{- end }}
               --ws {{ join "," .Values.introspector.rpcNodes }} \
+              {{- if .Values.introspector.verboseLogging }}
               -v \
+              {{- end }}
               prometheus --port {{ .Values.introspector.prometheusPort }}
               {{- range .Values.introspector.extraArgs }}
               {{ . }} \
