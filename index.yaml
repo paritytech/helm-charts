@@ -1467,6 +1467,19 @@ entries:
   polkadot-introspector:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2023-05-11T10:04:34.173776336Z"
+    description: A Helm chart to deploy polkadot-introspector
+    digest: 3fde09de7203fc02302108a4d70855090bef7fe2d1216a83cfeaf2e88b116732
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: polkadot-introspector
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/polkadot-introspector-0.4.1/polkadot-introspector-0.4.1.tgz
+    version: 0.4.1
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2023-05-04T18:26:51.958105705Z"
     description: A Helm chart to deploy polkadot-introspector
     digest: cf696b7b75228749f75ccfaf20186c3b40e34c811e78945d571255e6c2be70a8
@@ -2113,4 +2126,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/testnet-manager-1.0.0/testnet-manager-1.0.0.tgz
     version: 1.0.0
-generated: "2023-05-10T15:24:48.733612388Z"
+generated: "2023-05-11T10:04:34.174144242Z"
