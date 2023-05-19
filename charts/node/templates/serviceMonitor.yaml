@@ -34,34 +34,7 @@ spec:
       metricRelabelings:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-  namespaceSelector:
-    matchNames:
-      - {{ $.Release.Namespace }}
-  {{- with $.Values.node.serviceMonitor.targetLabels }}
-  targetLabels:
-  {{- toYaml .| nindent 4 }}
-  {{- end}}
-{{- end }}
----
-{{- if and .Values.node.serviceMonitor.enabled .Values.node.collatorRelayChain.prometheus.enabled }}
-{{ $fullname :=  include "node.fullname" . }}
-{{ $serviceLabels :=  include "node.serviceLabels" .  }}
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  name: {{ $fullname }}-relaychain
-  {{- if $.Values.node.serviceMonitor.namespace }}
-  namespace: {{ $.Values.node.serviceMonitor.namespace }}
-  {{- else }}
-  namespace: {{ $.Release.Namespace }}
-  {{- end }}
-  labels:
-    {{- include "node.labels" . | nindent 4 }}
-spec:
-  selector:
-    matchLabels:
-      {{- $serviceLabels | nindent 6 }}
-  endpoints:
+  {{- if .Values.node.collatorRelayChain.prometheus.enabled }}
     - port: prom-relaychain
       path: /metrics
     {{- if $.Values.node.serviceMonitor.interval }}
@@ -79,6 +52,7 @@ spec:
       metricRelabelings:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+  {{- end }}
   namespaceSelector:
     matchNames:
       - {{ $.Release.Namespace }}
