@@ -42,8 +42,6 @@ sender:
   replicas: 1
   args: []
     # node-url:  Node URL
-    # sender-index:  Sender index
-    #total-senders: Total number of senders
     #--chunk-size: Chunk size for sending the extrinsics [default: 50]
     #--num: Total number of pre-funded accounts (on funded-accounts.json)
 
