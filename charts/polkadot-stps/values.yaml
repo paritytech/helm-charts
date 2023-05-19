@@ -1,0 +1,83 @@
+## @section Global parameters
+## Global Docker image parameters
+## Official image tags: https://hub.docker.com/r/paritytech/faucet/tags/
+##
+
+nameOverride: ""
+fullnameOverride: ""
+
+imagePullSecrets: []
+
+replicas: 1
+
+tps:
+  replicas: 1
+  image:
+    repository: paritytech/stps-tps
+    pullPolicy: Always
+    tag: rococo-latest
+  scrapeFromGenesis:
+    enabled: false
+  paraBlockFinality:
+    enabled: true
+  prometheus:
+    enabled: true
+    port: 65432
+  args: []
+    # node-url:
+    # or
+    # collator-url:
+    # validator-url:
+    # sender-index:
+    # total-sender:
+    # chunk-size:
+    # num:
+
+sender:
+  enabled: false
+  image:
+    repository: paritytech/stps-sender
+    pullPolicy: Always
+    tag: rococo-latest
+  replicas: 1
+  args: []
+    # node-url:  Node URL
+    # sender-index:  Sender index
+    #total-senders: Total number of senders
+    #--chunk-size: Chunk size for sending the extrinsics [default: 50]
+    #--num: Total number of pre-funded accounts (on funded-accounts.json)
+
+extraLabels: []
+
+serviceMonitor:
+  enabled: false
+  interval: 5s
+  scrapeTimeout: 30s
+  targetLabels: []
+
+podAnnotations: {}
+
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 9615
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
