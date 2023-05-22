@@ -477,8 +477,9 @@ substrateApiSidecar:
 wsHealthExporter:
   image:
     repository: paritytech/ws-health-exporter
-    tag: latest
+    tag: 0a2e6e9b-20230412
   resources: {}
+  env: {}
 
 ## Configuration of Jaeger agent
 ## https://github.com/jaegertracing/jaeger
