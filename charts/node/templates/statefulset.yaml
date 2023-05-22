@@ -778,9 +778,9 @@ spec:
         - name: ws-health-exporter
           image: {{ .Values.wsHealthExporter.image.repository }}:{{ .Values.wsHealthExporter.image.tag }}
           env:
-            - name: NODE_URL
-              value: ws://127.0.0.1:{{ .Values.node.perNodeServices.apiService.rpcPort | int }}
-            {{- range $key, $val := .Values.wsHealthExporter.env }}
+            {{- $wsHealthExporterEnvDefault := dict "WSHE_NODE_RPC_URLS" (tpl "ws://127.0.0.1:{{ .Values.node.perNodeServices.apiService.rpcPort | int }}" .) }}
+            {{- $wsHealthExporterEnv := mergeOverwrite $wsHealthExporterEnvDefault $.Values.wsHealthExporter.env }}
+            {{- range $key, $val := $wsHealthExporterEnv }}
             - name: {{ $key }}
               value: {{ $val }}
             {{- end }}

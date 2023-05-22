@@ -408,8 +408,8 @@ node:
 
   ## Enable Node readiness probe through `paritytech/ws-health-exporter` running as a sidecar container
   ##
-  enableSidecarReadinessProbe: false
-  enableSidecarLivenessProbe: false
+  enableSidecarReadinessProbe: true
+  enableSidecarLivenessProbe: true
 
   ## Resource limits & requests
   ##
