@@ -780,6 +780,10 @@ spec:
           env:
             - name: NODE_URL
               value: ws://127.0.0.1:{{ .Values.node.perNodeServices.apiService.rpcPort | int }}
+            {{- range $key, $val := .Values.wsHealthExporter.env }}
+            - name: {{ $key }}
+              value: {{ $val }}
+            {{- end }}
           resources:
           {{- toYaml .Values.wsHealthExporter.resources | nindent 12 }}
           {{- if .Values.node.enableSidecarReadinessProbe }}

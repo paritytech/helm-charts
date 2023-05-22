@@ -479,6 +479,7 @@ wsHealthExporter:
     repository: paritytech/ws-health-exporter
     tag: latest
   resources: {}
+  env: {}
 
 ## Configuration of Jaeger agent
 ## https://github.com/jaegertracing/jaeger
