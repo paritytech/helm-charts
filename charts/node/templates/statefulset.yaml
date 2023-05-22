@@ -731,7 +731,7 @@ spec:
           env:
             {{- range $key, $val := .Values.substrateApiSidecar.env }}
             - name: {{ $key }}
-              value: {{ $val }}
+              value: {{ $val | squote }}
             {{- end }}
           resources:
           {{- toYaml .Values.substrateApiSidecar.resources | nindent 12 }}
@@ -748,7 +748,7 @@ spec:
           env:
             {{- range $key, $val := .Values.jaegerAgent.env }}
             - name: {{ $key }}
-              value: {{ $val }}
+              value: {{ $val | squote }}
             {{- end }}
           resources:
           {{- toYaml .Values.jaegerAgent.resources | nindent 12 }}
@@ -782,7 +782,7 @@ spec:
             {{- $wsHealthExporterEnv := mergeOverwrite $wsHealthExporterEnvDefault $.Values.wsHealthExporter.env }}
             {{- range $key, $val := $wsHealthExporterEnv }}
             - name: {{ $key }}
-              value: {{ $val }}
+              value: {{ $val | squote }}
             {{- end }}
           resources:
           {{- toYaml .Values.wsHealthExporter.resources | nindent 12 }}
