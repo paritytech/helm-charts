@@ -6,6 +6,6 @@ faucet:
     # your bot access token here is how to find it https://t2bot.io/docs/access_tokens/
     SMF_BOT_MATRIX_ACCESS_TOKEN: "__GITHUB_SECRET_SMF_BOT_MATRIX_ACCESS_TOKEN"
   config:
-    SMF_BACKEND_RPC_ENDPOINT: "https://westend-rpc.polkadot.io/"
+    SMF_BACKEND_RPC_ENDPOINT: "wss://westend-rpc.polkadot.io/"
     SMF_BOT_MATRIX_SERVER: "https://m.parity.io"
     SMF_BOT_MATRIX_BOT_USER_ID: "@helm-charts-bot:parity.io"
