@@ -19,7 +19,7 @@ fullnameOverride: ""
 ## Image of Polkadot Node.
 ##
 image:
-  repository: parity/polkadot-parachain
+  repository: parity/polkadot
   tag: latest
   pullPolicy: Always
   ## Add `-x` shell option to container
@@ -169,7 +169,7 @@ node:
   ## ref: https://wiki.polkadot.network/docs/learn-collator
   ## If Collator is enabled, collator image must be used
   ##
-  isParachain: true
+  isParachain: false
   
   ## EXPERIMENTAL!!!
   ## Run the collator node without a relay chain
@@ -178,10 +178,10 @@ node:
   ## Enabling this option will disable the values of collatorRelayChain
   ##
   externalRelayChain:
-    enabled: true
+    enabled: false
 
     ## List of Relay Chain RPCs to connect
-    relayChainRpcUrl: ["wss://rpc.polkadot.io", "wss://rpc.parity.io"]
+    relayChainRpcUrl: ["wss://rpc.polkadot.io"]
 
 
   collatorRelayChain:
