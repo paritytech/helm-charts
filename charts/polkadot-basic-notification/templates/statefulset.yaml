@@ -26,7 +26,6 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "polkadot-basic-notification.selectorLabels" . | nindent 8 }}
         {{- include "polkadot-basic-notification.labels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
