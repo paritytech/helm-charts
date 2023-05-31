@@ -45,7 +45,11 @@ jobs:
       run: |
         changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }})
         if [[ -n "$changed" ]]; then
-          echo "changed=$changed" >> $GITHUB_OUTPUT
+          # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "changed<<$EOF" >> "$GITHUB_ENV"
+          echo "$changed" >> "$GITHUB_ENV"
+          echo "$EOF" >> "$GITHUB_ENV"
         fi
 
     - name: Run chart-testing (lint)
