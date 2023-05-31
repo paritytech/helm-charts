@@ -47,9 +47,9 @@ jobs:
         if [[ -n "$changed" ]]; then
           # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "changed<<$EOF" >> "$GITHUB_ENV"
-          echo "$changed" >> "$GITHUB_ENV"
-          echo "$EOF" >> "$GITHUB_ENV"
+          echo "changed<<$EOF" >> "$GITHUB_OUTPUT"
+          echo "$changed" >> "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"
         fi
 
     - name: Run chart-testing (lint)
