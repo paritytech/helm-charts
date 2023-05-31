@@ -565,7 +565,7 @@ spec:
                 {{- if .Values.node.isParachain }}
                 {{- /* Experimental Feature */}}
                 {{- if  .Values.node.externalRelayChain.enabled }}
-                --relay-chain-rpc-urls {{- range .Values.node.externalRelayChain.relayChainRpcUrl }}
+                --relay-chain-rpc-urls {{- range .Values.node.externalRelayChain.relayChainRpcUrls }}
                 "{{ . }}" \
                 {{- end }}
                 {{- end }}
