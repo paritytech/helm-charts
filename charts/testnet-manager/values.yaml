@@ -31,6 +31,8 @@ externalValidators: []
 ##
 extraEnv: []
 
+extraLabels: []
+
 replicaCount: 1
 
 image:

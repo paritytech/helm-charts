@@ -18,6 +18,7 @@ spec:
       {{- end }}
       labels:
         {{- include "polkadot-introspector.selectorLabels" . | nindent 8 }}
+        {{- include "polkadot-introspector.labels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
