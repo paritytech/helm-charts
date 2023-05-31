@@ -18,6 +18,7 @@ spec:
       {{- end }}
       labels:
         {{- include "testnet-manager.selectorLabels" . | nindent 8 }}
+        {{- include "testnet-manager.labels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
