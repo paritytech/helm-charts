@@ -654,6 +654,9 @@ spec:
                 {{- end }}
                 {{- if  (not .Values.node.externalRelayChain.enabled) }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30333 \
+                {{- range .Values.node.telemetryUrls }}
+                --telemetry-url={{ . | squote }} \
+                {{- end }}
                 {{- end }}
           env:
             - name: CHAIN
