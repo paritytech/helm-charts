@@ -380,7 +380,7 @@ node:
     ## If enabled, create service to expose parachain P2P
     ##
     paraP2pService:
-      enabled: true
+      enabled: false
       externalTrafficPolicy: Cluster
       type: NodePort # or ClusterIP, LoadBalancer
       port: 30334
