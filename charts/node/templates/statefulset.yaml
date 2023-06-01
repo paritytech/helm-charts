@@ -633,6 +633,9 @@ spec:
                 {{- if .Values.node.collatorRelayChain.customChainspecUrl}}
                 --chain={{ .Values.node.collatorRelayChain.customChainspecPath}} \
                 {{- end }}
+                {{- range .Values.node.telemetryUrls }}
+                --telemetry-url={{ . | squote }} \
+                {{- end }}
                 {{- range .Values.node.collatorRelayChain.flags }}
                 {{- if regexMatch $chartManagedFlagsRegex . }}
                 {{- fail (printf "%s should not be set through `node.collatorRelayChain.flags` but with the appropriate chart value" .) }}
@@ -654,10 +657,8 @@ spec:
                 {{- end }}
                 {{- if  (not .Values.node.externalRelayChain.enabled) }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30333 \
-                {{- range .Values.node.telemetryUrls }}
-                --telemetry-url={{ . | squote }} \
                 {{- end }}
-                {{- end }}
+
           env:
             - name: CHAIN
               value: {{ .Values.node.chain }}

@@ -181,7 +181,7 @@ node:
     enabled: false
 
     ## List of Relay Chain RPCs to connect
-    relayChainRpcUrls: ["wss://rpc.polkadot.io"]
+    relayChainRpcUrls: []
 
 
   collatorRelayChain:
