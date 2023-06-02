@@ -50,7 +50,7 @@ extraLabels: []
 serviceMonitor:
   enabled: false
   interval: 5s
-  scrapeTimeout: 30s
+  scrapeTimeout: 5s
   targetLabels: []
 
 podAnnotations: {}
