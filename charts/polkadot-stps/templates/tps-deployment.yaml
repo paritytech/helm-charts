@@ -50,11 +50,11 @@ spec:
           livenessProbe:
             httpGet:
               path: /metrics
-              port: http
+              port: prometheus
           readinessProbe:
             httpGet:
               path: /metrics
-              port: http
+              port: prometheus
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
