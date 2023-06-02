@@ -170,6 +170,20 @@ node:
   ## If Collator is enabled, collator image must be used
   ##
   isParachain: false
+
+  ## EXPERIMENTAL!!!
+  ## Run the collator node without a relay chain
+  ## ref: https://github.com/paritytech/cumulus#external-relay-chain-node
+  ##
+  ## Enabling this option will disable the values of collatorRelayChain
+  ##
+  externalRelayChain:
+    enabled: false
+
+    ## List of Relay Chain RPCs to connect
+    relayChainRpcUrls: []
+
+
   collatorRelayChain:
     ## Name of the Relay Chain to connect
     ##

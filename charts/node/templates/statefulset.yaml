@@ -108,7 +108,7 @@ spec:
             - mountPath: /chain-data
               name: chain-data
         {{- end }}
-        {{- if .Values.node.collatorRelayChain.chainData.snapshotUrl }}
+        {{- if and .Values.node.collatorRelayChain.chainData.snapshotUrl (not .Values.node.externalRelayChain.enabled) }}
         - name: download-relay-chain-snapshot
           image: {{ .Values.initContainer.image.repository }}:{{ .Values.initContainer.image.tag }}
           command: [ "/bin/sh" ]
@@ -209,7 +209,7 @@ spec:
               readOnly: true
             {{- end }}
         {{- end }}
-        {{- if .Values.node.collatorRelayChain.chainData.GCSBucketUrl }}
+        {{- if  and .Values.node.collatorRelayChain.chainData.GCSBucketUrl  (not .Values.node.externalRelayChain.enabled)}}
         - name: sync-relay-chain-gcs
           image: {{ .Values.googleCloudSdk.image.repository }}:{{ .Values.googleCloudSdk.image.tag }}
           command: [ "/bin/sh" ]
@@ -244,7 +244,7 @@ spec:
               readOnly: true
              {{- end }}
          {{- end }}
-        {{- if or .Values.node.customChainspecUrl .Values.node.collatorRelayChain.customChainspecUrl}}
+        {{- if or .Values.node.customChainspecUrl (and .Values.node.collatorRelayChain.customChainspecUrl (not .Values.node.externalRelayChain.enabled))}}
         - name: download-chainspec
           image: {{ .Values.initContainer.image.repository }}:{{ .Values.initContainer.image.tag }}
           command: [ "/bin/sh" ]
@@ -273,7 +273,7 @@ spec:
           volumeMounts:
             - mountPath: /chain-data
               name: chain-data
-            {{- if and .Values.node.isParachain .Values.node.collatorRelayChain.customChainspecUrl}}
+            {{- if and .Values.node.isParachain .Values.node.collatorRelayChain.customChainspecUrl (not .Values.node.externalRelayChain.enabled)}}
             - mountPath: /relaychain-data
               name: relaychain-data
             {{- end }}
@@ -434,7 +434,7 @@ spec:
             - |
               set -eu {{ if .Values.initContainer.debug }}-x{{ end }}
               POD_INDEX="${HOSTNAME##*-}"
-              {{- if and .Values.node.perNodeServices.relayP2pService.enabled (eq .Values.node.perNodeServices.relayP2pService.type "NodePort") }}
+              {{- if and .Values.node.perNodeServices.relayP2pService.enabled (not .Values.node.externalRelayChain.enabled) (eq .Values.node.perNodeServices.relayP2pService.type "NodePort") }}
               RELAY_CHAIN_P2P_PORT="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-relay-chain-p2p -o jsonpath='{.spec.ports[?(@.name=="p2p")].nodePort}')"
               {{- if .Values.node.perNodeServices.relayP2pService.ws.enabled }}
               RELAY_CHAIN_P2P_PORT_WS="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-relay-chain-p2p -o jsonpath='{.spec.ports[?(@.name=="ws")].nodePort}')"
@@ -481,7 +481,8 @@ spec:
               EXTERNAL_IP="$(cat /chain-data/node_external_ip)"
               echo "EXTERNAL_IP=${EXTERNAL_IP}"
               {{- end }}
-              {{- if and .Values.node.perNodeServices.relayP2pService.enabled (eq .Values.node.perNodeServices.relayP2pService.type "NodePort") }}
+              {{- if  (not .Values.node.externalRelayChain.enabled) }}
+              {{- if and .Values.node.perNodeServices.relayP2pService.enabled (eq .Values.node.perNodeServices.relayP2pService.type "NodePort")  }}
               {{- /* For NodePort services, set the p2p port to the value saved in the retrieve-service-info init container */}}
               RELAY_CHAIN_P2P_PORT="$(cat /chain-data/relay_chain_p2p_port)"
               echo "RELAY_CHAIN_P2P_PORT=${RELAY_CHAIN_P2P_PORT}"
@@ -496,6 +497,7 @@ spec:
               {{- if .Values.node.perNodeServices.relayP2pService.ws.enabled }}
               RELAY_CHAIN_P2P_PORT_WS={{ $.Values.node.perNodeServices.relayP2pService.ws.port | quote }}
               echo "RELAY_CHAIN_P2P_PORT_WS=${RELAY_CHAIN_P2P_PORT_WS}"
+              {{- end }}
               {{- end }}
               {{- end }}
               {{- if .Values.node.isParachain }}
@@ -561,6 +563,12 @@ spec:
                 --rpc-methods=unsafe \
                 {{- end }}
                 {{- if .Values.node.isParachain }}
+                {{- /* Experimental Feature */}}
+                {{- if  .Values.node.externalRelayChain.enabled }}
+                --relay-chain-rpc-urls {{- range .Values.node.externalRelayChain.relayChainRpcUrls }}
+                "{{ . }}" \
+                {{- end }}
+                {{- end }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30334 \
                 {{- if .Values.node.perNodeServices.paraP2pService.enabled }}
                 {{- if .Values.node.perNodeServices.paraP2pService.ws.enabled }}
@@ -605,12 +613,12 @@ spec:
                 {{- if .Values.node.enableOffchainIndexing }}
                 --enable-offchain-indexing true \
                 {{- end }}
-                {{- if .Values.node.isParachain }}
+                {{- if and .Values.node.isParachain (not .Values.node.externalRelayChain.enabled) }}
                 -- \
                 --name=${POD_NAME} \
                 --base-path=/relaychain-data \
                 --keystore-path=/relaychain-keystore \
-                {{- if .Values.node.collatorRelayChain.chainData.database }}
+                {{- if .Values.node.collatorRelayChain.chainData.database}}
                 --database={{ .Values.node.collatorRelayChain.chainData.database }} \
                 {{- end }}
                 {{- if ge ( int .Values.node.collatorRelayChain.chainData.pruning ) 1 }}
@@ -647,7 +655,10 @@ spec:
                 --listen-addr=/ip4/0.0.0.0/tcp/30334/ws \
                 {{- end }}
                 {{- end }}
+                {{- if  (not .Values.node.externalRelayChain.enabled) }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30333 \
+                {{- end }}
+
           env:
             - name: CHAIN
               value: {{ .Values.node.chain }}
@@ -699,7 +710,7 @@ spec:
               name: chain-data
             - mountPath: /keystore
               name: chain-keystore
-            {{- if .Values.node.isParachain }}
+            {{- if and .Values.node.isParachain (not .Values.node.externalRelayChain.enabled)}}
             - mountPath: /relaychain-data
               name: relaychain-data
             - mountPath: /relaychain-keystore
@@ -928,7 +939,7 @@ spec:
           requests:
             storage: {{ .Values.node.chainKeystore.volumeSize }}
     {{- end }}
-    {{- if .Values.node.isParachain }}
+    {{- if and .Values.node.isParachain (not .Values.node.externalRelayChain.enabled) }}
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
