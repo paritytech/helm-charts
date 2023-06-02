@@ -1,0 +1,8 @@
+serviceMonitor:
+  enabled: false
+
+tps:
+  args:
+    validator-url: "wss://rococo-rpc.polkadot.io:443"
+    total-senders: "1"
+    num: "0"
