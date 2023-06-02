@@ -25,7 +25,7 @@ spec:
   jobLabel: "{{ .Release.Name }}"
   selector:
     matchLabels:
-      {{- include "polkadot-stps.selectorLabels" . | nindent 8 }}
+      {{- include "polkadot-stps-tps.selectorLabels" . | nindent 8 }}
   namespaceSelector:
     matchNames:
       - {{ .Release.Namespace }}

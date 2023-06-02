@@ -53,6 +53,23 @@ app.kubernetes.io/name: {{ include "polkadot-stps.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
+
+{{/*
+TPS Selector labels
+*/}}
+{{- define "polkadot-stps-tps.selectorLabels" -}}
+{{ include "polkadot-stps.selectorLabels" . }}
+stps/app: tps
+{{- end }}
+
+{{/*
+Sender Selector labels
+*/}}
+{{- define "polkadot-stps-sender.selectorLabels" -}}
+{{ include "polkadot-stps.selectorLabels" . }}
+stps/app: sender
+{{- end }}
+
 {{/*
 Define a regex matcher to check if the role is supported
 */}}

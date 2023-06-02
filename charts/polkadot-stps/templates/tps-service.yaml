@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "polkadot-stps.fullname" . }}
+  name: {{ include "polkadot-stps.fullname" . }}-tps
   labels:
-    {{- include "polkadot-stps.labels" . | nindent 4 }}
+    {{- include "polkadot-stps-tps.selectorLabels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -12,4 +12,4 @@ spec:
       targetPort: {{ .Values.tps.prometheus.port }}
       protocol: TCP
   selector:
-    {{- include "polkadot-stps.selectorLabels" . | nindent 4 }}
+    {{- include "polkadot-stps-tps.selectorLabels" . | nindent 4 }}

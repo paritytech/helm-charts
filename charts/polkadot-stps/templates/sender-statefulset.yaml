@@ -11,7 +11,7 @@ spec:
   serviceName: {{ include "polkadot-stps.fullname" . }}
   selector:
     matchLabels:
-      {{- include "polkadot-stps.selectorLabels" . | nindent 6 }}
+      {{- include "polkadot-stps-sender.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -19,7 +19,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "polkadot-stps.selectorLabels" . | nindent 8 }}
+        {{- include "polkadot-stps-sender.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
