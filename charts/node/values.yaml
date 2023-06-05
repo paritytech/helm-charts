@@ -54,7 +54,7 @@ googleCloudSdk:
   gsutilFlags: '-m -o "GSUtil:parallel_process_count=$(nproc --all)" -o "GSUtil:parallel_thread_count=2" -o "GSUtil:use_gcloud_storage=True"'
   # serviceAccountKey: ""
 
-## Sidecar containers
+## initContainers
 retrieveServiceInfo:
   resources: {}
 
