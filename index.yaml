@@ -278,6 +278,18 @@ entries:
     version: 0.1.0
   node:
   - apiVersion: v2
+    created: "2023-06-05T12:44:49.095553884Z"
+    description: A Helm chart to deploy Substrate/Polkadot nodes
+    digest: bd52aac7c94b6de3531cc42caecc2ec4a68048b9c04cc7ea041730e8e33b93d2
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: node
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/node-4.9.0/node-4.9.0.tgz
+    version: 4.9.0
+  - apiVersion: v2
     created: "2023-06-02T11:55:19.666894512Z"
     description: A Helm chart to deploy Substrate/Polkadot nodes
     digest: 57a6c1a6047f1af6a500a3456db7832ccf19f5b1e5a8ff43ac4dda52251a732a
@@ -1780,6 +1792,22 @@ entries:
     version: 1.0.0
   staking-miner:
   - apiVersion: v2
+    created: "2023-06-05T12:44:49.228372689Z"
+    dependencies:
+    - name: common
+      repository: https://charts.bitnami.com/bitnami
+      version: 1.14.1
+    description: A Helm chart to deploy staking miner (https://github.com/paritytech/staking-miner)
+    digest: f4447418bdfc60d398a1125cc23504efccdaa06dbce4c4d2f2ea06c380cf85d0
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: staking-miner
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/staking-miner-1.4.0/staking-miner-1.4.0.tgz
+    version: 1.4.0
+  - apiVersion: v2
     created: "2022-08-23T14:45:59.939811876Z"
     dependencies:
     - name: common
@@ -2264,4 +2292,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/testnet-manager-1.0.0/testnet-manager-1.0.0.tgz
     version: 1.0.0
-generated: "2023-06-02T11:55:19.667439918Z"
+generated: "2023-06-05T12:44:49.23033058Z"
