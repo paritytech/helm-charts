@@ -54,6 +54,29 @@ googleCloudSdk:
   gsutilFlags: '-m -o "GSUtil:parallel_process_count=$(nproc --all)" -o "GSUtil:parallel_thread_count=2" -o "GSUtil:use_gcloud_storage=True"'
   # serviceAccountKey: ""
 
+## Sidecar containers
+retrieveServiceInfo:
+  resources: {}
+
+syncChainGCS:
+  resources: {}
+
+syncRelayChainGCS:
+  resources: {}
+
+downloadChainspec:
+  resources: {}
+
+downloadRuntime:
+  resources: {}
+
+persistGeneratedNodeKey:
+  resources: {}
+
+injectKeys:
+  resources: {}
+##
+
 ## Reference to one or more secrets to be used when pulling images
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 ##

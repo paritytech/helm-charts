@@ -73,6 +73,7 @@ stakingMiner:
 ## @param generateConfig.image.tag init-container image tag (immutable tags are recommended)
 ## @param generateConfig.image.pullPolicy init-container image pull policy
 ## @param generateConfig.image.pullSecrets init-container image pull secrets
+## @param generateConfig.resources init-container requests/limits
 generateConfig:
   image:
     registry: docker.io
@@ -91,6 +92,7 @@ generateConfig:
     ##   - myRegistryKeySecretName
     ##
     pullSecrets: []
+  resources: {}
 
 ## @param waitRuntimeUpgrade Wait until chain will have same spec version as staking miner.
 ##
