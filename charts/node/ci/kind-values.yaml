@@ -10,4 +10,4 @@ node:
   chainKeystore:
     storageClass: standard
 image:
-  tag: v0.9.27
+  tag: v0.9.42

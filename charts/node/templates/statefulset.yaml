@@ -200,6 +200,8 @@ spec:
           env:
             - name: CHAIN_PATH
               value: {{ default .Values.node.chain .Values.node.chainData.chainPath }}
+          resources:
+          {{- toYaml .Values.syncChainGCS.resources | nindent 12 }}
           volumeMounts:
             - mountPath: /chain-data
               name: chain-data
@@ -235,6 +237,8 @@ spec:
           env:
             - name: RELAY_CHAIN_PATH
               value: {{ default .Values.node.collatorRelayChain.chain .Values.node.collatorRelayChain.chainData.chainPath }}
+          resources:
+          {{- toYaml .Values.syncRelayChainGCS.resources | nindent 12 }}
           volumeMounts:
             - mountPath: /relaychain-data
               name: relaychain-data
@@ -270,6 +274,8 @@ spec:
               fi
               {{- end }}
               {{- end }}
+          resources:
+          {{- toYaml .Values.downloadChainspec.resources | nindent 12 }}
           volumeMounts:
             - mountPath: /chain-data
               name: chain-data
@@ -290,6 +296,8 @@ spec:
               set -eu -o pipefail {{ if .Values.initContainer.debug }}-x{{ end }}
               mkdir -p {{ .Values.node.wasmRuntimeOverridesPath }}
               wget -nc -P {{ .Values.node.wasmRuntimeOverridesPath }} {{ .Values.node.wasmRuntimeUrl }}
+          resources:
+          {{- toYaml .Values.downloadRuntime.resources | nindent 12 }}
           volumeMounts:
             - mountPath: /chain-data
               name: chain-data
@@ -314,6 +322,8 @@ spec:
               fi
               NODE_PEER_ID="$({{ .Values.node.command }} key inspect-node-key --file ${NODE_KEY_PATH})"
               echo "Node key present in ${NODE_KEY_PATH} with peer-id: ${NODE_PEER_ID}"
+          resources:
+          {{- toYaml .Values.persistGeneratedNodeKey.resources | nindent 12 }}
           volumeMounts:
             - mountPath: /keystore
               name: chain-keystore
@@ -346,6 +356,8 @@ spec:
           env:
             - name: CHAIN
               value: {{ .Values.node.chain }}
+          resources:
+          {{- toYaml .Values.injectKeys.resources | nindent 12 }}
           volumeMounts:
             - mountPath: /keystore
               name: chain-keystore
@@ -377,6 +389,8 @@ spec:
           env:
             - name: CHAIN
               value: {{ .Values.node.chain }}
+          resources:
+          {{- toYaml .Values.injectKeys.resources | nindent 12 }}
           volumeMounts:
             - mountPath: /keystore
               name: chain-keystore
@@ -418,6 +432,8 @@ spec:
               && echo "Inserted key {{ .name }} (type={{ .type }}, scheme={{ .scheme }}) into Keystore" \
               || echo "Failed to insert key {{ .name }} (type={{ .type }}, scheme={{ .scheme }}) into Keystore."
               {{- end }}
+          resources:
+          {{- toYaml .Values.injectKeys.resources | nindent 12 }}
           env:
             - name: CHAIN
               value: {{ .Values.node.chain }}
@@ -460,6 +476,8 @@ spec:
               echo "${EXTERNAL_IP}" > /chain-data/node_external_ip
               echo "Retrieved external IP from {{ .Values.node.perNodeServices.ipRetrievalServiceUrl }}, saved ${EXTERNAL_IP} to /chain-data/node_external_ip"
               {{- end }}
+          resources:
+          {{- toYaml .Values.retrieveServiceInfo.resources | nindent 12 }}
           volumeMounts:
             - mountPath: /chain-data
               name: chain-data
