@@ -1773,6 +1773,20 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/polkadot-runtime-exporter-1.0.1/polkadot-runtime-exporter-1.0.1.tgz
     version: 1.0.1
+  polkadot-stps:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2023-06-05T14:02:48.301619692Z"
+    description: A Helm chart to deploy polkadot-stps
+    digest: 0ab329160ed1447a5d9127537efebdfcccb5fef90c08301d151a3bf7438b30a0
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: polkadot-stps
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/polkadot-stps-0.1.0/polkadot-stps-0.1.0.tgz
+    version: 0.1.0
   runtime-exporter:
   - apiVersion: v2
     created: "2022-08-22T16:22:13.141973927Z"
@@ -2292,4 +2306,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/testnet-manager-1.0.0/testnet-manager-1.0.0.tgz
     version: 1.0.0
-generated: "2023-06-05T12:44:49.23033058Z"
+generated: "2023-06-05T14:02:48.301936759Z"
