@@ -1,3 +1,4 @@
+{{- if .Values.sender.enabled }}
 {{- if .Values.serviceMonitor.enabled }}
 ---
 apiVersion: monitoring.coreos.com/v1
@@ -29,5 +30,5 @@ spec:
   namespaceSelector:
     matchNames:
       - {{ .Release.Namespace }}
-
-{{- end}}
+{{- end }}
+{{- end }}

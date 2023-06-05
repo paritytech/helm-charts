@@ -11,6 +11,7 @@ imagePullSecrets: []
 replicas: 1
 
 tps:
+  enabled: true
   replicas: 1
   image:
     repository: paritytech/stps-tps
