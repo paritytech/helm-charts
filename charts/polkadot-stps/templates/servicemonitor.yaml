@@ -1,0 +1,34 @@
+{{- if .Values.sender.enabled }}
+{{- if .Values.serviceMonitor.enabled }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "polkadot-stps.fullname" . }}
+  labels:
+    {{- include "polkadot-stps.labels" . | nindent 4 }}
+spec:
+  endpoints:
+  - port: {{ .Values.service.portName }}
+    {{- with .Values.serviceMonitor.interval }}
+    interval: {{ . }}
+    {{- end }}
+    {{- with .Values.serviceMonitor.scrapeTimeout }}
+    scrapeTimeout: {{ . }}
+    {{- end }}
+    honorLabels: true
+    path: /metrics
+    scheme: http
+  {{- with .Values.serviceMonitor.targetLabels }}
+  targetLabels:
+  {{ toYaml .| nindent 6 }}
+  {{- end}}
+  jobLabel: "{{ .Release.Name }}"
+  selector:
+    matchLabels:
+      {{- include "polkadot-stps-tps.selectorLabels" . | nindent 8 }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+{{- end }}
+{{- end }}

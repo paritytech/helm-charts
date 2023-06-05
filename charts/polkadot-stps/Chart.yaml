@@ -1,0 +1,9 @@
+apiVersion: v2
+name: polkadot-stps
+description: A Helm chart to deploy polkadot-stps
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+maintainers:
+  - name: Parity
+    url: https://github.com/paritytech/helm-charts

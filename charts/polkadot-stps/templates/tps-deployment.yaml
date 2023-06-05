@@ -1,0 +1,74 @@
+{{- if .Values.tps.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "polkadot-stps.fullname" . }}-tps
+  labels:
+    {{- include "polkadot-stps.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      {{- include "polkadot-stps-tps.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "polkadot-stps-tps.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: stps-tps
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.tps.image.repository }}:{{ .Values.tps.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.tps.image.pullPolicy }}
+          args:
+          {{- range $key, $val := .Values.tps.args }}
+          - --{{ $key }}={{ $val }}
+          {{- end }}
+          {{- if .Values.tps.scrapeFromGenesis.enabled }}
+          - --genesis
+          {{- end }}
+          {{- if .Values.tps.paraBlockFinality.enabled }}
+          - --para-finality
+          {{- end }}
+          {{- if .Values.tps.prometheus.enabled }}
+          - --prometheus
+          - --prometheus-port={{ .Values.tps.prometheus.port }}
+          ports:
+            - name: prometheus
+              containerPort: {{ .Values.tps.prometheus.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: prometheus
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: prometheus
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

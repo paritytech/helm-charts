@@ -1,0 +1,5 @@
+serviceMonitor:
+  enabled: false
+
+tps:
+  enabled: false

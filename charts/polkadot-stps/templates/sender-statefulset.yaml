@@ -1,0 +1,60 @@
+{{- if .Values.sender.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "polkadot-stps.fullname" . }}-sender
+  labels:
+    {{- include "polkadot-stps.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.sender.replicas }}
+  podManagementPolicy: Parallel
+  serviceName: {{ include "polkadot-stps.fullname" . }}
+  selector:
+    matchLabels:
+      {{- include "polkadot-stps-sender.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "polkadot-stps-sender.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: stps-sender
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.sender.image.repository }}:{{ .Values.sender.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.sender.image.pullPolicy }}
+          command: ["/bin/sh"]
+          args:
+            - -c
+            - |
+              exec /usr/local/bin/sender \
+              --total-senders={{ .Values.sender.replicas }} \
+              --sender-index=${HOSTNAME##*-} \
+              {{- range $key, $val := .Values.sender.args }}
+              --{{ $key }}={{ $val }} \
+              {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
