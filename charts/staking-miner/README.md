@@ -43,6 +43,22 @@ The command removes all the Kubernetes components associated with the chart and 
 > **NOTE**: The Helm chart uses [readme-generator](https://github.com/bitnami-labs/readme-generator-for-helm) to generate [Parameters](#parameters) section. Make sure to update the parameters with that tool instead of manually editing it.
 
 ## Upgrading
+
+### ⚠️ 2.0.0 (breaking change)
+Values for `waitRuntimeUpgrade` have changed
+
+Before:
+```
+waitRuntimeUpgrade: true
+```
+
+Now:
+```
+waitRuntimeUpgrade:
+  enabled: true
+  resources: {}
+```
+
 ### ⚠️ 1.1.0 (breaking change)
 Chart version 1.1.0 has breaking changes. staking-miner CLI [has changed](https://github.com/paritytech/polkadot/pull/5577) the order of positional arguments.
 
