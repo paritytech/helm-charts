@@ -1818,6 +1818,22 @@ entries:
     version: 1.0.0
   staking-miner:
   - apiVersion: v2
+    created: "2023-06-06T16:36:21.256278878Z"
+    dependencies:
+    - name: common
+      repository: https://charts.bitnami.com/bitnami
+      version: 1.14.1
+    description: A Helm chart to deploy staking miner (https://github.com/paritytech/staking-miner)
+    digest: 14cb181587e5eb757e2e088a16a0eeabbc8168e47319bde6578e4f91ff9c815f
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: staking-miner
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/staking-miner-2.0.0/staking-miner-2.0.0.tgz
+    version: 2.0.0
+  - apiVersion: v2
     created: "2023-06-05T12:44:49.228372689Z"
     dependencies:
     - name: common
@@ -2318,4 +2334,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/testnet-manager-1.0.0/testnet-manager-1.0.0.tgz
     version: 1.0.0
-generated: "2023-06-05T16:47:17.065878676Z"
+generated: "2023-06-06T16:36:21.256949584Z"
