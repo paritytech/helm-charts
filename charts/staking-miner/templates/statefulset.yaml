@@ -93,7 +93,7 @@ spec:
           volumeMounts:
           - name: configs
             mountPath: "/config"
-        {{- if .Values.waitRuntimeUpgrade }}
+        {{- if .Values.waitRuntimeUpgrade.enabled }}
         - name: wait-runtime-upgrade
           image:  {{ template "stakingminer.image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -110,6 +110,7 @@ spec:
                 sleep 60
               done
           securityContext: {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          resources: {{- toYaml .Values.waitRuntimeUpgrade.resources | nindent 12 }}
           volumeMounts:
             - name: configs
               mountPath: "/config"

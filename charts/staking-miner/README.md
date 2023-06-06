@@ -43,6 +43,22 @@ The command removes all the Kubernetes components associated with the chart and 
 > **NOTE**: The Helm chart uses [readme-generator](https://github.com/bitnami-labs/readme-generator-for-helm) to generate [Parameters](#parameters) section. Make sure to update the parameters with that tool instead of manually editing it.
 
 ## Upgrading
+
+### ⚠️ 2.0.0 (breaking change)
+Values for `waitRuntimeUpgrade` have changed
+
+Before:
+```
+waitRuntimeUpgrade: true
+```
+
+Now:
+```
+waitRuntimeUpgrade:
+  enabled: true
+  resources: {}
+```
+
 ### ⚠️ 1.1.0 (breaking change)
 Chart version 1.1.0 has breaking changes. staking-miner CLI [has changed](https://github.com/paritytech/polkadot/pull/5577) the order of positional arguments.
 
@@ -97,7 +113,8 @@ If you use a customized value for `args` make sure to update it accordingly. If 
 | `generateConfig.image.tag`                        | init-container image tag (immutable tags are recommended)                                                                                                                                                                                                                               | `latest`                                                                                             |
 | `generateConfig.image.pullPolicy`                 | init-container image pull policy                                                                                                                                                                                                                                                        | `IfNotPresent`                                                                                       |
 | `generateConfig.image.pullSecrets`                | init-container image pull secrets                                                                                                                                                                                                                                                       | `[]`                                                                                                 |
-| `waitRuntimeUpgrade`                              | Wait until chain will have same spec version as staking miner.                                                                                                                                                                                                                          | `false`                                                                                              |
+| `waitRuntimeUpgrade.enabled`                      | Wait until chain will have same spec version as staking miner                                                                                                                                                                                                                          | `false`                                                                                              |
+| `waitRuntimeUpgrade.resources`                    | Resources configuration for the wait container                                                                                                                                                                                                                          | `{}`                                                                                              |
 | `image.registry`                                  | staking-miner image registry                                                                                                                                                                                                                                                            | `docker.io`                                                                                          |
 | `image.repository`                                | staking-miner image repository                                                                                                                                                                                                                                                          | `paritytech/staking-miner`                                                                           |
 | `image.tag`                                       | staking-miner image tag (immutable tags are recommended)                                                                                                                                                                                                                                | `master`                                                                                             |
