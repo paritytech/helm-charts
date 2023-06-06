@@ -94,9 +94,12 @@ generateConfig:
     pullSecrets: []
   resources: {}
 
-## @param waitRuntimeUpgrade Wait until chain will have same spec version as staking miner.
+## @param waitRuntimeUpgrade.enabled Wait until chain will have same spec version as staking miner
+## @param waitRuntimeUpgrade.resources Resources configuration for the wait container
 ##
-waitRuntimeUpgrade: false
+waitRuntimeUpgrade:
+  enabled: false
+  resources: {}
 
 ## Parity staking-miner image
 ## ref: https://hub.docker.com/r/paritytech/staking-miner/tags/
