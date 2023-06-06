@@ -110,6 +110,7 @@ spec:
                 sleep 60
               done
           securityContext: {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          resources: {{- toYaml .Values.waitRuntimeConfig.resources | nindent 12 }}
           volumeMounts:
             - name: configs
               mountPath: "/config"
