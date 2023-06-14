@@ -14,7 +14,7 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "faucet.selectorLabels" . | nindent 8 }}
+        {{- include "faucet.labels" . | nindent 8 }}
       annotations:
         configmap/checksum: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         secret/checksum: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
