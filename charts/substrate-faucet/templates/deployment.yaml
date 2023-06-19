@@ -31,6 +31,9 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
+            - name: SMF_CONFIG_PORT
+              value: "5555"
+            # TODO: remove these SMF_BACKEND_* / SMF_BOT_* vars after releasing corresponding faucet code
             - name: SMF_BACKEND_PORT
               value: "5555"
           {{- range $key, $val := .Values.faucet.secret }}
@@ -47,6 +50,14 @@ spec:
                   key: {{ $key }}
                   name: {{ $.Values.faucet.existingConfigMap | default (printf "%s-config" $.Release.Name) }}
           {{- end }}
+            - name: SMF_CONFIG_DEPLOYED_REF
+              value: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+            - name: SMF_CONFIG_DEPLOYED_TIME
+              value: {{ now | date "2006-01-02T15:04:05" | quote }}
+            - name: SMF_CONFIG_EXTERNAL_ACCESS
+              value: {{ .Values.faucet.externalAccess | quote }}
+
+            # TODO: remove these SMF_BACKEND_* / SMF_BOT_* vars after releasing corresponding faucet code
             - name: SMF_BACKEND_DEPLOYED_REF
               value: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
             - name: SMF_BACKEND_DEPLOYED_TIME
