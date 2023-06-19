@@ -64,7 +64,8 @@ jobs:
 
     - name: Replace secrets in Helm charts
       env:
-        SMF_CONFIG_MATRIX_ACCESS_TOKEN: ${{ secrets.SMF_CONFIG_MATRIX_ACCESS_TOKEN }}
+        # TODO: rename the secret to avoid confusion
+        SMF_CONFIG_MATRIX_ACCESS_TOKEN: ${{ secrets.SMF_BOT_MATRIX_ACCESS_TOKEN }}
         # TODO: remove these SMF_BACKEND_* / SMF_BOT_* vars after releasing corresponding faucet code
         SMF_BOT_MATRIX_ACCESS_TOKEN: ${{ secrets.SMF_BOT_MATRIX_ACCESS_TOKEN }}
         STAKING_MINER_CONFIG_SEED: ${{ secrets.STAKING_MINER_CONFIG_SEED }}
