@@ -64,11 +64,16 @@ jobs:
 
     - name: Replace secrets in Helm charts
       env:
+        # TODO: rename the secret to avoid confusion
+        SMF_CONFIG_MATRIX_ACCESS_TOKEN: ${{ secrets.SMF_BOT_MATRIX_ACCESS_TOKEN }}
+        # TODO: remove these SMF_BACKEND_* / SMF_BOT_* vars after releasing corresponding faucet code
         SMF_BOT_MATRIX_ACCESS_TOKEN: ${{ secrets.SMF_BOT_MATRIX_ACCESS_TOKEN }}
         STAKING_MINER_CONFIG_SEED: ${{ secrets.STAKING_MINER_CONFIG_SEED }}
       run: |
         shopt -s globstar
         for f in $(find **/ci/*-values.yaml); do
+          sed -i "s/__GITHUB_SECRET_SMF_CONFIG_MATRIX_ACCESS_TOKEN/$SMF_CONFIG_MATRIX_ACCESS_TOKEN/g" $f
+          # TODO: remove these SMF_BACKEND_* / SMF_BOT_* vars after releasing corresponding faucet code
           sed -i "s/__GITHUB_SECRET_SMF_BOT_MATRIX_ACCESS_TOKEN/$SMF_BOT_MATRIX_ACCESS_TOKEN/g" $f
           sed -i "s/__GITHUB_SECRET_STAKING_MINER_CONFIG_SEED/$STAKING_MINER_CONFIG_SEED/g" $f
         done

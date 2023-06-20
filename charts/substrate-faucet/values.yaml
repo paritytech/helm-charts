@@ -28,6 +28,17 @@ faucet:
   externalAccess: false
 
   secret:
+    ## @param faucet.secret.SMF_CONFIG_FAUCET_ACCOUNT_MNEMONIC Mnemonic seed for the faucet account
+    ##
+    SMF_CONFIG_FAUCET_ACCOUNT_MNEMONIC: "this is a fake mnemonic"
+    ## @param faucet.secret.SMF_CONFIG_RECAPTCHA_SECRET A secret recaptcha token used to validate external requests
+    ##
+    SMF_CONFIG_RECAPTCHA_SECRET: "fakeRecaptchaSecret"
+    ## @param faucet.secret.SMF_CONFIG_MATRIX_ACCESS_TOKEN Matrix Bot access token
+    ##
+    SMF_CONFIG_MATRIX_ACCESS_TOKEN: "ThisIsNotARealAccessToken"
+
+    # TODO: remove these SMF_BACKEND_* / SMF_BOT_* vars after releasing corresponding faucet code
     ## @param faucet.secret.SMF_BACKEND_FAUCET_ACCOUNT_MNEMONIC Mnemonic seed for the faucet account
     ##
     SMF_BACKEND_FAUCET_ACCOUNT_MNEMONIC: "this is a fake mnemonic"
@@ -39,6 +50,20 @@ faucet:
     SMF_BOT_MATRIX_ACCESS_TOKEN: "ThisIsNotARealAccessToken"
 
   config:
+    ## @param faucet.config.SMF_CONFIG_RPC_ENDPOINT WS RPC node endpoint
+    ##
+    SMF_CONFIG_RPC_ENDPOINT: "wss://example.com/"
+    ## @param faucet.config.SMF_CONFIG_MATRIX_SERVER Matrix server URL
+    ##
+    SMF_CONFIG_MATRIX_SERVER: "https://matrix.org"
+    ## @param faucet.config.SMF_CONFIG_MATRIX_CONFIG_USER_ID Bot user ID
+    ##
+    SMF_CONFIG_MATRIX_BOT_USER_ID: "@test_bot_faucet:matrix.org"
+    ## @param faucet.config.SMF_CONFIG_FAUCET_IGNORE_LIST A list of Matrix accounts that will be silently ignored. Example: \"@alice:matrix.org,@bob:domain.com\"
+    ##
+    SMF_CONFIG_FAUCET_IGNORE_LIST: ''
+
+    # TODO: remove these SMF_BACKEND_* / SMF_BOT_* vars after releasing corresponding faucet code
     ## @param faucet.config.SMF_BACKEND_RPC_ENDPOINT WS RPC node endpoint
     ##
     SMF_BACKEND_RPC_ENDPOINT: "wss://example.com/"

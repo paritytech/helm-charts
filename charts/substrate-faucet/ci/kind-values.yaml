@@ -4,8 +4,13 @@ serviceMonitor:
 faucet:
   secret:
     # your bot access token here is how to find it https://t2bot.io/docs/access_tokens/
+    SMF_CONFIG_MATRIX_ACCESS_TOKEN: "__GITHUB_SECRET_SMF_CONFIG_MATRIX_ACCESS_TOKEN"
+    # TODO: remove these SMF_BACKEND_* / SMF_BOT_* vars after releasing corresponding faucet code
     SMF_BOT_MATRIX_ACCESS_TOKEN: "__GITHUB_SECRET_SMF_BOT_MATRIX_ACCESS_TOKEN"
   config:
+    SMF_CONFIG_MATRIX_SERVER: "https://m.parity.io"
+    SMF_CONFIG_MATRIX_BOT_USER_ID: "@helm-charts-bot:parity.io"
+    # TODO: remove these SMF_BACKEND_* / SMF_BOT_* vars after releasing corresponding faucet code
     SMF_BACKEND_RPC_ENDPOINT: "wss://westend-rpc.polkadot.io/"
     SMF_BOT_MATRIX_SERVER: "https://m.parity.io"
     SMF_BOT_MATRIX_BOT_USER_ID: "@helm-charts-bot:parity.io"
