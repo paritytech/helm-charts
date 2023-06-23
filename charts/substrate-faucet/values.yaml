@@ -38,21 +38,10 @@ faucet:
     ##
     SMF_CONFIG_MATRIX_ACCESS_TOKEN: "ThisIsNotARealAccessToken"
 
-    # TODO: remove these SMF_BACKEND_* / SMF_BOT_* vars after releasing corresponding faucet code
-    ## @param faucet.secret.SMF_BACKEND_FAUCET_ACCOUNT_MNEMONIC Mnemonic seed for the faucet account
-    ##
-    SMF_BACKEND_FAUCET_ACCOUNT_MNEMONIC: "this is a fake mnemonic"
-    ## @param faucet.secret.SMF_BACKEND_RECAPTCHA_SECRET A secret recaptcha token used to validate external requests
-    ##
-    SMF_BACKEND_RECAPTCHA_SECRET: "fakeRecaptchaSecret"
-    ## @param faucet.secret.SMF_BOT_MATRIX_ACCESS_TOKEN Matrix Bot access token
-    ##
-    SMF_BOT_MATRIX_ACCESS_TOKEN: "ThisIsNotARealAccessToken"
-
   config:
-    ## @param faucet.config.SMF_CONFIG_RPC_ENDPOINT WS RPC node endpoint
+    ## @param faucet.config.SMF_CONFIG_NETWORK network name: rococo, westend, wococo, etc.
     ##
-    SMF_CONFIG_RPC_ENDPOINT: "wss://example.com/"
+    SMF_CONFIG_NETWORK: "rococo"
     ## @param faucet.config.SMF_CONFIG_MATRIX_SERVER Matrix server URL
     ##
     SMF_CONFIG_MATRIX_SERVER: "https://matrix.org"
@@ -62,36 +51,6 @@ faucet:
     ## @param faucet.config.SMF_CONFIG_FAUCET_IGNORE_LIST A list of Matrix accounts that will be silently ignored. Example: \"@alice:matrix.org,@bob:domain.com\"
     ##
     SMF_CONFIG_FAUCET_IGNORE_LIST: ''
-
-    # TODO: remove these SMF_BACKEND_* / SMF_BOT_* vars after releasing corresponding faucet code
-    ## @param faucet.config.SMF_BACKEND_RPC_ENDPOINT WS RPC node endpoint
-    ##
-    SMF_BACKEND_RPC_ENDPOINT: "wss://example.com/"
-    ## @param faucet.config.SMF_BACKEND_NETWORK_DECIMALS Number of decimal for the network
-    ##
-    SMF_BACKEND_NETWORK_DECIMALS: 12
-    ## @param faucet.config.SMF_BACKEND_INJECTED_TYPES To set if any type must be overriden
-    ##
-    SMF_BACKEND_INJECTED_TYPES: '{}'
-    ## @param faucet.config.SMF_BOT_DRIP_AMOUNT Default amount of tokens to send
-    ##
-    SMF_BACKEND_FAUCET_BALANCE_CAP: 100
-    ## @param faucet.config.SMF_BACKEND_FAUCET_BALANCE_CAP The bot wil verify this limit before
-    # sending tokens. If the account requesting tokens has more then the bot will not send tokens
-    ##
-    SMF_BOT_DRIP_AMOUNT: 10
-    ## @param faucet.config.SMF_BOT_MATRIX_SERVER Matrix server URL
-    ##
-    SMF_BOT_MATRIX_SERVER: "https://matrix.org"
-    ## @param faucet.config.SMF_BOT_MATRIX_BOT_USER_ID Bot user ID
-    ##
-    SMF_BOT_MATRIX_BOT_USER_ID: "@test_bot_faucet:matrix.org"
-    ## @param faucet.config.SMF_BOT_NETWORK_UNIT Token unit for the network
-    ##
-    SMF_BOT_NETWORK_UNIT: "UNIT"
-    ## @param faucet.config.SMF_BOT_FAUCET_IGNORE_LIST A list of Matrix accounts that will be silently ignored. Example: \"@alice:matrix.org,@bob:domain.com\"
-    ##
-    SMF_BOT_FAUCET_IGNORE_LIST: ''
 
 
 ## @section Common parameters
