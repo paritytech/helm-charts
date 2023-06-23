@@ -54,8 +54,7 @@ imagePullSecrets: []
 ##
 serviceAccount:
   create: true
-  annotations:
-    {}
+  annotations: {}
     ## uncomment if you're using workload indentity
     ##
     # iam.gke.io/gcp-service-account: 'mysa@gcp-project-id.iam.gserviceaccount.com'
@@ -73,14 +72,12 @@ podAnnotations: {}
 ## This defaults to non root user with uid 1000 and gid 1000.
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
 ##
-podSecurityContext:
-  {}
+podSecurityContext: {}
   # fsGroup: 1000
   # runAsNonRoot: true
   # runAsUser: 1000
   # runAsGroup: 1000
-containerSecurityContext:
-  {}
+containerSecurityContext: {}
   # capabilities:
   #   drop:
   #   - ALL
@@ -91,8 +88,7 @@ containerSecurityContext:
 
 ## Environment variable to add to the pods
 ##
-env:
-  {}
+env: {}
   # VAR: "value"
   # VAR2:
   #   valueFrom:
@@ -107,6 +103,7 @@ envFrom: []
 #      name: env-configmap
 #  - secretRef:
 #      name: env-secret
+
 
 ## Additional Pod Spec
 ##
@@ -147,8 +144,7 @@ service:
 ingress:
   enabled: false
   className: ""
-  annotations:
-    {}
+  annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
@@ -157,14 +153,13 @@ ingress:
         - path: /
           pathType: ImplementationSpecific
   tls:
-    - secretName: chart-example-tls
-      hosts:
-        - chart-example.local
+  - secretName: chart-example-tls
+    hosts:
+      - chart-example.local
 
 ## Resource limits & requests
 ##
-resources:
-  {}
+resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -191,8 +186,7 @@ affinity: {}
 ## Controller Container liveness/readiness probe configuration
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 ##
-livenessProbe:
-  {}
+livenessProbe: {}
   # failureThreshold: 3
   # successThreshold: 1
   # initialDelaySeconds: 0
@@ -201,8 +195,7 @@ livenessProbe:
   #   port: 80
   # periodSeconds: 10
 
-readinessProbe:
-  {}
+readinessProbe: {}
   # failureThreshold: 3
   # successThreshold: 1
   # initialDelaySeconds: 0
@@ -211,8 +204,7 @@ readinessProbe:
   #   port: 80
   # periodSeconds: 10
 
-startupProbe:
-  {}
+startupProbe: {}
   # failureThreshold: 3
   # successThreshold: 1
   # initialDelaySeconds: 0
@@ -231,7 +223,7 @@ stateful:
 persistence:
   enabled: false
   accessModes:
-    - ReadWriteOnce
+  - ReadWriteOnce
   size: 50Gi
   annotations: {}
   # selector:
@@ -243,8 +235,7 @@ persistence:
 
 ## See `kubectl explain poddisruptionbudget.spec` for more
 ## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
-podDisruptionBudget:
-  {}
+podDisruptionBudget: {}
   # minAvailable: 1
   # maxUnavailable: 1
 
@@ -268,12 +259,12 @@ serviceMonitor:
   ## List of endpoints of service which Prometheus scrapes
   ##
   endpoints:
-    - path: /metrics
-      port: http
-      interval: 1m
-      scheme: http
-      scrapeTimeout: 30s
-      honorLabels: true
+  - path: /metrics
+    port: http
+    interval: 1m
+    scheme: http
+    scrapeTimeout: 30s
+    honorLabels: true
 
   ## Propagate certain service labels to Prometheus.
   targetLabels: []
