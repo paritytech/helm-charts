@@ -48,6 +48,9 @@ imagePullSecrets: []
 #   - name: init-container
 #     image: busybox:1.28
 #     command: ['sh', '-c', "sleep 30"]
+#     volumeMounts:
+#       - name: name
+#         mountPath: "/path"
 
 ## Service account for the pod to use
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
