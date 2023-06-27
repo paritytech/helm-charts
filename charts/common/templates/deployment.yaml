@@ -40,11 +40,18 @@ spec:
       serviceAccountName: {{ include "common.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      {{- if .Values.initContainers}}
+      {{- if .Values.initContainers }}
       initContainers:
-        - name: {{ .Values.initContainers.name }}
-          image: {{ .Values.initContainers.image }}
-          command: {{ .Values.initContainers.command }}
+      {{- range $initContainer := .Values.initContainers }}
+        - name: {{ $initContainer.name }}
+          image: {{ $initContainer.image }}
+          command:
+            {{- toYaml $initContainer.command | nindent 12 }}
+          {{- with $initContainer.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- end }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
