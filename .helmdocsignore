@@ -1,0 +1,11 @@
+# These charts do not yet support generating README.md with helm-docs
+bridges-common-relay/
+common/
+polkadot-basic-notification/
+polkadot-introspector/
+polkadot-runtime-exporter/
+polkadot-stps/
+staking-miner/
+substrate-faucet/
+substrate-telemetry/
+testnet-manager/

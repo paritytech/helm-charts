@@ -1,0 +1,190 @@
+<!--
+DO NOT EDIT README.md manually!
+We're using [helm-docs](https://github.com/norwoodj/helm-docs) to render values of the chart.
+If you updated values.yaml file make sure to render a new README.md locally before submitting a Pull Request.
+
+If you're using [pre-commit](https://pre-commit.com/) REAMDE.md will be updated automatically.
+Otherwise, you should install helm-docs and manually update README.md. Navigate to repository root and run:
+`helm-docs --chart-search-root=charts/node --template-files=README.md.gotmpl`
+-->
+
+# Substrate/Polkadot node helm chart
+
+{{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}{{ template "chart.appVersionBadge" . }}
+
+{{ template "chart.maintainersSection" . }}
+
+## Installing the chart
+
+```console
+helm repo add parity https://paritytech.github.io/helm-charts/
+helm install polkadot-node parity/node
+```
+
+This will deploy a single Polkadot node with the default configuration.
+
+### Deploying a node with data synced from a snapshot archive (eg. [Polkashot](https://polkashots.io/))
+
+Polkadot:
+```console
+helm install polkadot-node parity/node --set node.chainDataSnapshotUrl=https://dot-rocksdb.polkashots.io/snapshot --set node.chainDataSnapshotFormat=lz4
+```
+
+Kusama:
+```console
+helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm-rocksdb.polkashots.io/snapshot --set node.chainDataSnapshotFormat=lz4 --set node.chainPath=ksmcc3
+```
+⚠️ For some chains where the local directory name is different from the chain ID, `node.chainPath` needs to be set to a custom value.
+
+### Resizing the node disk
+
+To resize the node persistent volume, perform the following steps:
+
+1. Patch the PVC storage size, eg. to `1000Gi`:
+
+```console
+kubectl patch pvc chain-data-polkadot-node-0  -p '{"spec":{"resources":{"requests":{"storage":"1000Gi"}}}}}'
+```
+
+2. Delete the StatefulSet object with `cascade=orphan` (ie. without removing the attached pods):
+
+```console
+kubectl delete sts polkadot-node --cascade=orphan
+```
+
+3. Update the `node.dataVolumeSize` to the new value (eg. `1000Gi`) and upgrade the helm release.
+
+Note that for a Kubernetes Persistent Volume Claims to be resizable, its StorageClass must have specific characteristics. More information on this topic is available in the [Expanding Persistent Volumes Claims
+section of the Kubernetes documentation](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#expanding-persistent-volumes-claims).
+
+### Optional Vault Integration
+
+To integrate this chart with vault:
+- Vault agent injector [installed](https://www.vaultproject.io/docs/platform/k8s/injector/installation) on the cluster
+- Kubernetes [auth enabled](https://learn.hashicorp.com/tutorials/vault/kubernetes-sidecar#configure-kubernetes-authentication) in your vault instance
+- Secrets for either the keys or the nodeKey created in your vault using kv-2
+- A policy for each of your secrets configured in your vault
+- an authentication role crated in your vault instance (should match the serviceAccount name for this chart) with policies for accessing your keys attached
+
+```
+node:
+  vault:
+    keys:
+      - name: aura
+        type: aura
+        scheme: sr25519
+        vaultPath: kv/secret/polkadot-node # path at which the secret is located in Vault
+        vaultKey: aura # key under which the secret value is stored in Vault
+        extraDerivation: "//${HOSTNAME}//aura" # allows to have unique derived keys for each pod of the statefulset
+    nodeKey:
+      name: nodekey
+      vaultPath: kv/secret/polkadot-node
+      vaultKey: nodekey
+```
+
+## Upgrade
+
+### v4.6.0 (⚠️ breaking change)
+
+Substrate changed the default rpc flags: https://github.com/paritytech/substrate/pull/13384 \
+The dual RPC ports; `--rpc-port=9933` (HTTP) ,`--ws-port=9944` (WS) was replaced by a combined port `--rpc-port=9944`.
+Flags replaced:
+```
+--rpc-max--payload (replaced by --rpc--max-request-size and --rpc-max-response-size)
+--ws-max-out-buffer-capacity (removed)
+--ws-external (replaced by --rpc-external)
+--unsafe-ws--external (replaced by --unsafe-rpc-external)
+--ipc-path (removed)
+--ws-port (replaced by --rpc-port)
+--ws-max-connections (replaced by --rpc-max-connections)
+--rpc-http (replaced by --rpc-addr)
+--rpc-ws (replaced by --rpc-addr)
+```
+New value was added to support this change:
+- `node.legacyRpcFlags`
+
+If your node is still using the old RPC flags, please set `node.legacyRpcFlags=true`
+
+### v4.5.0 (⚠️ small change)
+
+The storage classes are now set to `""` by default instead of `"default"`.
+Make sure that the following values are set to the storage classes you are using if not already set (before 4.5.0, those were set explicitly to `default`) :
+
+- `node.chainData.storageClass`
+- `node.chainKeystore.storageClass`
+- `node.collatorRelayChain.chainData.storageClass`
+- `node.collatorRelayChain.chainKeystore.storageClass`
+
+### From v3.x.x to v4.0.0 (⚠️ breaking changes)
+
+The following chart parameters have been renamed or rearranged:
+
+- `node.pruning` -> `node.chainData.pruning`
+- `node.database` -> `node.chainData.database`
+- `node.collator.isParachain` -> `node.isParachain`
+- `node.collator.relayChain` -> `node.collatorRelayChain.chain`
+- `node.collator.relayChainCustomChainspecPath` -> `node.collatorRelayChain.customChainspecPath`
+- `node.collator.relayChainCustomChainspecUrl` -> `node.collatorRelayChain.customChainspecUrl`
+- `node.collator.relayChainFlags` -> `node.collatorRelayChain.flags`
+- `node.collator.relayChainData.*` -> `node.collatorRelayChain.chainData.*`
+- `node.collator.relayChainPruning` -> `node.collatorRelayChain.chainData.pruning`
+- `node.collator.relayChainDatabase` -> `node.collatorRelayChain.chainData.database`
+- `node.collator.relayChainKeystore.*` -> `node.collatorRelayChain.chainKeystore.*`
+- `node.collator.relayChainPrometheus.*` -> `node.collatorRelayChain.prometheus.*`
+
+The following flags are now invalid if they were previously set in `node.flags` or `node.collator.relayChainFlags`.
+An error will be thrown if any of those flags are set directly.
+
+- `--name`
+- `--base-path`
+- `--chain`
+- `--validator`
+- `--collator`
+- `--light`
+- `--database`
+- `--pruning`
+- `--prometheus-external`
+- `--prometheus-port`
+- `--node-key`
+- `--wasm-runtime-overrides`
+- `--jaeger-agent`
+- `--rpc-methods`
+- `--rpc-external`
+- `--unsafe-rpc-external`
+- `--ws-external`
+- `--unsafe-ws-external`
+- `--rpc-cors`
+- `--rpc-port`
+- `--ws-port`
+
+### From v2.x.x to v3.0.0 (⚠️ breaking changes)
+There are now separate volumes for:
+- relaychain data
+- relaychain keystore
+- parachain data
+- parachain keystore
+
+Some chart parameters have been grouped together and renamed. There are now separate sections for the following values:
+- `node.chainData`
+- `node.chainKeystore`
+- `node.collator`
+
+Common `storageClass` parameter has been moved to the corresponding separate groups mentioned above.
+
+As both the chain data and keystore can now be stored on up to 4 different volumes you may need to manually relocate the existing data to the newly created volumes.
+
+If you're running a non-collator node:
+- Move chain files from the `/data/chains/<chain_name>` in the `chain-data` volume to `/chain-data` in the `chain-data` volume.
+- Move keystore files from the `/data/chains/<chain_name>/keystore` in the `chain-data` volume to `/keystore` in the `chain-keystore` volume.
+
+If you're running a collator node:
+- Move chain files from the `/data/chains/<chain_name>` in the `chain-data` volume to `/chain-data` in the `chain-data` volume.
+- Move keystore files from the `/data/chains/<chain_name>/keystore` in the `chain-data` volume to `/keystore` in the `chain-keystore` volume.
+- Move relaychain files from the `/data/relay/polkadot` in the `chain-data` volume to `/relaychain-data/polkadot` in the `relaychain-data` volume.
+- Move relaychain keystore from `/data/relay/polkadot/chains/<relay_chain_name>/keystore` in the `chain-data` volume to `/relaychain-keystore` in the `relaychain-keystore` volume
+
+{{ template "chart.requirementsSection" . }}
+
+{{ template "chart.valuesSection" . }}
+
+{{ template "helm-docs.versionFooter" . }}
