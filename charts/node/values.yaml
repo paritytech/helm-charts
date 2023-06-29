@@ -258,9 +258,13 @@ node:
       # -- Annotations to add to the volumeClaimTemplates
       annotations: {}
 
+      # -- Configure parameters for restoring relay chain snapshot. Uses [rclone](https://rclone.org/)
       chainSnapshot:
+        # -- Enable relay chain snapshot restoration
         enabled: false
-        method: gcs, s3, http-single-tar, http-single-tar-lz4, http-filelist
+        # -- Restoration method. One of: gcs, s3, http-single-tar, http-single-tar-lz4, http-filelist
+        method: gcs
+        # -- A URL to download chain backup
         url: ""
 
     chainKeystore:

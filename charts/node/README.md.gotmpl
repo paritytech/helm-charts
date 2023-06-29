@@ -6,6 +6,9 @@ If you updated values.yaml file make sure to render a new README.md locally befo
 If you're using [pre-commit](https://pre-commit.com/) REAMDE.md will be updated automatically.
 Otherwise, you should install helm-docs and manually update README.md. Navigate to repository root and run:
 `helm-docs --chart-search-root=charts/node --template-files=README.md.gotmpl`
+
+You may encounter `files were modified by this hook` error after updating README.md.gotmpl file when using pre-commit.
+This is intended behaviour. Make sure to run `git add -A` once again to stage changes in the auto-updated REAMDE.md
 -->
 
 # Substrate/Polkadot node helm chart
@@ -83,6 +86,21 @@ node:
 ```
 
 ## Upgrade
+
+### From v4.x.x to v5.0.0 (⚠️ breaking changes)
+- Chain backup upload functionality has been removed. I.e., the `node.enableChainBackupGcs` flag is no longer available;
+- Chain backup download scripts have been updated to use [`rclone`](https://rclone.org/). Multiple flags associated with this functionality have changed. Chain backup and relay chain backup restoration are now controlled by `node.chainData.chainSnapshot` and `node.collatorRelayChain.chainData.chainSnapshot` blocks of flags accordingly.
+- Chain backup restoration now supports a new method: downloading DB files by direct HTTP links using a list of files as a reference. I.e., a restoration process would first download a file containing a list of DB files that need to be downloaded. `rclone` will then use this file to generate HTTP links to the DB files and download it in parallel.
+- The following flags have changed:
+  - `initContainer.*` -> replaced with `initContainers.*` to enable individual configuration of each init container;
+  - `kubectl.*` -> merged into `initContainers.*`;
+  - `googleCloudSdk.*` -> replaced with `node.chainData.chainSnapshot.*` and `node.collatorRelayChain.chainData.chainSnapshot.*`
+  - `node.chainData.snapshotUrl` -> replaced with `node.chainData.chainSnapshot.url`
+  - `node.chainData.snapshotFormat` -> replaced with `node.chainData.chainSnapshot.method`
+  - `node.chainData.GCSBucketUrl` -> replaced with `node.chainData.chainSnapshot.url`
+  - `node.collatorRelayChain.chainData.snapshotUrl` -> replaced with `node.collatorRelayChain.chainData.chainSnapshot.url`
+  - `node.collatorRelayChain.chainData.snapshotFormat` -> replaced with `node.collatorRelayChain.chainData.chainSnapshot.method`
+  - `node.collatorRelayChain.chainData.GCSBucketUrl` -> replaced with `node.collatorRelayChain.chainData.chainSnapshot.url`
 
 ### v4.6.0 (⚠️ breaking change)
 
