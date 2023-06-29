@@ -195,6 +195,13 @@ node:
       method: gcs
       # -- A URL to download chain backup
       url: ""
+      # -- A remote file name containing names of DB file chunks. Appended to `url`
+      filelistName: files.txt
+      # $ cat files.txt
+      # full/000187.sst
+      # full/000321.sst
+      # full/000381.sst
+      # ...
 
   # -- Configure chain keystore parameters
   chainKeystore:
@@ -266,6 +273,13 @@ node:
         method: gcs
         # -- A URL to download chain backup
         url: ""
+        # -- A remote file name containing names of DB file chunks. Appended to `url`
+        filelistName: files.txt
+        # $ cat files.txt
+        # full/000187.sst
+        # full/000321.sst
+        # full/000381.sst
+        # ...
 
     chainKeystore:
       # -- Mount relay-chain keystore in memory using an emptyDir volume

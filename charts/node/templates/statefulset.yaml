@@ -94,24 +94,24 @@ spec:
                 SNAPSHOT_URL="{{ .Values.node.chainData.chainSnapshot.url }}"
                 mkdir -p /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
                 if [ "${METHOD}" == "http-single-tar-lz4" ]; then
-                  rclone copyurl {{ .Values.initContainers.downloadChainSpec.cmdArgs }} --stdout ${SNAPSHOT_URL} | lz4 -c -d - | tar -x -C /chain-data/chains/${CHAIN_PATH}/
+                  rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout ${SNAPSHOT_URL} | lz4 -c -d - | tar -x -C /chain-data/chains/${CHAIN_PATH}/
                 elif [ "${METHOD}" == "http-single-tar" ]; then
-                  rclone copyurl {{ .Values.initContainers.downloadChainSpec.cmdArgs }} --stdout ${SNAPSHOT_URL} | tar -x -C /chain-data/chains/${CHAIN_PATH}/
+                  rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout ${SNAPSHOT_URL} | tar -x -C /chain-data/chains/${CHAIN_PATH}/
                 elif [ "${METHOD}" == "gcs" ]; then
-                  LATEST=$(rclone copyto {{ .Values.initContainers.downloadChainSpec.cmdArgs }} --stdout :gcs:${SNAPSHOT_URL}/latest_version.meta.txt )
+                  LATEST=$(rclone copyto {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout :gcs:${SNAPSHOT_URL}/latest_version.meta.txt )
                   if [ -z "$LATEST" ]; then
                     echo "Failed to retrieve latest_version.meta.txt file. Will download everything from ${SNAPSHOT_URL} instead"
                   fi
-                  rclone sync {{ .Values.initContainers.downloadChainSpec.cmdArgs }} :gcs:${SNAPSHOT_URL}/${LATEST} /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
+                  rclone sync {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} :gcs:${SNAPSHOT_URL}/${LATEST} /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
                 elif [ "${METHOD}" == "s3" ]; then
-                  LATEST=$(rclone copyto {{ .Values.initContainers.downloadChainSpec.cmdArgs }} --stdout :s3:${SNAPSHOT_URL}/latest_version.meta.txt )
+                  LATEST=$(rclone copyto {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout :s3:${SNAPSHOT_URL}/latest_version.meta.txt )
                   if [ -z "$LATEST" ]; then
                     echo "Failed to retrieve latest_version.meta.txt file. Will download everything from ${SNAPSHOT_URL} instead"
                   fi
-                  rclone sync {{ .Values.initContainers.downloadChainSpec.cmdArgs }} :s3:${SNAPSHOT_URL}/${LATEST} /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
+                  rclone sync {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} :s3:${SNAPSHOT_URL}/${LATEST} /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
                 elif [ "${METHOD}" == "http-filelist" ]; then
-                  rclone copyurl {{ .Values.initContainers.downloadChainSpec.cmdArgs }} ${SNAPSHOT_URL} /tmp/filelist.txt
-                  rclone copy {{ .Values.initContainers.downloadChainSpec.cmdArgs }} --http-url ${SNAPSHOT_URL} --no-traverse --http-no-head --disable-http2 --files-from /tmp/filelist.txt :http: /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
+                  rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} ${SNAPSHOT_URL}/{{ .Values.node.chainData.chainSnapshot.filelistName }} /tmp/filelist.txt
+                  rclone copy {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --http-url ${SNAPSHOT_URL} --no-traverse --http-no-head --disable-http2 --files-from /tmp/filelist.txt :http: /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
                 fi
               fi
           env:
@@ -123,7 +123,7 @@ spec:
             {{- toYaml . | nindent 12 }}
             {{- end}}
           resources:
-          {{- toYaml .Values.downloadChainSnapshot.resources | nindent 12 }}
+          {{- toYaml .Values.initContainers.downloadChainSnapshot.resources | nindent 12 }}
           volumeMounts:
             - mountPath: /chain-data
               name: chain-data
@@ -143,24 +143,24 @@ spec:
                 SNAPSHOT_URL="{{ .Values.node.collatorRelayChain.chainData.chainSnapshot.url }}"
                 mkdir -p /chain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
                 if [ "${METHOD}" == "http-single-tar-lz4" ]; then
-                  rclone copyurl {{ .Values.initContainers.downloadChainSpec.cmdArgs }} --stdout ${SNAPSHOT_URL} | lz4 -c -d - | tar -x -C /chain-data/chains/${RELAY_CHAIN_PATH}/
+                  rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout ${SNAPSHOT_URL} | lz4 -c -d - | tar -x -C /chain-data/chains/${RELAY_CHAIN_PATH}/
                 elif [ "${METHOD}" == "http-single-tar" ]; then
-                  rclone copyurl {{ .Values.initContainers.downloadChainSpec.cmdArgs }} --stdout ${SNAPSHOT_URL} | tar -x -C /chain-data/chains/${RELAY_CHAIN_PATH}/
+                  rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout ${SNAPSHOT_URL} | tar -x -C /chain-data/chains/${RELAY_CHAIN_PATH}/
                 elif [ "${METHOD}" == "gcs" ]; then
-                  LATEST=$(rclone copyto {{ .Values.initContainers.downloadChainSpec.cmdArgs }} --stdout :gcs:${SNAPSHOT_URL}/latest_version.meta.txt )
+                  LATEST=$(rclone copyto {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout :gcs:${SNAPSHOT_URL}/latest_version.meta.txt )
                   if [ -z "$LATEST" ]; then
                     echo "Failed to retrieve latest_version.meta.txt file. Will download everything from ${SNAPSHOT_URL} instead"
                   fi
-                  rclone sync {{ .Values.initContainers.downloadChainSpec.cmdArgs }} :gcs:${SNAPSHOT_URL}/${LATEST} /chain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
+                  rclone sync {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} :gcs:${SNAPSHOT_URL}/${LATEST} /chain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
                 elif [ "${METHOD}" == "s3" ]; then
-                  LATEST=$(rclone copyto {{ .Values.initContainers.downloadChainSpec.cmdArgs }} --stdout :s3:${SNAPSHOT_URL}/latest_version.meta.txt )
+                  LATEST=$(rclone copyto {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout :s3:${SNAPSHOT_URL}/latest_version.meta.txt )
                   if [ -z "$LATEST" ]; then
                     echo "Failed to retrieve latest_version.meta.txt file. Will download everything from ${SNAPSHOT_URL} instead"
                   fi
-                  rclone sync {{ .Values.initContainers.downloadChainSpec.cmdArgs }} :s3:${SNAPSHOT_URL}/${LATEST} /chain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
+                  rclone sync {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} :s3:${SNAPSHOT_URL}/${LATEST} /chain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
                 elif [ "${METHOD}" == "http-filelist" ]; then
-                  rclone copyurl {{ .Values.initContainers.downloadChainSpec.cmdArgs }} ${SNAPSHOT_URL} /tmp/filelist.txt
-                  rclone copy {{ .Values.initContainers.downloadChainSpec.cmdArgs }} --http-url ${SNAPSHOT_URL} --no-traverse --http-no-head --disable-http2 --files-from /tmp/filelist.txt :http: /chain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
+                  rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} ${SNAPSHOT_URL}/{{ .Values.node.collatorRelayChain.chainData.chainSnapshot.filelistName }} /tmp/filelist.txt
+                  rclone copy {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --http-url ${SNAPSHOT_URL} --no-traverse --http-no-head --disable-http2 --files-from /tmp/filelist.txt :http: /chain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
                 fi
               fi
           env:
@@ -172,7 +172,7 @@ spec:
             {{- toYaml . | nindent 12 }}
             {{- end}}
           resources:
-          {{- toYaml .Values.downloadChainSnapshot.resources | nindent 12 }}
+          {{- toYaml .Values.initContainers.downloadChainSnapshot.resources | nindent 12 }}
           volumeMounts:
             - mountPath: /relaychain-data
               name: relaychain-data
