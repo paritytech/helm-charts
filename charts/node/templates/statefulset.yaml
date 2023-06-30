@@ -90,28 +90,42 @@ spec:
               if [ -d "/chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}" ]; then
                 echo "Database directory already exists, skipping chain snapshot download"
               else
+                PARALLEL_TRANFERS="$(($(nproc --all) * 5 < 50 ? $(nproc --all) * 5 : 50))" # MIN(vCPU_count * 5, 50)
                 echo "Downloading chain snapshot"
                 SNAPSHOT_URL="{{ .Values.node.chainData.chainSnapshot.url }}"
                 mkdir -p /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
+
                 if [ "${METHOD}" == "http-single-tar-lz4" ]; then
-                  rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout ${SNAPSHOT_URL} | lz4 -c -d - | tar -x -C /chain-data/chains/${CHAIN_PATH}/
+                  apk add lz4 --no-cache
+                  rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout --error-on-no-transfer ${SNAPSHOT_URL} | lz4 -c -d - | tar -x -C /chain-data/chains/${CHAIN_PATH}/
+                  chown -R {{ .Values.podSecurityContext.runAsUser }}:{{ .Values.podSecurityContext.fsGroup }} /chain-data/chains/${CHAIN_PATH}/
+
                 elif [ "${METHOD}" == "http-single-tar" ]; then
-                  rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout ${SNAPSHOT_URL} | tar -x -C /chain-data/chains/${CHAIN_PATH}/
+                  rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout --error-on-no-transfer ${SNAPSHOT_URL} | tar -x -C /chain-data/chains/${CHAIN_PATH}/
+
                 elif [ "${METHOD}" == "gcs" ]; then
-                  LATEST=$(rclone copyto {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout :gcs:${SNAPSHOT_URL}/latest_version.meta.txt )
+                  LATEST=$(rclone cat {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --quiet :gcs:${SNAPSHOT_URL}/latest_version.meta.txt)
                   if [ -z "$LATEST" ]; then
                     echo "Failed to retrieve latest_version.meta.txt file. Will download everything from ${SNAPSHOT_URL} instead"
                   fi
-                  rclone sync {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} :gcs:${SNAPSHOT_URL}/${LATEST} /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
+                  rclone sync {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --fast-list --transfers $PARALLEL_TRANFERS --progress --error-on-no-transfer :gcs:${SNAPSHOT_URL}/${LATEST} /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
+
                 elif [ "${METHOD}" == "s3" ]; then
-                  LATEST=$(rclone copyto {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout :s3:${SNAPSHOT_URL}/latest_version.meta.txt )
+                  LATEST=$(rclone cat {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --quiet :s3:${SNAPSHOT_URL}/latest_version.meta.txt )
                   if [ -z "$LATEST" ]; then
                     echo "Failed to retrieve latest_version.meta.txt file. Will download everything from ${SNAPSHOT_URL} instead"
                   fi
-                  rclone sync {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} :s3:${SNAPSHOT_URL}/${LATEST} /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
+                  rclone sync {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --fast-list --transfers $PARALLEL_TRANFERS --progress --error-on-no-transfer :s3:${SNAPSHOT_URL}/${LATEST} /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
+
                 elif [ "${METHOD}" == "http-filelist" ]; then
-                  rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} ${SNAPSHOT_URL}/{{ .Values.node.chainData.chainSnapshot.filelistName }} /tmp/filelist.txt
-                  rclone copy {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --http-url ${SNAPSHOT_URL} --no-traverse --http-no-head --disable-http2 --files-from /tmp/filelist.txt :http: /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
+                  LATEST=$(rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout ${SNAPSHOT_URL}/latest_version.meta.txt )
+                  if [ -z "$LATEST" ]; then
+                    echo "Failed to retrieve latest_version.meta.txt file. Will download everything from ${SNAPSHOT_URL} instead"
+                  else
+                    SNAPSHOT_URL="${SNAPSHOT_URL}/${LATEST}"
+                  fi
+                  rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --error-on-no-transfer ${SNAPSHOT_URL}/{{ .Values.node.chainData.chainSnapshot.filelistName }} /tmp/filelist.txt
+                  rclone copy {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --progress --error-on-no-transfer --transfers $PARALLEL_TRANFERS --http-url ${SNAPSHOT_URL} --no-traverse --http-no-head --disable-http2 --files-from /tmp/filelist.txt :http: /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
                 fi
               fi
           env:
@@ -127,6 +141,11 @@ spec:
           volumeMounts:
             - mountPath: /chain-data
               name: chain-data
+          # run as root as lz4 is missing from the default image and can only be installed by the root user
+          {{- if eq .Values.node.chainData.chainSnapshot.method "http-single-tar-lz4" }}
+          securityContext:
+            runAsUser: 0
+          {{- end }}
         {{- end }}
         {{- if and .Values.node.collatorRelayChain.chainData.chainSnapshot.enabled (not .Values.node.externalRelayChain.enabled) }}
         - name: download-relay-chain-snapshot
@@ -136,31 +155,45 @@ spec:
             - -c
             - |
               set -eu -o pipefail {{ if .Values.initContainers.downloadChainSnapshot.debug }}-x{{ end }}
-              if [ -d "/relaychain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}" ]; then
-                echo "Database directory already exists, skipping relay chain snapshot download"
+              if [ -d "/chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}" ]; then
+                echo "Database directory already exists, skipping chain snapshot download"
               else
+                PARALLEL_TRANFERS="$(($(nproc --all) * 5 < 50 ? $(nproc --all) * 5 : 50))" # MIN(vCPU_count * 5, 50)
                 echo "Downloading chain snapshot"
                 SNAPSHOT_URL="{{ .Values.node.collatorRelayChain.chainData.chainSnapshot.url }}"
-                mkdir -p /chain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
+                mkdir -p /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
+
                 if [ "${METHOD}" == "http-single-tar-lz4" ]; then
-                  rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout ${SNAPSHOT_URL} | lz4 -c -d - | tar -x -C /chain-data/chains/${RELAY_CHAIN_PATH}/
+                  apk add lz4 --no-cache
+                  rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout --error-on-no-transfer ${SNAPSHOT_URL} | lz4 -c -d - | tar -x -C /chain-data/chains/${CHAIN_PATH}/
+                  chown -R {{ .Values.podSecurityContext.runAsUser }}:{{ .Values.podSecurityContext.fsGroup }} /chain-data/chains/${CHAIN_PATH}/
+
                 elif [ "${METHOD}" == "http-single-tar" ]; then
-                  rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout ${SNAPSHOT_URL} | tar -x -C /chain-data/chains/${RELAY_CHAIN_PATH}/
+                  rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout --error-on-no-transfer ${SNAPSHOT_URL} | tar -x -C /chain-data/chains/${CHAIN_PATH}/
+
                 elif [ "${METHOD}" == "gcs" ]; then
-                  LATEST=$(rclone copyto {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout :gcs:${SNAPSHOT_URL}/latest_version.meta.txt )
+                  LATEST=$(rclone cat {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --quiet :gcs:${SNAPSHOT_URL}/latest_version.meta.txt)
                   if [ -z "$LATEST" ]; then
                     echo "Failed to retrieve latest_version.meta.txt file. Will download everything from ${SNAPSHOT_URL} instead"
                   fi
-                  rclone sync {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} :gcs:${SNAPSHOT_URL}/${LATEST} /chain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
+                  rclone sync {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --fast-list --transfers $PARALLEL_TRANFERS --progress --error-on-no-transfer :gcs:${SNAPSHOT_URL}/${LATEST} /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
+
                 elif [ "${METHOD}" == "s3" ]; then
-                  LATEST=$(rclone copyto {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout :s3:${SNAPSHOT_URL}/latest_version.meta.txt )
+                  LATEST=$(rclone cat {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --quiet :s3:${SNAPSHOT_URL}/latest_version.meta.txt )
                   if [ -z "$LATEST" ]; then
                     echo "Failed to retrieve latest_version.meta.txt file. Will download everything from ${SNAPSHOT_URL} instead"
                   fi
-                  rclone sync {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} :s3:${SNAPSHOT_URL}/${LATEST} /chain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
+                  rclone sync {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --fast-list --transfers $PARALLEL_TRANFERS --progress --error-on-no-transfer :s3:${SNAPSHOT_URL}/${LATEST} /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
+
                 elif [ "${METHOD}" == "http-filelist" ]; then
-                  rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} ${SNAPSHOT_URL}/{{ .Values.node.collatorRelayChain.chainData.chainSnapshot.filelistName }} /tmp/filelist.txt
-                  rclone copy {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --http-url ${SNAPSHOT_URL} --no-traverse --http-no-head --disable-http2 --files-from /tmp/filelist.txt :http: /chain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}/
+                  LATEST=$(rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout ${SNAPSHOT_URL}/latest_version.meta.txt )
+                  if [ -z "$LATEST" ]; then
+                    echo "Failed to retrieve latest_version.meta.txt file. Will download everything from ${SNAPSHOT_URL} instead"
+                  else
+                    SNAPSHOT_URL="${SNAPSHOT_URL}/${LATEST}"
+                  fi
+                  rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --error-on-no-transfer ${SNAPSHOT_URL}/{{ .Values.node.collatorRelayChain.chainData.chainSnapshot.filelistName }} /tmp/filelist.txt
+                  rclone copy {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --progress --error-on-no-transfer --transfers $PARALLEL_TRANFERS --http-url ${SNAPSHOT_URL} --no-traverse --http-no-head --disable-http2 --files-from /tmp/filelist.txt :http: /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
                 fi
               fi
           env:
@@ -176,6 +209,11 @@ spec:
           volumeMounts:
             - mountPath: /relaychain-data
               name: relaychain-data
+          # run as root as lz4 is missing from the default image and can only be installed by the root user
+          {{- if eq .Values.node.collatorRelayChain.chainData.chainSnapshot.method "http-single-tar-lz4" }}
+          securityContext:
+            runAsUser: 0
+          {{- end }}
         {{- end }}
         {{- if or .Values.node.customChainspecUrl (and .Values.node.collatorRelayChain.customChainspecUrl (not .Values.node.externalRelayChain.enabled))}}
         - name: download-chainspec

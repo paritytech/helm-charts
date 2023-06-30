@@ -231,7 +231,7 @@ If you're running a collator node:
 | ingress.enabled | bool | `false` | Enable creation of Ingress |
 | ingress.rules | list | `[]` | Ingress rules configuration |
 | ingress.tls | list | `[]` | Ingress TLS configuration |
-| initContainers | object | `{"downloadChainSnapshot":{"cmdArgs":"","debug":false,"extraEnvVars":[],"image":{"repository":"docker.io/rclone/rclone","tag":"latest"},"resources":{}},"downloadChainspec":{"debug":false,"image":{"repository":"paritytech/kubetools-kubectl","tag":"latest"},"resources":{}},"downloadRuntime":{"debug":false,"image":{"repository":"paritytech/kubetools-kubectl","tag":"latest"},"resources":{}},"injectKeys":{"debug":false,"resources":{}},"persistGeneratedNodeKey":{"debug":false,"resources":{}},"retrieveServiceInfo":{"debug":false,"image":{"repository":"paritytech/kubetools-kubectl","tag":"latest"},"resources":{}}}` | Additional init containers |
+| initContainers | object | `{"downloadChainSnapshot":{"cmdArgs":"","debug":false,"extraEnvVars":[],"image":{"repository":"docker.io/rclone/rclone","tag":"latest"},"resources":{}},"downloadChainspec":{"debug":false,"image":{"repository":"docker.io/alpine","tag":"latest"},"resources":{}},"downloadRuntime":{"debug":false,"image":{"repository":"paritytech/kubetools-kubectl","tag":"latest"},"resources":{}},"injectKeys":{"debug":false,"resources":{}},"persistGeneratedNodeKey":{"debug":false,"resources":{}},"retrieveServiceInfo":{"debug":false,"image":{"repository":"paritytech/kubetools-kubectl","tag":"latest"},"resources":{}}}` | Additional init containers |
 | initContainers.downloadChainSnapshot.cmdArgs | string | `""` | Flags to add to the CLI command. We rely on rclone for downloading snapshots so make sure the flags are compatible. |
 | initContainers.downloadChainSnapshot.debug | bool | `false` | Adds `-x` shell option to container. Note: passwords and keys used in container may appear in logs |
 | initContainers.downloadChainSnapshot.extraEnvVars | list | `[]` | Additional environment variables to add to the container |
@@ -240,7 +240,7 @@ If you're running a collator node:
 | initContainers.downloadChainSnapshot.image.tag | string | `"latest"` | Image tag |
 | initContainers.downloadChainSnapshot.resources | object | `{}` | The resources requests/limits for the container |
 | initContainers.downloadChainspec.debug | bool | `false` | Adds `-x` shell option to container. Note: passwords and keys used in container may appear in logs |
-| initContainers.downloadChainspec.image.repository | string | `"paritytech/kubetools-kubectl"` | Image repository |
+| initContainers.downloadChainspec.image.repository | string | `"docker.io/alpine"` | Image repository |
 | initContainers.downloadChainspec.image.tag | string | `"latest"` | Image tag |
 | initContainers.downloadChainspec.resources | object | `{}` | Additional environment variables to add to the container |
 | initContainers.downloadRuntime.debug | bool | `false` | Adds `-x` shell option to container. Note: passwords and keys used in container may appear in logs |

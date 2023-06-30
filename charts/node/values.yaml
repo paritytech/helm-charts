@@ -54,7 +54,7 @@ initContainers:
   downloadChainspec:
     image:
       # -- Image repository
-      repository: paritytech/kubetools-kubectl
+      repository: docker.io/alpine
       # -- Image tag
       tag: latest
     # -- Additional environment variables to add to the container
