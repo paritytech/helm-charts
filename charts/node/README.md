@@ -34,14 +34,14 @@ This will deploy a single Polkadot node with the default configuration.
 
 Polkadot:
 ```console
-helm install polkadot-node parity/node --set node.chainDataSnapshotUrl=https://dot-rocksdb.polkashots.io/snapshot --set node.chainDataSnapshotFormat=lz4
+helm install polkadot-node parity/node --set node.chainData.chainSnapshot.enabled=true --set node.chainData.chainSnapshot.method=http-single-tar-lz4 --set node.chainData.chainSnapshot.url=https://dot-rocksdb.polkashots.io/snapshot
 ```
 
 Kusama:
 ```console
-helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm-rocksdb.polkashots.io/snapshot --set node.chainDataSnapshotFormat=lz4 --set node.chainPath=ksmcc3
+helm install kusama-node parity/node --set node.chain=kusama --set node.chainData.chainSnapshot.enabled=true --set node.chainData.chainSnapshot.method=http-single-tar-lz4 --set node.chainData.chainSnapshot.url=https://ksm-rocksdb.polkashots.io/snapshot --set node.chainData.chainPath=ksmcc3
 ```
-⚠️ For some chains where the local directory name is different from the chain ID, `node.chainPath` needs to be set to a custom value.
+⚠️ For some chains where the local directory name is different from the chain ID, `node.chainData.chainPath` needs to be set to a custom value.
 
 ### Resizing the node disk
 
@@ -59,7 +59,7 @@ kubectl patch pvc chain-data-polkadot-node-0  -p '{"spec":{"resources":{"request
 kubectl delete sts polkadot-node --cascade=orphan
 ```
 
-3. Update the `node.dataVolumeSize` to the new value (eg. `1000Gi`) and upgrade the helm release.
+3. Update the `node.chainData.volumeSize` to the new value (eg. `1000Gi`) and upgrade the helm release.
 
 Note that for a Kubernetes Persistent Volume Claims to be resizable, its StorageClass must have specific characteristics. More information on this topic is available in the [Expanding Persistent Volumes Claims
 section of the Kubernetes documentation](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#expanding-persistent-volumes-claims).
@@ -92,8 +92,8 @@ node:
 ## Upgrade
 
 ### From v4.x.x to v5.0.0 (⚠️ breaking changes)
-- Chain backup upload functionality has been removed. I.e., the `node.enableChainBackupGcs` flag is no longer available;
-- Chain backup download scripts have been updated to use [`rclone`](https://rclone.org/). Multiple flags associated with this functionality have changed. Chain backup and relay chain backup restoration are now controlled by `node.chainData.chainSnapshot` and `node.collatorRelayChain.chainData.chainSnapshot` blocks of flags accordingly.
+- Chain backup upload functionality has been removed. I.e., the `node.enableChainBackupGcs` flag is no longer available. Backup upload was implemented in the form of init container. Since backup init container starts before the main container runs, the node does not have a chance to sync to the latest block. Instead, backup container syncs the DB chunks from the time the node was last online which most of the times would be a stale data. Additionally, after backup is completed the node will continue to run which is not always necessary as you probably just wanted to make a backup and exit the script. A more complete solution for making node backups will be published in the future releases of the chart;
+- Chain backup download scripts have been updated to use [`rclone`](https://rclone.org/). Multiple flags associated with this functionality have changed. Chain backup and relay chain backup restoration are now controlled by `node.chainData.chainSnapshot.*` and `node.collatorRelayChain.chainData.chainSnapshot.*` blocks of flags accordingly.
 - Chain backup restoration now supports a new method: downloading DB files by direct HTTP links using a list of files as a reference. I.e., a restoration process would first download a file containing a list of DB files that need to be downloaded. `rclone` will then use this file to generate HTTP links to the DB files and download it in parallel.
 - The following flags have changed:
   - `initContainer.*` -> replaced with `initContainers.*` to enable individual configuration of each init container;

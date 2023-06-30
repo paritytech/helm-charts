@@ -790,11 +790,6 @@ spec:
             optional: {{ .optional }}
             defaultMode: {{ .defaultMode }}
       {{- end }}
-      {{- if .Values.googleCloudSdk.serviceAccountKey }}
-        - name: service-account-key
-          secret:
-            secretName: {{ $fullname }}-gcs-bucket-service-account-key
-      {{- end }}
       {{- if .Values.node.persistGeneratedNodeKey }}
       {{- else if .Values.node.customNodeKey }}
         - name: custom-node-key
