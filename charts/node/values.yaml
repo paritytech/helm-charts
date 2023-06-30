@@ -118,6 +118,15 @@ podSecurityContext:
   # -- Set container's Security Context fsGroup
   fsGroup: 1000
 
+# -- podDisruptionBudget configuration
+podDisruptionBudget:
+  # -- Enable podDisruptionBudget
+  enabled: false
+  # -- minAvailable replicas
+  minAvailable:
+  # -- maxUnavailable replicas
+  maxUnavailable:
+
 # -- Creates an ingress resource
 ingress:
   # -- Enable creation of Ingress

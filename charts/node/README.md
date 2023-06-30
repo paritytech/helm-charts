@@ -422,6 +422,10 @@ If you're running a collator node:
 | node.wasmRuntimeUrl | string | `""` | Download a WASM runtime to override the on-chain runtime when the version matches. Note that this will download the runtime file in the directory specified in `node.wasmRuntimeOverridesPath` Then on startup, the node will load all runtime files from this directory including previously downloaded runtimes |
 | nodeSelector | object | `{}` | Define which Nodes the Pods are scheduled on |
 | podAnnotations | object | `{}` | Annotations to add to the Pod |
+| podDisruptionBudget | object | `{"enabled":false,"maxUnavailable":null,"minAvailable":null}` | podDisruptionBudget configuration |
+| podDisruptionBudget.enabled | bool | `false` | Enable podDisruptionBudget |
+| podDisruptionBudget.maxUnavailable | string | `nil` | maxUnavailable replicas |
+| podDisruptionBudget.minAvailable | string | `nil` | minAvailable replicas |
 | podSecurityContext | object | `{"fsGroup":1000,"runAsGroup":1000,"runAsUser":1000}` | SecurityContext holds pod-level security attributes and common container settings. This defaults to non root user with uid 1000 and gid 1000. ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | podSecurityContext.fsGroup | int | `1000` | Set container's Security Context fsGroup |
 | podSecurityContext.runAsGroup | int | `1000` | Set container's Security Context runAsGroup |
