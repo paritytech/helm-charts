@@ -583,8 +583,7 @@ spec:
                 {{- if .Values.node.isParachain }}
                 {{- /* Experimental Feature */}}
                 {{- if  .Values.node.externalRelayChain.enabled }}
-                --relay-chain-rpc-urls {{- range .Values.node.externalRelayChain.relayChainRpcUrls }}
-                "{{ . }}" \
+                --relay-chain-rpc-urls {{- range .Values.node.externalRelayChain.relayChainRpcUrls }} "{{ . }}" {{- end }} \
                 {{- end }}
                 {{- end }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30334 \
