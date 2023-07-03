@@ -106,6 +106,30 @@ node:
   - `node.collatorRelayChain.chainData.snapshotFormat` -> replaced with `node.collatorRelayChain.chainData.chainSnapshot.method`
   - `node.collatorRelayChain.chainData.GCSBucketUrl` -> replaced with `node.collatorRelayChain.chainData.chainSnapshot.url`
 
+#### Public snapshots
+You can now use the following public URLs to download chain snapshots:
+- https://snapshots.polkadot.io/polkadot-paritydb-prune
+- https://snapshots.polkadot.io/polkadot-rocksdb-prune
+- https://snapshots.polkadot.io/polkadot-paritydb-archive
+- https://snapshots.polkadot.io/polkadot-rocksdb-archive
+- https://snapshots.polkadot.io/kusama-paritydb-prune
+- https://snapshots.polkadot.io/kusama-rocksdb-prune
+- https://snapshots.polkadot.io/kusama-paritydb-archive
+- https://snapshots.polkadot.io/kusama-rocksdb-archive
+
+For example, to restore Polkadot pruned snapshot running ParityDB, configure chart values like the following:
+```yaml
+node:
+  chain: polkadot
+  role: full
+  chainData:
+    chainSnapshot:
+      enabled: true
+      method: http-filelist
+      url: https://snapshots.polkadot.io/polkadot-paritydb-prune
+    pruning: 1000
+```
+
 ### v4.6.0 (⚠️ breaking change)
 
 Substrate changed the default rpc flags: https://github.com/paritytech/substrate/pull/13384 \
