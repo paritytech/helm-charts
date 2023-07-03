@@ -1,0 +1,232 @@
+<!--
+DO NOT EDIT README.md manually!
+We're using [helm-docs](https://github.com/norwoodj/helm-docs) to render values of the chart.
+If you updated values.yaml file make sure to render a new README.md locally before submitting a Pull Request.
+
+If you're using [pre-commit](https://pre-commit.com/) REAMDE.md will be updated automatically.
+Otherwise, you should install helm-docs and manually update README.md. Navigate to repository root and run:
+`helm-docs --chart-search-root=charts/node --template-files=README.md.gotmpl`
+
+You may encounter `files were modified by this hook` error after updating README.md.gotmpl file when using pre-commit.
+This is intended behaviour. Make sure to run `git add -A` once again to stage changes in the auto-updated REAMDE.md
+-->
+
+# Substrate/Polkadot node helm chart
+
+{{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}{{ template "chart.appVersionBadge" . }}
+
+{{ template "chart.maintainersSection" . }}
+
+## Installing the chart
+
+```console
+helm repo add parity https://paritytech.github.io/helm-charts/
+helm install polkadot-node parity/node
+```
+
+This will deploy a single Polkadot node with the default configuration.
+
+### Deploying a node with data synced from a snapshot archive (eg. [Polkashot](https://polkashots.io/))
+
+Polkadot:
+```console
+helm install polkadot-node parity/node --set node.chainData.chainSnapshot.enabled=true --set node.chainData.chainSnapshot.method=http-single-tar-lz4 --set node.chainData.chainSnapshot.url=https://dot-rocksdb.polkashots.io/snapshot
+```
+
+Kusama:
+```console
+helm install kusama-node parity/node --set node.chain=kusama --set node.chainData.chainSnapshot.enabled=true --set node.chainData.chainSnapshot.method=http-single-tar-lz4 --set node.chainData.chainSnapshot.url=https://ksm-rocksdb.polkashots.io/snapshot --set node.chainData.chainPath=ksmcc3
+```
+⚠️ For some chains where the local directory name is different from the chain ID, `node.chainData.chainPath` needs to be set to a custom value.
+
+### Resizing the node disk
+
+To resize the node persistent volume, perform the following steps:
+
+1. Patch the PVC storage size, eg. to `1000Gi`:
+
+```console
+kubectl patch pvc chain-data-polkadot-node-0  -p '{"spec":{"resources":{"requests":{"storage":"1000Gi"}}}}}'
+```
+
+2. Delete the StatefulSet object with `cascade=orphan` (ie. without removing the attached pods):
+
+```console
+kubectl delete sts polkadot-node --cascade=orphan
+```
+
+3. Update the `node.chainData.volumeSize` to the new value (eg. `1000Gi`) and upgrade the helm release.
+
+Note that for a Kubernetes Persistent Volume Claims to be resizable, its StorageClass must have specific characteristics. More information on this topic is available in the [Expanding Persistent Volumes Claims
+section of the Kubernetes documentation](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#expanding-persistent-volumes-claims).
+
+### Optional Vault Integration
+
+To integrate this chart with vault:
+- Vault agent injector [installed](https://www.vaultproject.io/docs/platform/k8s/injector/installation) on the cluster
+- Kubernetes [auth enabled](https://learn.hashicorp.com/tutorials/vault/kubernetes-sidecar#configure-kubernetes-authentication) in your vault instance
+- Secrets for either the keys or the nodeKey created in your vault using kv-2
+- A policy for each of your secrets configured in your vault
+- an authentication role crated in your vault instance (should match the serviceAccount name for this chart) with policies for accessing your keys attached
+
+```
+node:
+  vault:
+    keys:
+      - name: aura
+        type: aura
+        scheme: sr25519
+        vaultPath: kv/secret/polkadot-node # path at which the secret is located in Vault
+        vaultKey: aura # key under which the secret value is stored in Vault
+        extraDerivation: "//${HOSTNAME}//aura" # allows to have unique derived keys for each pod of the statefulset
+    nodeKey:
+      name: nodekey
+      vaultPath: kv/secret/polkadot-node
+      vaultKey: nodekey
+```
+
+## Upgrade
+
+### From v4.x.x to v5.0.0 (⚠️ breaking changes)
+- Chain backup upload functionality has been removed. I.e., the `node.enableChainBackupGcs` flag is no longer available. Backup upload was implemented in the form of init container. Since backup init container starts before the main container runs, the node does not have a chance to sync to the latest block. Instead, backup container syncs the DB chunks from the time the node was last online which most of the times would be a stale data. Additionally, after backup is completed the node will continue to run which is not always necessary as you probably just wanted to make a backup and exit the script. A more complete solution for making node backups will be published in the future releases of the chart;
+- Chain backup download scripts have been updated to use [`rclone`](https://rclone.org/). Multiple flags associated with this functionality have changed. Chain backup and relay chain backup restoration are now controlled by `node.chainData.chainSnapshot.*` and `node.collatorRelayChain.chainData.chainSnapshot.*` blocks of flags accordingly.
+- Chain backup restoration now supports a new method: downloading DB files by direct HTTP links using a list of files as a reference. I.e., a restoration process would first download a file containing a list of DB files that need to be downloaded. `rclone` will then use this file to generate HTTP links to the DB files and download it in parallel.
+- The following flags have changed:
+  - `initContainer.*` -> replaced with `initContainers.*` to enable individual configuration of each init container;
+  - `kubectl.*` -> merged into `initContainers.*`;
+  - `googleCloudSdk.*` -> replaced with `node.chainData.chainSnapshot.*` and `node.collatorRelayChain.chainData.chainSnapshot.*`
+  - `node.chainData.snapshotUrl` -> replaced with `node.chainData.chainSnapshot.url`
+  - `node.chainData.snapshotFormat` -> replaced with `node.chainData.chainSnapshot.method`
+  - `node.chainData.GCSBucketUrl` -> replaced with `node.chainData.chainSnapshot.url`
+  - `node.collatorRelayChain.chainData.snapshotUrl` -> replaced with `node.collatorRelayChain.chainData.chainSnapshot.url`
+  - `node.collatorRelayChain.chainData.snapshotFormat` -> replaced with `node.collatorRelayChain.chainData.chainSnapshot.method`
+  - `node.collatorRelayChain.chainData.GCSBucketUrl` -> replaced with `node.collatorRelayChain.chainData.chainSnapshot.url`
+
+#### Public snapshots
+You can now use the following public URLs to download chain snapshots:
+- https://snapshots.polkadot.io/polkadot-paritydb-prune
+- https://snapshots.polkadot.io/polkadot-rocksdb-prune
+- https://snapshots.polkadot.io/polkadot-paritydb-archive
+- https://snapshots.polkadot.io/polkadot-rocksdb-archive
+- https://snapshots.polkadot.io/kusama-paritydb-prune
+- https://snapshots.polkadot.io/kusama-rocksdb-prune
+- https://snapshots.polkadot.io/kusama-paritydb-archive
+- https://snapshots.polkadot.io/kusama-rocksdb-archive
+
+For example, to restore Polkadot pruned snapshot running ParityDB, configure chart values like the following:
+```yaml
+node:
+  chain: polkadot
+  role: full
+  chainData:
+    chainSnapshot:
+      enabled: true
+      method: http-filelist
+      url: https://snapshots.polkadot.io/polkadot-paritydb-prune
+    pruning: 1000
+```
+
+### v4.6.0 (⚠️ breaking change)
+
+Substrate changed the default rpc flags: https://github.com/paritytech/substrate/pull/13384 \
+The dual RPC ports; `--rpc-port=9933` (HTTP) ,`--ws-port=9944` (WS) was replaced by a combined port `--rpc-port=9944`.
+Flags replaced:
+```
+--rpc-max--payload (replaced by --rpc--max-request-size and --rpc-max-response-size)
+--ws-max-out-buffer-capacity (removed)
+--ws-external (replaced by --rpc-external)
+--unsafe-ws--external (replaced by --unsafe-rpc-external)
+--ipc-path (removed)
+--ws-port (replaced by --rpc-port)
+--ws-max-connections (replaced by --rpc-max-connections)
+--rpc-http (replaced by --rpc-addr)
+--rpc-ws (replaced by --rpc-addr)
+```
+New value was added to support this change:
+- `node.legacyRpcFlags`
+
+If your node is still using the old RPC flags, please set `node.legacyRpcFlags=true`
+
+### v4.5.0 (⚠️ small change)
+
+The storage classes are now set to `""` by default instead of `"default"`.
+Make sure that the following values are set to the storage classes you are using if not already set (before 4.5.0, those were set explicitly to `default`) :
+
+- `node.chainData.storageClass`
+- `node.chainKeystore.storageClass`
+- `node.collatorRelayChain.chainData.storageClass`
+- `node.collatorRelayChain.chainKeystore.storageClass`
+
+### From v3.x.x to v4.0.0 (⚠️ breaking changes)
+
+The following chart parameters have been renamed or rearranged:
+
+- `node.pruning` -> `node.chainData.pruning`
+- `node.database` -> `node.chainData.database`
+- `node.collator.isParachain` -> `node.isParachain`
+- `node.collator.relayChain` -> `node.collatorRelayChain.chain`
+- `node.collator.relayChainCustomChainspecPath` -> `node.collatorRelayChain.customChainspecPath`
+- `node.collator.relayChainCustomChainspecUrl` -> `node.collatorRelayChain.customChainspecUrl`
+- `node.collator.relayChainFlags` -> `node.collatorRelayChain.flags`
+- `node.collator.relayChainData.*` -> `node.collatorRelayChain.chainData.*`
+- `node.collator.relayChainPruning` -> `node.collatorRelayChain.chainData.pruning`
+- `node.collator.relayChainDatabase` -> `node.collatorRelayChain.chainData.database`
+- `node.collator.relayChainKeystore.*` -> `node.collatorRelayChain.chainKeystore.*`
+- `node.collator.relayChainPrometheus.*` -> `node.collatorRelayChain.prometheus.*`
+
+The following flags are now invalid if they were previously set in `node.flags` or `node.collator.relayChainFlags`.
+An error will be thrown if any of those flags are set directly.
+
+- `--name`
+- `--base-path`
+- `--chain`
+- `--validator`
+- `--collator`
+- `--light`
+- `--database`
+- `--pruning`
+- `--prometheus-external`
+- `--prometheus-port`
+- `--node-key`
+- `--wasm-runtime-overrides`
+- `--jaeger-agent`
+- `--rpc-methods`
+- `--rpc-external`
+- `--unsafe-rpc-external`
+- `--ws-external`
+- `--unsafe-ws-external`
+- `--rpc-cors`
+- `--rpc-port`
+- `--ws-port`
+
+### From v2.x.x to v3.0.0 (⚠️ breaking changes)
+There are now separate volumes for:
+- relaychain data
+- relaychain keystore
+- parachain data
+- parachain keystore
+
+Some chart parameters have been grouped together and renamed. There are now separate sections for the following values:
+- `node.chainData`
+- `node.chainKeystore`
+- `node.collator`
+
+Common `storageClass` parameter has been moved to the corresponding separate groups mentioned above.
+
+As both the chain data and keystore can now be stored on up to 4 different volumes you may need to manually relocate the existing data to the newly created volumes.
+
+If you're running a non-collator node:
+- Move chain files from the `/data/chains/<chain_name>` in the `chain-data` volume to `/chain-data` in the `chain-data` volume.
+- Move keystore files from the `/data/chains/<chain_name>/keystore` in the `chain-data` volume to `/keystore` in the `chain-keystore` volume.
+
+If you're running a collator node:
+- Move chain files from the `/data/chains/<chain_name>` in the `chain-data` volume to `/chain-data` in the `chain-data` volume.
+- Move keystore files from the `/data/chains/<chain_name>/keystore` in the `chain-data` volume to `/keystore` in the `chain-keystore` volume.
+- Move relaychain files from the `/data/relay/polkadot` in the `chain-data` volume to `/relaychain-data/polkadot` in the `relaychain-data` volume.
+- Move relaychain keystore from `/data/relay/polkadot/chains/<relay_chain_name>/keystore` in the `chain-data` volume to `/relaychain-keystore` in the `relaychain-keystore` volume
+
+{{ template "chart.requirementsSection" . }}
+
+{{ template "chart.valuesSection" . }}
+
+{{ template "helm-docs.versionFooter" . }}

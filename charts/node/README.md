@@ -1,4 +1,25 @@
+<!--
+DO NOT EDIT README.md manually!
+We're using [helm-docs](https://github.com/norwoodj/helm-docs) to render values of the chart.
+If you updated values.yaml file make sure to render a new README.md locally before submitting a Pull Request.
+
+If you're using [pre-commit](https://pre-commit.com/) REAMDE.md will be updated automatically.
+Otherwise, you should install helm-docs and manually update README.md. Navigate to repository root and run:
+`helm-docs --chart-search-root=charts/node --template-files=README.md.gotmpl`
+
+You may encounter `files were modified by this hook` error after updating README.md.gotmpl file when using pre-commit.
+This is intended behaviour. Make sure to run `git add -A` once again to stage changes in the auto-updated REAMDE.md
+-->
+
 # Substrate/Polkadot node helm chart
+
+![Version: 5.0.0](https://img.shields.io/badge/Version-5.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+
+## Maintainers
+
+| Name | Email | Url |
+| ---- | ------ | --- |
+| Parity | <devops+helm@parity.io> | <https://github.com/paritytech/helm-charts> |
 
 ## Installing the chart
 
@@ -13,14 +34,14 @@ This will deploy a single Polkadot node with the default configuration.
 
 Polkadot:
 ```console
-helm install polkadot-node parity/node --set node.chainDataSnapshotUrl=https://dot-rocksdb.polkashots.io/snapshot --set node.chainDataSnapshotFormat=lz4
+helm install polkadot-node parity/node --set node.chainData.chainSnapshot.enabled=true --set node.chainData.chainSnapshot.method=http-single-tar-lz4 --set node.chainData.chainSnapshot.url=https://dot-rocksdb.polkashots.io/snapshot
 ```
 
 Kusama:
 ```console
-helm install kusama-node parity/node --set node.chainDataSnapshotUrl=https://ksm-rocksdb.polkashots.io/snapshot --set node.chainDataSnapshotFormat=lz4 --set node.chainPath=ksmcc3
+helm install kusama-node parity/node --set node.chain=kusama --set node.chainData.chainSnapshot.enabled=true --set node.chainData.chainSnapshot.method=http-single-tar-lz4 --set node.chainData.chainSnapshot.url=https://ksm-rocksdb.polkashots.io/snapshot --set node.chainData.chainPath=ksmcc3
 ```
-⚠️ For some chains where the local directory name is different from the chain ID, `node.chainPath` needs to be set to a custom value.
+⚠️ For some chains where the local directory name is different from the chain ID, `node.chainData.chainPath` needs to be set to a custom value.
 
 ### Resizing the node disk
 
@@ -38,7 +59,7 @@ kubectl patch pvc chain-data-polkadot-node-0  -p '{"spec":{"resources":{"request
 kubectl delete sts polkadot-node --cascade=orphan
 ```
 
-3. Update the `node.dataVolumeSize` to the new value (eg. `1000Gi`) and upgrade the helm release.
+3. Update the `node.chainData.volumeSize` to the new value (eg. `1000Gi`) and upgrade the helm release.
 
 Note that for a Kubernetes Persistent Volume Claims to be resizable, its StorageClass must have specific characteristics. More information on this topic is available in the [Expanding Persistent Volumes Claims
 section of the Kubernetes documentation](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#expanding-persistent-volumes-claims).
@@ -69,6 +90,45 @@ node:
 ```
 
 ## Upgrade
+
+### From v4.x.x to v5.0.0 (⚠️ breaking changes)
+- Chain backup upload functionality has been removed. I.e., the `node.enableChainBackupGcs` flag is no longer available. Backup upload was implemented in the form of init container. Since backup init container starts before the main container runs, the node does not have a chance to sync to the latest block. Instead, backup container syncs the DB chunks from the time the node was last online which most of the times would be a stale data. Additionally, after backup is completed the node will continue to run which is not always necessary as you probably just wanted to make a backup and exit the script. A more complete solution for making node backups will be published in the future releases of the chart;
+- Chain backup download scripts have been updated to use [`rclone`](https://rclone.org/). Multiple flags associated with this functionality have changed. Chain backup and relay chain backup restoration are now controlled by `node.chainData.chainSnapshot.*` and `node.collatorRelayChain.chainData.chainSnapshot.*` blocks of flags accordingly.
+- Chain backup restoration now supports a new method: downloading DB files by direct HTTP links using a list of files as a reference. I.e., a restoration process would first download a file containing a list of DB files that need to be downloaded. `rclone` will then use this file to generate HTTP links to the DB files and download it in parallel.
+- The following flags have changed:
+  - `initContainer.*` -> replaced with `initContainers.*` to enable individual configuration of each init container;
+  - `kubectl.*` -> merged into `initContainers.*`;
+  - `googleCloudSdk.*` -> replaced with `node.chainData.chainSnapshot.*` and `node.collatorRelayChain.chainData.chainSnapshot.*`
+  - `node.chainData.snapshotUrl` -> replaced with `node.chainData.chainSnapshot.url`
+  - `node.chainData.snapshotFormat` -> replaced with `node.chainData.chainSnapshot.method`
+  - `node.chainData.GCSBucketUrl` -> replaced with `node.chainData.chainSnapshot.url`
+  - `node.collatorRelayChain.chainData.snapshotUrl` -> replaced with `node.collatorRelayChain.chainData.chainSnapshot.url`
+  - `node.collatorRelayChain.chainData.snapshotFormat` -> replaced with `node.collatorRelayChain.chainData.chainSnapshot.method`
+  - `node.collatorRelayChain.chainData.GCSBucketUrl` -> replaced with `node.collatorRelayChain.chainData.chainSnapshot.url`
+
+#### Public snapshots
+You can now use the following public URLs to download chain snapshots:
+- https://snapshots.polkadot.io/polkadot-paritydb-prune
+- https://snapshots.polkadot.io/polkadot-rocksdb-prune
+- https://snapshots.polkadot.io/polkadot-paritydb-archive
+- https://snapshots.polkadot.io/polkadot-rocksdb-archive
+- https://snapshots.polkadot.io/kusama-paritydb-prune
+- https://snapshots.polkadot.io/kusama-rocksdb-prune
+- https://snapshots.polkadot.io/kusama-paritydb-archive
+- https://snapshots.polkadot.io/kusama-rocksdb-archive
+
+For example, to restore Polkadot pruned snapshot running ParityDB, configure chart values like the following:
+```yaml
+node:
+  chain: polkadot
+  role: full
+  chainData:
+    chainSnapshot:
+      enabled: true
+      method: http-filelist
+      url: https://snapshots.polkadot.io/polkadot-paritydb-prune
+    pruning: 1000
+```
 
 ### v4.6.0 (⚠️ breaking change)
 
@@ -169,178 +229,248 @@ If you're running a collator node:
 - Move relaychain files from the `/data/relay/polkadot` in the `chain-data` volume to `/relaychain-data/polkadot` in the `relaychain-data` volume.
 - Move relaychain keystore from `/data/relay/polkadot/chains/<relay_chain_name>/keystore` in the `chain-data` volume to `/relaychain-keystore` in the `relaychain-keystore` volume
 
-## Parameters
+## Values
 
-### Common parameters
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| affinity | object | `{}` | Assign custom affinity rules |
+| autoscaling.additionalMetrics | object | `{}` | Additional metrics to track |
+| autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler (HPA) |
+| autoscaling.maxReplicas | string | `nil` | Scale up to this number of replicas |
+| autoscaling.minReplicas | int | `1` | Maintain min number of replicas |
+| autoscaling.targetCPU | string | `nil` | Target CPU utilization that triggers scale up |
+| autoscaling.targetMemory | string | `nil` | Target memory utilization that triggers scale up |
+| extraContainers | list | `[]` | Additional containers to run in the pod |
+| extraInitContainers | list | `[]` | Additional init containers to run in the pod |
+| extraLabels | object | `{}` | Additional common labels on pods and services |
+| fullnameOverride | string | `""` | Provide a name to substitute for the full names of resources |
+| image | object | `{"debug":false,"pullPolicy":"Always","repository":"parity/polkadot","tag":"latest"}` | Image of Polkadot Node. |
+| image.debug | bool | `false` | Adds `-x` shell option to container. Note: passwords and keys used in container may appear in logs |
+| image.pullPolicy | string | `"Always"` | Image pull policy |
+| image.repository | string | `"parity/polkadot"` | Image repository |
+| image.tag | string | `"latest"` | Image tag |
+| imagePullSecrets | list | `[]` | Reference to one or more secrets to be used when pulling images. ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/ |
+| ingress | object | `{"annotations":{},"enabled":false,"rules":[],"tls":[]}` | Creates an ingress resource |
+| ingress.annotations | object | `{}` | Annotations to add to the Ingress |
+| ingress.enabled | bool | `false` | Enable creation of Ingress |
+| ingress.rules | list | `[]` | Ingress rules configuration |
+| ingress.tls | list | `[]` | Ingress TLS configuration |
+| initContainers | object | `{"downloadChainSnapshot":{"cmdArgs":"","debug":false,"extraEnvVars":[],"image":{"repository":"docker.io/rclone/rclone","tag":"latest"},"resources":{}},"downloadChainspec":{"debug":false,"image":{"repository":"docker.io/alpine","tag":"latest"},"resources":{}},"downloadRuntime":{"debug":false,"image":{"repository":"paritytech/kubetools-kubectl","tag":"latest"},"resources":{}},"injectKeys":{"debug":false,"resources":{}},"persistGeneratedNodeKey":{"debug":false,"resources":{}},"retrieveServiceInfo":{"debug":false,"image":{"repository":"paritytech/kubetools-kubectl","tag":"latest"},"resources":{}}}` | Additional init containers |
+| initContainers.downloadChainSnapshot.cmdArgs | string | `""` | Flags to add to the CLI command. We rely on rclone for downloading snapshots so make sure the flags are compatible. |
+| initContainers.downloadChainSnapshot.debug | bool | `false` | Adds `-x` shell option to container. Note: passwords and keys used in container may appear in logs |
+| initContainers.downloadChainSnapshot.extraEnvVars | list | `[]` | Additional environment variables to add to the container |
+| initContainers.downloadChainSnapshot.image | object | `{"repository":"docker.io/rclone/rclone","tag":"latest"}` | A container to use for downloading a node backup/snapshot |
+| initContainers.downloadChainSnapshot.image.repository | string | `"docker.io/rclone/rclone"` | Image repository |
+| initContainers.downloadChainSnapshot.image.tag | string | `"latest"` | Image tag |
+| initContainers.downloadChainSnapshot.resources | object | `{}` | The resources requests/limits for the container |
+| initContainers.downloadChainspec.debug | bool | `false` | Adds `-x` shell option to container. Note: passwords and keys used in container may appear in logs |
+| initContainers.downloadChainspec.image.repository | string | `"docker.io/alpine"` | Image repository |
+| initContainers.downloadChainspec.image.tag | string | `"latest"` | Image tag |
+| initContainers.downloadChainspec.resources | object | `{}` | Additional environment variables to add to the container |
+| initContainers.downloadRuntime.debug | bool | `false` | Adds `-x` shell option to container. Note: passwords and keys used in container may appear in logs |
+| initContainers.downloadRuntime.image.repository | string | `"paritytech/kubetools-kubectl"` | Image repository |
+| initContainers.downloadRuntime.image.tag | string | `"latest"` | Image tag |
+| initContainers.downloadRuntime.resources | object | `{}` | Additional environment variables to add to the container |
+| initContainers.injectKeys.debug | bool | `false` | Adds `-x` shell option to container. Note: passwords and keys used in container may appear in logs |
+| initContainers.injectKeys.resources | object | `{}` | Additional environment variables to add to the container |
+| initContainers.persistGeneratedNodeKey.debug | bool | `false` | Adds `-x` shell option to container. Note: passwords and keys used in container may appear in logs |
+| initContainers.persistGeneratedNodeKey.resources | object | `{}` | Additional environment variables to add to the container |
+| initContainers.retrieveServiceInfo | object | `{"debug":false,"image":{"repository":"paritytech/kubetools-kubectl","tag":"latest"},"resources":{}}` | A container to handle network configuration of the Polkadot node |
+| initContainers.retrieveServiceInfo.debug | bool | `false` | Adds `-x` shell option to container. Note: passwords and keys used in container may appear in logs |
+| initContainers.retrieveServiceInfo.image.repository | string | `"paritytech/kubetools-kubectl"` | Image repository |
+| initContainers.retrieveServiceInfo.image.tag | string | `"latest"` | Image tag |
+| initContainers.retrieveServiceInfo.resources | object | `{}` | The resources requests/limits for the container |
+| jaegerAgent | object | `{"collector":{"port":14250,"url":null},"env":{},"image":{"repository":"jaegertracing/jaeger-agent","tag":"latest"},"ports":{"binaryPort":6832,"compactPort":6831,"samplingPort":5778},"resources":{}}` | Configuration of Jaeger agent https://github.com/jaegertracing/jaeger |
+| jaegerAgent.collector | object | `{"port":14250,"url":null}` | Collector config |
+| jaegerAgent.env | object | `{}` | Environment variables to set on the Jaeger sidecar |
+| jaegerAgent.image.repository | string | `"jaegertracing/jaeger-agent"` | Image repository |
+| jaegerAgent.image.tag | string | `"latest"` | Image tag |
+| jaegerAgent.ports.binaryPort | int | `6832` | Accept jaeger.thrift over binary thrift protocol |
+| jaegerAgent.ports.compactPort | int | `6831` | Accept jaeger.thrift over compact thrift protocol |
+| jaegerAgent.ports.samplingPort | HTTP | `5778` | serve configs, sampling strategies |
+| jaegerAgent.resources | object | `{}` | Resource limits & requests |
+| nameOverride | string | `""` | Provide a name in place of node for `app:` labels |
+| node | object | `{"allowUnsafeRpcMethods":false,"chain":"polkadot","chainData":{"annotations":{},"chainPath":null,"chainSnapshot":{"enabled":false,"filelistName":"files.txt","method":"gcs","url":""},"database":"rocksdb","kubernetesVolumeSnapshot":null,"kubernetesVolumeToClone":null,"pruning":1000,"storageClass":"","volumeSize":"100Gi"},"chainKeystore":{"accessModes":["ReadWriteOnce"],"annotations":{},"kubernetesVolumeSnapshot":null,"kubernetesVolumeToClone":null,"mountInMemory":{"enabled":false,"sizeLimit":null},"storageClass":"","volumeSize":"10Mi"},"collatorRelayChain":{"chain":"polkadot","chainData":{"annotations":{},"chainPath":"","chainSnapshot":{"enabled":false,"filelistName":"files.txt","method":"gcs","url":""},"database":"rocksdb","kubernetesVolumeSnapshot":null,"kubernetesVolumeToClone":null,"pruning":1000,"storageClass":"","volumeSize":"100Gi"},"chainKeystore":{"accessModes":["ReadWriteOnce"],"annotations":{},"kubernetesVolumeSnapshot":null,"kubernetesVolumeToClone":null,"mountInMemory":{"enabled":false,"sizeLimit":null},"storageClass":"","volumeSize":"10Mi"},"customChainspecPath":"/relaychain-data/relay_chain_chainspec.json","customChainspecUrl":null,"flags":[],"prometheus":{"enabled":false,"port":9625}},"command":"polkadot","customChainspecPath":"/chain-data/chainspec.json","customChainspecUrl":null,"customNodeKey":null,"enableOffchainIndexing":false,"enableSidecarLivenessProbe":false,"enableSidecarReadinessProbe":false,"enableStartupProbe":true,"existingSecrets":{"keys":[],"nodeKey":{}},"externalRelayChain":{"enabled":false,"relayChainRpcUrls":[]},"extraConfigmapMounts":[],"extraEnvVars":[],"extraSecretMounts":[],"flags":[],"forceDownloadChainspec":false,"isParachain":false,"keys":{},"legacyRpcFlags":false,"logLevels":[],"perNodeServices":{"apiService":{"annotations":{},"enabled":true,"externalDns":{"customPrefix":"","enabled":false,"hostname":"example.com","ttl":300},"externalTrafficPolicy":"Cluster","httpPort":9933,"prometheusPort":9615,"relayChainPrometheusPort":9625,"rpcPort":9944,"type":"ClusterIP","wsPort":9955},"paraP2pService":{"annotations":{},"enabled":false,"externalDns":{"customPrefix":"","enabled":false,"hostname":"example.com","ttl":300},"externalTrafficPolicy":"Cluster","port":30334,"type":"NodePort","ws":{"enabled":false,"port":30335}},"relayP2pService":{"annotations":{},"enabled":false,"externalDns":{"customPrefix":"","enabled":false,"hostname":"example.com","ttl":300},"externalTrafficPolicy":"Cluster","port":30333,"type":"NodePort","ws":{"enabled":false,"port":30334}},"setPublicAddressToExternalIp":{"enabled":false,"ipRetrievalServiceUrl":"https://ifconfig.io"}},"persistGeneratedNodeKey":false,"podManagementPolicy":null,"prometheus":{"enabled":false,"port":9615},"replicas":1,"resources":{},"role":"full","serviceAnnotations":{},"serviceMonitor":{"enabled":false,"interval":"30s","metricRelabelings":[],"namespace":null,"relabelings":[],"scrapeTimeout":"10s","targetLabels":["node"]},"substrateApiSidecar":{"enabled":false},"telemetryUrls":[],"tracing":{"enabled":false},"updateStrategy":{"enabled":false,"maxUnavailable":1,"type":"RollingUpdate"},"vault":{"authConfigServiceAccount":null,"authConfigType":null,"authPath":null,"authRole":null,"authType":null,"keys":{},"nodeKey":{}},"wasmRuntimeOverridesPath":"/chain-data/runtimes","wasmRuntimeUrl":""}` | Deploy a substrate node. ref: https://docs.substrate.io/tutorials/v3/private-network/ |
+| node.allowUnsafeRpcMethods | bool | `false` | Allow executing unsafe RPC methods |
+| node.chain | string | `"polkadot"` | Name of the chain |
+| node.chainData.annotations | object | `{}` | Annotations to add to the volumeClaimTemplates |
+| node.chainData.chainPath | string | `nil` | Path on the volume to store chain data |
+| node.chainData.chainSnapshot | object | `{"enabled":false,"filelistName":"files.txt","method":"gcs","url":""}` | Configure parameters for restoring chain snapshot. Uses [rclone](https://rclone.org/) |
+| node.chainData.chainSnapshot.enabled | bool | `false` | Enable chain snapshot restoration |
+| node.chainData.chainSnapshot.filelistName | string | `"files.txt"` | A remote file name containing names of DB file chunks. Appended to `url` |
+| node.chainData.chainSnapshot.method | string | `"gcs"` | Restoration method. One of: gcs, s3, http-single-tar, http-single-tar-lz4, http-filelist |
+| node.chainData.chainSnapshot.url | string | `""` | A URL to download chain backup |
+| node.chainData.database | string | `"rocksdb"` | Database backend engine to use |
+| node.chainData.kubernetesVolumeSnapshot | string | `nil` | If set, create a clone of the volume (using volumeClaimTemplates.dataSource.VolumeSnapshot) and use it to store chain data |
+| node.chainData.kubernetesVolumeToClone | string | `nil` | If set, create a clone of the volume (using volumeClaimTemplates.dataSource.PersistentVolumeClaim) and use it to store chain data |
+| node.chainData.pruning | int | `1000` | Set the amount of blocks to retain. If set to 0 archive node will be run |
+| node.chainData.storageClass | string | `""` | Storage class to use for persistent volume |
+| node.chainData.volumeSize | string | `"100Gi"` | Size of the volume for chain data |
+| node.chainKeystore | object | `{"accessModes":["ReadWriteOnce"],"annotations":{},"kubernetesVolumeSnapshot":null,"kubernetesVolumeToClone":null,"mountInMemory":{"enabled":false,"sizeLimit":null},"storageClass":"","volumeSize":"10Mi"}` | Configure chain keystore parameters |
+| node.chainKeystore.accessModes | list | `["ReadWriteOnce"]` | Access mode of the volume |
+| node.chainKeystore.annotations | object | `{}` | Annotations to add to the volumeClaimTemplates |
+| node.chainKeystore.kubernetesVolumeSnapshot | string | `nil` | If set, create a clone of the volume (using volumeClaimTemplates.dataSource.VolumeSnapshot) and use it for the keystore |
+| node.chainKeystore.kubernetesVolumeToClone | string | `nil` | If set, create a clone of the volume (using volumeClaimTemplates.dataSource.PersistentVolumeClaim) and use it for the keystore |
+| node.chainKeystore.mountInMemory | object | `{"enabled":false,"sizeLimit":null}` | Mount chain keystore in memory using an emptyDir volume |
+| node.chainKeystore.mountInMemory.enabled | bool | `false` | Enable mounting in-memory keystore |
+| node.chainKeystore.mountInMemory.sizeLimit | string | `nil` | Size limit of the emptyDir holding a keystore. Requires K8s >=1.22 |
+| node.chainKeystore.storageClass | string | `""` | Storage class to use for persistent volume |
+| node.chainKeystore.volumeSize | string | `"10Mi"` | Size of the volume |
+| node.collatorRelayChain.chain | string | `"polkadot"` | Name of the Relay Chain to connect |
+| node.collatorRelayChain.chainData.annotations | object | `{}` | Annotations to add to the volumeClaimTemplates |
+| node.collatorRelayChain.chainData.chainPath | string | `""` | Path on the volume to store chain data |
+| node.collatorRelayChain.chainData.chainSnapshot | object | `{"enabled":false,"filelistName":"files.txt","method":"gcs","url":""}` | Configure parameters for restoring relay chain snapshot. Uses [rclone](https://rclone.org/) |
+| node.collatorRelayChain.chainData.chainSnapshot.enabled | bool | `false` | Enable relay chain snapshot restoration |
+| node.collatorRelayChain.chainData.chainSnapshot.filelistName | string | `"files.txt"` | A remote file name containing names of DB file chunks. Appended to `url` |
+| node.collatorRelayChain.chainData.chainSnapshot.method | string | `"gcs"` | Restoration method. One of: gcs, s3, http-single-tar, http-single-tar-lz4, http-filelist |
+| node.collatorRelayChain.chainData.chainSnapshot.url | string | `""` | A URL to download chain backup |
+| node.collatorRelayChain.chainData.database | string | `"rocksdb"` | Database backend engine to use for the collator relay-chain database |
+| node.collatorRelayChain.chainData.kubernetesVolumeSnapshot | string | `nil` | If set, create a clone of the volume (using volumeClaimTemplates.dataSource.VolumeSnapshot) and use it to store relay-chain data |
+| node.collatorRelayChain.chainData.kubernetesVolumeToClone | string | `nil` | If set, create a clone of the volume (using volumeClaimTemplates.dataSource.PersistentVolumeClaim) and use it to store relay-chain data |
+| node.collatorRelayChain.chainData.pruning | int | `1000` | Set the amount of blocks to retain for the collator relay-chain database. If set to 0 archive node will be run |
+| node.collatorRelayChain.chainData.storageClass | string | `""` | Storage class to use for persistent volume |
+| node.collatorRelayChain.chainData.volumeSize | string | `"100Gi"` | Size of the volume |
+| node.collatorRelayChain.chainKeystore.accessModes | list | `["ReadWriteOnce"]` | Access mode of the volume |
+| node.collatorRelayChain.chainKeystore.annotations | object | `{}` | Annotations to add to the volumeClaimTemplates |
+| node.collatorRelayChain.chainKeystore.kubernetesVolumeSnapshot | string | `nil` | If set, create a clone of the volume (using volumeClaimTemplates.dataSource.VolumeSnapshot) and use it for the keystore |
+| node.collatorRelayChain.chainKeystore.kubernetesVolumeToClone | string | `nil` | If set, create a clone of the volume (using volumeClaimTemplates.dataSource.PersistentVolumeClaim) and use it for the keystore |
+| node.collatorRelayChain.chainKeystore.mountInMemory | object | `{"enabled":false,"sizeLimit":null}` | Mount relay-chain keystore in memory using an emptyDir volume |
+| node.collatorRelayChain.chainKeystore.mountInMemory.enabled | bool | `false` | Enable mounting in-memory keystore |
+| node.collatorRelayChain.chainKeystore.mountInMemory.sizeLimit | string | `nil` | Size limit of the emptyDir holding a keystore. Requires K8s >=1.22 |
+| node.collatorRelayChain.chainKeystore.storageClass | string | `""` | Storage class to use for persistent volume |
+| node.collatorRelayChain.chainKeystore.volumeSize | string | `"10Mi"` | Size of the volume |
+| node.collatorRelayChain.customChainspecPath | string | `"/relaychain-data/relay_chain_chainspec.json"` | Path to the file containing the chainspec of the collator relay-chain |
+| node.collatorRelayChain.customChainspecUrl | string | `nil` | URL to retrive custom chain spec |
+| node.collatorRelayChain.flags | list | `[]` | Flags to add to the Polkadot binary |
+| node.collatorRelayChain.prometheus | object | `{"enabled":false,"port":9625}` | Expose relay chain metrics via Prometheus format in /metrics endpoint. Passes the following args to the Polkadot binary:   - "--prometheus-external" \   - "--prometheus-port {{ port }}" |
+| node.collatorRelayChain.prometheus.enabled | bool | `false` | Expose Prometheus metrics |
+| node.collatorRelayChain.prometheus.port | int | `9625` | The port for exposed Prometheus metrics |
+| node.command | string | `"polkadot"` | Command to run within the container |
+| node.customChainspecPath | string | `"/chain-data/chainspec.json"` | Node may require custom name for chainspec file. ref:  moonbeam https://github.com/PureStake/moonbeam/issues/1104#issuecomment-996787548 Note: path should start with /chain-data/ since this folder mount in init container download-chainspec. |
+| node.customChainspecUrl | string | `nil` | URL to retrive custom chain spec |
+| node.customNodeKey | string | `nil` | Name of the secret containig the key |
+| node.enableOffchainIndexing | bool | `false` | Enable Offchain Indexing. https://docs.substrate.io/fundamentals/offchain-operations/ |
+| node.enableSidecarLivenessProbe | bool | `false` | Enable Node liveness probe through `paritytech/ws-health-exporter` running as a sidecar container |
+| node.enableSidecarReadinessProbe | bool | `false` | Enable Node readiness probe through `paritytech/ws-health-exporter` running as a sidecar container |
+| node.enableStartupProbe | bool | `true` | Enable Node container's startup probe |
+| node.existingSecrets | object | `{"keys":[],"nodeKey":{}}` | Inject keys from already existing Kubernetes secrets |
+| node.existingSecrets.keys | list | `[]` | List of kubernetes secret names to be added to the keystore. Each secret should contain 3 keys: type, scheme and seed Supercedes node.vault.keys |
+| node.existingSecrets.nodeKey | object | `{}` | K8s secret with node key Supercedes node.vault.nodeKey |
+| node.externalRelayChain | object | `{"enabled":false,"relayChainRpcUrls":[]}` | EXPERIMENTAL!!! Run the collator node without a relay chain ref: https://github.com/paritytech/cumulus#external-relay-chain-node Enabling this option will disable the values of collatorRelayChain |
+| node.externalRelayChain.enabled | bool | `false` | Enable deployment of the external collator |
+| node.externalRelayChain.relayChainRpcUrls | list | `[]` | List of Relay Chain RPCs to connect |
+| node.extraConfigmapMounts | list | `[]` | Mount already existing ConfigMaps into the main container. https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#populate-a-volume-with-data-stored-in-a-configmap |
+| node.extraEnvVars | list | `[]` | Environment variables to set for the main container: |
+| node.extraSecretMounts | list | `[]` | Mount already existing k8s Secrets into main container. https://kubernetes.io/docs/concepts/configuration/secret/#using-secrets-as-files-from-a-pod NOTE: This is NOT used to inject keys to the keystore or add node key. |
+| node.flags | list | `[]` | Flags to add to the Polkadot binary |
+| node.forceDownloadChainspec | bool | `false` | Replace chain spec if it already exists |
+| node.isParachain | bool | `false` | Deploy a collator node. ref: https://wiki.polkadot.network/docs/learn-collator If Collator is enabled, collator image must be used |
+| node.keys | object | `{}` | Keys to use by the node. ref: https://wiki.polkadot.network/docs/learn-keys |
+| node.legacyRpcFlags | bool | `false` | Use deprecated ws/rpc flags. ref: https://github.com/paritytech/substrate/pull/13384 |
+| node.logLevels | list | `[]` | Log level |
+| node.perNodeServices | object | `{"apiService":{"annotations":{},"enabled":true,"externalDns":{"customPrefix":"","enabled":false,"hostname":"example.com","ttl":300},"externalTrafficPolicy":"Cluster","httpPort":9933,"prometheusPort":9615,"relayChainPrometheusPort":9625,"rpcPort":9944,"type":"ClusterIP","wsPort":9955},"paraP2pService":{"annotations":{},"enabled":false,"externalDns":{"customPrefix":"","enabled":false,"hostname":"example.com","ttl":300},"externalTrafficPolicy":"Cluster","port":30334,"type":"NodePort","ws":{"enabled":false,"port":30335}},"relayP2pService":{"annotations":{},"enabled":false,"externalDns":{"customPrefix":"","enabled":false,"hostname":"example.com","ttl":300},"externalTrafficPolicy":"Cluster","port":30333,"type":"NodePort","ws":{"enabled":false,"port":30334}},"setPublicAddressToExternalIp":{"enabled":false,"ipRetrievalServiceUrl":"https://ifconfig.io"}}` | Configuration of individual services of the node |
+| node.perNodeServices.apiService.annotations | object | `{}` | Annotations to add to the Service |
+| node.perNodeServices.apiService.enabled | bool | `true` | If enabled, generic service to expose common node APIs |
+| node.perNodeServices.apiService.externalDns | object | `{"customPrefix":"","enabled":false,"hostname":"example.com","ttl":300}` | External DNS configuration ref: https://github.com/kubernetes-sigs/external-dns |
+| node.perNodeServices.apiService.externalDns.customPrefix | string | `""` | Custom prefix to use instead of prefixing the hostname with the name of the Pod |
+| node.perNodeServices.apiService.externalDns.enabled | bool | `false` | Enable External DNS |
+| node.perNodeServices.apiService.externalDns.hostname | string | `"example.com"` | External DNS hostname |
+| node.perNodeServices.apiService.externalDns.ttl | int | `300` | DNS record TTL |
+| node.perNodeServices.apiService.externalTrafficPolicy | string | `"Cluster"` | Traffic policy |
+| node.perNodeServices.apiService.httpPort | int | `9933` | deprecated, use rpcPort |
+| node.perNodeServices.apiService.prometheusPort | int | `9615` | Prometheus port |
+| node.perNodeServices.apiService.relayChainPrometheusPort | int | `9625` | Relay chains Prometheus port |
+| node.perNodeServices.apiService.rpcPort | int | `9944` | Port of the RPC endpoint |
+| node.perNodeServices.apiService.type | string | `"ClusterIP"` | Service type |
+| node.perNodeServices.apiService.wsPort | int | `9955` | deprecated, use rpcPort |
+| node.perNodeServices.paraP2pService | object | `{"annotations":{},"enabled":false,"externalDns":{"customPrefix":"","enabled":false,"hostname":"example.com","ttl":300},"externalTrafficPolicy":"Cluster","port":30334,"type":"NodePort","ws":{"enabled":false,"port":30335}}` | If enabled, create service to expose parachain P2P |
+| node.perNodeServices.paraP2pService.annotations | object | `{}` | Annotations to add to the Service |
+| node.perNodeServices.paraP2pService.enabled | bool | `false` | Enable exposing parachain P2P Service |
+| node.perNodeServices.paraP2pService.externalDns | object | `{"customPrefix":"","enabled":false,"hostname":"example.com","ttl":300}` | External DNS configuration ref: https://github.com/kubernetes-sigs/external-dns |
+| node.perNodeServices.paraP2pService.externalDns.customPrefix | string | `""` | Custom prefix to use instead of prefixing the hostname with the name of the Pod |
+| node.perNodeServices.paraP2pService.externalDns.enabled | bool | `false` | Enable External DNS |
+| node.perNodeServices.paraP2pService.externalDns.hostname | string | `"example.com"` | External DNS hostname |
+| node.perNodeServices.paraP2pService.externalDns.ttl | int | `300` | DNS record TTL |
+| node.perNodeServices.paraP2pService.externalTrafficPolicy | string | `"Cluster"` | Traffic policy |
+| node.perNodeServices.paraP2pService.port | int | `30334` | Port of the P2P endpoint (parachain) |
+| node.perNodeServices.paraP2pService.type | string | `"NodePort"` | Service type |
+| node.perNodeServices.paraP2pService.ws.enabled | bool | `false` | If enabled, additionally expose WebSocket port. Useful for bootnodes |
+| node.perNodeServices.paraP2pService.ws.port | int | `30335` | WS port |
+| node.perNodeServices.relayP2pService | object | `{"annotations":{},"enabled":false,"externalDns":{"customPrefix":"","enabled":false,"hostname":"example.com","ttl":300},"externalTrafficPolicy":"Cluster","port":30333,"type":"NodePort","ws":{"enabled":false,"port":30334}}` | If enabled, create service to expose relay chain P2P |
+| node.perNodeServices.relayP2pService.annotations | object | `{}` | Annotations to add to the Service |
+| node.perNodeServices.relayP2pService.externalDns | object | `{"customPrefix":"","enabled":false,"hostname":"example.com","ttl":300}` | External DNS configuration ref: https://github.com/kubernetes-sigs/external-dns |
+| node.perNodeServices.relayP2pService.externalDns.customPrefix | string | `""` | Custom prefix to use instead of prefixing the hostname with the name of the Pod |
+| node.perNodeServices.relayP2pService.externalDns.enabled | bool | `false` | Enable External DNS |
+| node.perNodeServices.relayP2pService.externalDns.hostname | string | `"example.com"` | External DNS hostname |
+| node.perNodeServices.relayP2pService.externalDns.ttl | int | `300` | DNS record TTL |
+| node.perNodeServices.relayP2pService.externalTrafficPolicy | string | `"Cluster"` | Traffic policy |
+| node.perNodeServices.relayP2pService.port | int | `30333` | Port of the P2P endpoint (relay chain) |
+| node.perNodeServices.relayP2pService.type | string | `"NodePort"` | Service type |
+| node.perNodeServices.relayP2pService.ws.enabled | bool | `false` | If enabled, additionally expose WebSocket port. Useful for bootnodes |
+| node.perNodeServices.relayP2pService.ws.port | int | `30334` | WS port |
+| node.perNodeServices.setPublicAddressToExternalIp.enabled | bool | `false` | If enabled, set `--public-addr` flag to be the NodePort p2p services external address |
+| node.perNodeServices.setPublicAddressToExternalIp.ipRetrievalServiceUrl | string | `"https://ifconfig.io"` | Web service to use for public IP retrieval |
+| node.persistGeneratedNodeKey | bool | `false` | If enabled, generate a persistent volume to use for the keys |
+| node.podManagementPolicy | string | `nil` | Pod management policy of stateful set. ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies |
+| node.prometheus | object | `{"enabled":false,"port":9615}` | Expose metrics via Prometheus format in /metrics endpoint. Passes the following args to the Polkadot binary:   - "--prometheus-external" \   - "--prometheus-port {{ .Values.node.prometheus.port }}" |
+| node.prometheus.enabled | bool | `false` | Expose Prometheus metrics |
+| node.prometheus.port | int | `9615` | The port for exposed Prometheus metrics |
+| node.replicas | int | `1` | Number of replicas to deploy |
+| node.resources | object | `{}` | Resource limits & requests |
+| node.role | string | `"full"` | Type of the node. One of: full, authority, validator, collator, light |
+| node.serviceAnnotations | object | `{}` | Annotations to add to the Service |
+| node.serviceMonitor | object | `{"enabled":false,"interval":"30s","metricRelabelings":[],"namespace":null,"relabelings":[],"scrapeTimeout":"10s","targetLabels":["node"]}` | Service Monitor of Prometheus-Operator ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors |
+| node.serviceMonitor.enabled | bool | `false` | Enables Service Monitor |
+| node.serviceMonitor.interval | string | `"30s"` | Scrape interval |
+| node.serviceMonitor.metricRelabelings | list | `[]` | Metric relabelings config |
+| node.serviceMonitor.namespace | string | `nil` | Namespace to deploy Service Monitor. If not set deploys in the same namespace with the chart |
+| node.serviceMonitor.relabelings | list | `[]` | Relabelings config |
+| node.serviceMonitor.scrapeTimeout | string | `"10s"` | Scrape timeout |
+| node.serviceMonitor.targetLabels | list | `["node"]` | Labels to scrape |
+| node.substrateApiSidecar.enabled | bool | `false` | Enable Sustrate API as a sidecar |
+| node.telemetryUrls | list | `[]` | URLs to send telemetry data |
+| node.tracing.enabled | bool | `false` | Enable Jaeger Agent as a sidecar |
+| node.updateStrategy | object | `{"enabled":false,"maxUnavailable":1,"type":"RollingUpdate"}` | How node updates should be applied. |
+| node.updateStrategy.enabled | bool | `false` | Enable custom updateStrategy |
+| node.updateStrategy.maxUnavailable | int | `1` | Can be an int or a % |
+| node.updateStrategy.type | string | `"RollingUpdate"` | Type supports RollingUpdate or OnDelete |
+| node.vault | object | `{"authConfigServiceAccount":null,"authConfigType":null,"authPath":null,"authRole":null,"authType":null,"keys":{},"nodeKey":{}}` | Component to inject secrets via annotation of Hashicorp Vault ref: https://www.vaultproject.io/docs/platform/k8s/injector/annotations |
+| node.vault.authConfigServiceAccount | string | `nil` | Configures auth-config-service-account annotation |
+| node.vault.authConfigType | string | `nil` | Configures auth-config-type annotations |
+| node.vault.authPath | string | `nil` | Configures the authentication path for the Kubernetes auth method |
+| node.vault.authRole | string | `nil` | Configures the Vault role used by the Vault Agent auto-auth method. |
+| node.vault.authType | string | `nil` | Configures the authentication type for Vault Agent. For a list of valid authentication methods, see the Vault Agent auto-auth documentation. |
+| node.vault.keys | object | `{}` | Keys to fetch from Hashicorp Vault and set on the node |
+| node.vault.nodeKey | object | `{}` | Node key to use via vault |
+| node.wasmRuntimeOverridesPath | string | `"/chain-data/runtimes"` | Define the WASM runtime overrides directory path |
+| node.wasmRuntimeUrl | string | `""` | Download a WASM runtime to override the on-chain runtime when the version matches. Note that this will download the runtime file in the directory specified in `node.wasmRuntimeOverridesPath` Then on startup, the node will load all runtime files from this directory including previously downloaded runtimes |
+| nodeSelector | object | `{}` | Define which Nodes the Pods are scheduled on |
+| podAnnotations | object | `{}` | Annotations to add to the Pod |
+| podDisruptionBudget | object | `{"enabled":false,"maxUnavailable":null,"minAvailable":null}` | podDisruptionBudget configuration |
+| podDisruptionBudget.enabled | bool | `false` | Enable podDisruptionBudget |
+| podDisruptionBudget.maxUnavailable | string | `nil` | maxUnavailable replicas |
+| podDisruptionBudget.minAvailable | string | `nil` | minAvailable replicas |
+| podSecurityContext | object | `{"fsGroup":1000,"runAsGroup":1000,"runAsUser":1000}` | SecurityContext holds pod-level security attributes and common container settings. This defaults to non root user with uid 1000 and gid 1000. ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
+| podSecurityContext.fsGroup | int | `1000` | Set container's Security Context fsGroup |
+| podSecurityContext.runAsGroup | int | `1000` | Set container's Security Context runAsGroup |
+| podSecurityContext.runAsUser | int | `1000` | Set container's Security Context runAsUser |
+| serviceAccount | object | `{"annotations":{},"create":true,"createRoleBinding":true,"name":""}` | Service account for the node to use. ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/ |
+| serviceAccount.annotations | object | `{}` | Annotations to add to the Service Account |
+| serviceAccount.create | bool | `true` | Enable creation of a Service Account for the main container |
+| serviceAccount.createRoleBinding | bool | `true` | Creates RoleBinding |
+| serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
+| substrateApiSidecar | object | `{"env":{},"image":{"repository":"parity/substrate-api-sidecar","tag":"latest"},"resources":{}}` | Configuration of Substrate API ref: https://github.com/paritytech/substrate-api-sidecar |
+| substrateApiSidecar.env | object | `{}` | Environment variables to set on the API sidecar |
+| substrateApiSidecar.image.repository | string | `"parity/substrate-api-sidecar"` | Image repository |
+| substrateApiSidecar.image.tag | string | `"latest"` | Image tag |
+| substrateApiSidecar.resources | object | `{}` | Resource limits & requests |
+| terminationGracePeriodSeconds | int | `60` | Grace termination period of the Pod |
+| tolerations | list | `[]` | Tolerations for use with node taints |
+| wsHealthExporter | object | `{"env":{},"image":{"repository":"paritytech/ws-health-exporter","tag":"0a2e6e9b-20230412"},"resources":{}}` | Configuration of the WS Health exporter. ref: https://github.com/paritytech/scripts/tree/master/dockerfiles/ws-health-exporter |
+| wsHealthExporter.env | object | `{}` | Environment variables to set on the API sidecar |
+| wsHealthExporter.image.repository | string | `"paritytech/ws-health-exporter"` | Image repository |
+| wsHealthExporter.image.tag | string | `"0a2e6e9b-20230412"` | Image tag |
+| wsHealthExporter.resources | object | `{}` | Resource limits & requests |
 
-| Parameter           | Description                                  | Default                        |
-|---------------------|----------------------------------------------|--------------------------------|
-| `nameOverride`      | String to partially override node.fullname   | `nil`                          |
-| `fullnameOverride`  | String to fully override node.fullname       | `nil`                          |
-| `imagePullSecrets`  | Labels to add to all deployed objects        | `[]`                           |
-| `podAnnotations`    | Annotations to add to pods                   | `{}` (evaluated as a template) |
-| `nodeSelector`      | Node labels for pod assignment               | `{}` (evaluated as a template) |
-| `tolerations`       | Tolerations for pod assignment               | `[]` (evaluated as a template) |
-| `affinity`          | Affinity for pod assignment                  | `{}` (evaluated as a template) |
-
-### Node parameters
-
-| Parameter                                                                 | Description                                                                                                                                                                                                                                          | Default                                                             |
-|---------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
-| `node.chain`                                                              | Network to connect the node to (ie `--chain`)                                                                                                                                                                                                        | `polkadot`                                                          |
-| `node.command`                                                            | Command to be invoked to launch the node binary                                                                                                                                                                                                      | `polkadot`                                                          |
-| `node.flags`                                                              | Node flags other than `--name` (set from the helm release name), `--base-path` and `--chain` (both set with `node.chain`)                                                                                                                            | `--prometheus-external --rpc-external --ws-external --rpc-cors all` |
-| `node.keys`                                                               | The list of keys to inject on the node before startup (object{ type, scheme, seed }), supercedes `node.vault.keys`                                                                                                                                   | `{}`                                                                |
-| `node.vault.authPath`                                                     | Set the vault-agent authentication path (defaults to `auth/kubernetes`)                                                                                                                                                                              | `nil`                                                               |
-| `node.vault.authRole`                                                     | Set the vault role to be used by the vault-agent (defaults to the service account name)                                                                                                                                                              | `nil`                                                               |
-| `node.vault.authType`                                                     | Set the vault-agent authentication type (defaults to `kubernetes` when not set)                                                                                                                                                                      | `nil`                                                               |
-| `node.vault.authConfigType`                                               | Set the vault-agent authentication additional `type` parameter                                                                                                                                                                                       | `nil`                                                               |
-| `node.vault.authConfigServiceAccount`                                     | Set the vault-agent authentication additional `service-account` parameter                                                                                                                                                                            | `nil`                                                               |
-| `node.vault.keys`                                                         | The list of vault secrets to inject on the node before startup (object{name, vaultPath, vaultKey, scheme, type, extraDerivation}). Note that the vaultKey must be alphanumeric.                                                                      | `{}`                                                                |
-| `node.vault.nodeKey`                                                      | The vault secret to inject as a custom nodeKey (the secrets value must be 64 byte hex) (object {name, vaultPath, vaultKey, vaultKeyAppendPodIndex})                                                                                                  | `{}`                                                                |
-| `node.vault.nodeKey.vaultKeyAppendPodIndex`                               | If true, append the pod index to the vaultKey used to load the node key secret from vault (ie. the key used will be `vaultKey_$INDEX`)                                                                                                               | `{}`                                                                |
-| `node.persistGeneratedNodeKey`                                            | Persist the auto-generated node key inside the data volume (at /data/node-key)                                                                                                                                                                       | `false`                                                             |
-| `node.customNodeKey`                                                      | Use a custom node-key, if `node.persistGeneratedNodeKey` is true then this will not be used.  (Must be 64 byte hex key), supercedes `node.vault.nodeKey`                                                                                             | `nil`                                                               |
-| `node.enableStartupProbe`                                                 | If true, enable the startup probe check                                                                                                                                                                                                              | `true`                                                              |
-| `node.enableSidecarReadinessProbe`                                        | If true, enable the readiness probe check through `paritytech/ws-health-exporter` running as a sidecar                                                                                                                                               | `false`                                                             |
-| `node.enableChainBackupGcs`                                               | If true, creates a database backup to GCS on startup through an init container                                                                                                                                                                       | `false`                                                             |
-| `node.extraEnvVars`                                                       | A list of environment variables to set for the main container                                                                                                                                                                                        | `[]`                                                                |
-| `node.chainBackupGcsUrl`                                                  | URL of the GCS bucket to use for the database backup (eg. `gs://bucket-name[/folder-name]`)                                                                                                                                                          | `false`                                                             |
-| `node.replica`                                                            | Number of replica in the node StatefulSet                                                                                                                                                                                                            | `1`                                                                 |
-| `node.role`                                                               | Set the role of the node: `full`, `authority`/`validator`, `collator` or `light`                                                                                                                                                                     | `full`                                                              |
-| `node.prometheus.enabled`                                                 | If true, enables Prometheus endpoint                                                                                                                                                                                                                 | `true`                                                              |
-| `node.prometheus.port`                                                    | Port to use for the Prometheus endpoint                                                                                                                                                                                                              | `9615`                                                              |
-| `node.chainData.snapshotUrl`                                              | Download and load chain data from a snapshot archive http URL                                                                                                                                                                                        | ``                                                                  |
-| `node.chainData.snapshotFormat`                                           | The snapshot archive format (`tar` or `lz4`)                                                                                                                                                                                                         | `tar`                                                               |
-| `node.chainData.GCSBucketUrl`                                             | Sync chain data files from a GCS bucket (eg. `gs://bucket-name[/folder-name]`)                                                                                                                                                                       | ``                                                                  |
-| `node.chainData.chainPath`                                                | Path at which the chain database files are located (`/data/chains/${CHAIN_PATH}`)                                                                                                                                                                    | `nil` (if undefined, fallbacks to the value in `node.chain`)        |
-| `node.chainData.kubernetesVolumeSnapshot`                                 | Initialize the chain data volume from a Kubernetes VolumeSnapshot                                                                                                                                                                                    | ``                                                                  |
-| `node.chainData.kubernetesVolumeToClone`                                  | Initialize the chain data volume from a existing Kubernetes PVC                                                                                                                                                                                      | ``                                                                  |
-| `node.chainData.volumeSize`                                               | The size of the chain data PersistentVolume                                                                                                                                                                                                          | `100Gi`                                                             |
-| `node.chainData.storageClass`                                             | Storage Class to use for chain data PersistentVolume                                                                                                                                                                                                 | `default`                                                           |
-| `node.chainData.annotations`                                              | Annotations to be set on chain data PersistentVolume                                                                                                                                                                                                 | `default`                                                           |
-| `node.chainKeystore.volumeSize`                                           | The size of the chain keystore PersistentVolume                                                                                                                                                                                                      | `10Mi`                                                              |
-| `node.chainKeystore.storageClass`                                         | Storage Class to use for chain keystore PersistentVolume                                                                                                                                                                                             | `default`                                                           |
-| `node.chainKeystore.annotations`                                          | Annotations to be set on chain keystore PersistentVolume                                                                                                                                                                                             | `default`                                                           |
-| `node.chainKeystore.accessModes`                                          | Access modes to use for chain keystore PersistentVolume                                                                                                                                                                                              | `["ReadWriteOnce"]`                                                 |
-| `node.chainKeystore.mountInMemory.enabled`                                | If true, use the in-memory volume to keep the chain keystore instead of persisting it to the disk                                                                                                                                                    | `false`                                                             |
-| `node.chainKeystore.mountInMemory.sizeLimit`                              | The size of the in-memory volume for the chain keystore. Requires K8s >=1.22                                                                                                                                                                         | `nil`                                                               |
-| `node.customChainspecUrl`                                                 | Download and use a custom chainspec file from a URL                                                                                                                                                                                                  | `nil`                                                               |
-| `node.database`                                                           | Set the database backend to use and that will be passed to the `--database` flag (`rocksdb`, `paritydb` or `nil`)                                                                                                                                    | `nil`                                                               |
-| `node.forceDownloadChainspec`                                             | Force the chainspec download even if it is already present on the volume                                                                                                                                                                             | `false`                                                             |
-| `node.allowUnsafeRpcMethods`                                              | If true, allows unsafe RPC methods by setting `--rpc-methods=unsafe`                                                                                                                                                                                 | false                                                               |
-| `node.isParachain`                                                        | If true, configure the node as a parachain (set the relay-chain flags after `--`)                                                                                                                                                                    | `nil`                                                               |
-| `node.externalRelayChain.enabled`                                         | If true, configure the node as a parachain without using a relay chain node                                                                                                                                                                    | `false`                                                               |
-| `node.externalRelayChain.relayChainRpcUrls`                               | The list of Rely Chain RPCs to use                                                                           | `"[wss://rpc.polkadot.io"]`     
-| `node.collatorRelayChain.customChainspecUrl`                              | Download and use a custom relay-chain chainspec file from a URL                                                                                                                                                                                      | `nil`                                                               |
-| `node.collatorRelayChain.chainData.snapshotUrl`                           | Download and load relay-chain data from a snapshot archive http URL                                                                                                                                                                                  | `nil`                                                               |
-| `node.collatorRelayChain.chainData.snapshotFormat`                        | The relay-chain snapshot archive format (`tar` or `lz4`)                                                                                                                                                                                             | `nil`                                                               |
-| `node.collatorRelayChain.chainData.chainPath`                             | Path at which the chain database files are located (`/relaychain-data/chains/${RELAY_CHAIN_PATH}`)                                                                                                                                                   | `nil`                                                               |
-| `node.collatorRelayChain.chainData.GCSBucketUrl`                          | Sync relay-chain data files from a GCS bucket (eg. `gs://bucket-name/folder-name`)                                                                                                                                                                   | `nil`                                                               |
-| `node.collatorRelayChain.chainData.kubernetesVolumeSnapshot`              | Initialize the relay chain data volume from a Kubernetes VolumeSnapshot                                                                                                                                                                              | ``                                                                  |
-| `node.collatorRelayChain.chainData.kubernetesVolumeToClone`               | Initialize the relay chain data volume from a existing Kubernetes PVC                                                                                                                                                                                | ``                                                                  |
-| `node.collatorRelayChain.chainData.volumeSize`                            | The size of the relay chain data PersistentVolume                                                                                                                                                                                                    | `100Gi`                                                             |
-| `node.collatorRelayChain.chainData.storageClass`                          | Storage Class to use for relay chain data PersistentVolume                                                                                                                                                                                           | `default`                                                           |
-| `node.collatorRelayChain.chainData.annotations`                           | Annotations to be set on relay chain data PersistentVolume                                                                                                                                                                                           | `default`                                                           |
-| `node.collatorRelayChain.chainKeystore.volumeSize`                        | The size of the relay chain keystore PersistentVolume                                                                                                                                                                                                | `10Mi`                                                              |
-| `node.collatorRelayChain.chainKeystore.storageClass`                      | Storage Class to use for relay chain keystore PersistentVolume                                                                                                                                                                                       | `default`                                                           |
-| `node.collatorRelayChain.chainKeystore.annotations`                       | Annotations to be set on relay chain keystore PersistentVolume                                                                                                                                                                                       | `default`                                                           |
-| `node.collatorRelayChain.chainKeystore.accessModes`                       | Access modes to use for relay chain keystore PersistentVolume                                                                                                                                                                                        | `["ReadWriteOnce"]`                                                 |
-| `node.collatorRelayChain.chainKeystore.mountInMemory.enabled`             | If true, use the in-memory volume to keep the relay chain keystore instead of persisting it to the disk                                                                                                                                              | `false`                                                             |
-| `node.collatorRelayChain.chainKeystore.mountInMemory.sizeLimit`           | The size of the in-memory volume for the relay chain keystore. Requires K8s >=1.22                                                                                                                                                                   | `nil`                                                               |
-| `node.collatorRelayChain.flags`                                           | Relay-chain node flags other than `--name` (set from the helm release name), `--base-path` and `--chain`                                                                                                                                             | `nil`                                                               |
-| `node.collatorRelayChain.prometheus.enabled`                              | If true, enables Prometheus endpoint for relaychain                                                                                                                                                                                                  | `false`                                                             |
-| `node.collatorRelayChain.prometheus.port`                                 | Port to use for the Relaychain Service Prometheus endpoint                                                                                                                                                                                           | `9625`                                                              |
-| `node.resources.limits`                                                   | The resources limits (cpu/memory) for nodes                                                                                                                                                                                                          | `{}`                                                                |
-| `node.podManagementPolicy`                                                | The pod management policy to apply to the StatefulSet, set it to `Parallel` to launch or terminate all Pods in parallel, and not to wait for pods to become Running and Ready or completely terminated prior to launching or terminating another pod | `{}`                                                                |
-| `node.chainData.pruning`                                                  | The amount of blocks to retain. Set to a number or set to 0 for `--pruning=archive` .                                                                                                                                                                | `nil`                                                               |
-| `node.legacyRpcFlags`                                                     | Use deprecated rpc flags.                                                                                                                                                                                                                            | `false`                                                             |
-| `node.perNodeServices.apiService.enabled`                                 | If true, creates a an API Service for every node in the statefulset exposing the HTTP, WS and Prometheus endpoints                                                                                                                                   | `true`                                                              |
-| `node.perNodeServices.apiService.type`                                    | Define the type of the API Services (`ClusterIP`, `NodePort` or `LoadBalancer`)                                                                                                                                                                      | `ClusterIP`                                                         |
-| `node.perNodeServices.apiService.annotations`                             | Annotations to be set on API Services                                                                                                                                                                                                                | `{}`                                                                |
-| `node.perNodeServices.apiService.rpcPort`                                  | Port to use for the API Service RPC endpoint                                                                                                                                                                                                          | `9944`                                                              |
-| `node.perNodeServices.apiService.httpPort`                                | Port to use for the API Service HTTP endpoint (deprecated, use rpcPort)                                                                                                                                                                                                        | `9933`                                                              |
-| `node.perNodeServices.apiService.wsPort`                                  | Port to use for the API Service WS endpoint (deprecated, use rpcPort)                                                                                                                                                                                                         | `9944`                                                              |
-| `node.perNodeServices.apiService.prometheusPort`                          | Port to use for the API Service Prometheus endpoint                                                                                                                                                                                                  | `9615`                                                              |
-| `node.perNodeServices.apiService.externalDns.enabled`                     | If true, adds an [external-dns](https://github.com/kubernetes-sigs/external-dns) annotation to set a DNS record directing to the API Service                                                                                                         | `false`                                                             |
-| `node.perNodeServices.apiService.externalDns.hostname`                    | Define the base hostname for the external-dns DNS record which will be  (eg. for `hostname: example.com`, the annotation set will be `external-dns.alpha.kubernetes.io/hostname: POD_NAME.example.com`)                                              | `example.com`                                                       |
-| `node.perNodeServices.apiService.externalDns.ttl`                         | Define the TTL to be set for the external-dns DNS record                                                                                                                                                                                             | `300`                                                               |
-| `node.perNodeServices.apiService.externalDns.customPrefix`                | Custom prefix to use instead of prefixing the hostname with the name of the Pod                                                                                                                                                                                             | `""`                                                               |
-| `node.perNodeServices.relayP2pService.enabled`                            | If true, creates a relay-chain P2P Service for every node in the statefulset exposing the TCP P2P endpoint                                                                                                                                           | `true`                                                              |
-| `node.perNodeServices.relayP2pService.type`                               | Define the type of the relay-chain P2P Services (`ClusterIP`, `NodePort` or `LoadBalancer`)                                                                                                                                                          | `ClusterIP`                                                         |
-| `node.perNodeServices.relayP2pService.annotations`                        | Annotations to be set on relay-chain P2P Services                                                                                                                                                                                                    | `{}`                                                                |
-| `node.perNodeServices.relayP2pService.port`                               | Port to use to expose the relay-chain P2P Service externally                                                                                                                                                                                         | `9944`                                                              |
-| `node.perNodeServices.relayP2pService.ws.enabled`                         | If true, creates a relay-chain P2P Service for every node in the statefulset exposing the WebSocket P2P endpoint                                                                                                                                     | `false`                                                             |
-| `node.perNodeServices.relayP2pService.ws.port`                            | Port to use to expose the relay-chain WebSocket P2P Service externally                                                                                                                                                                               | `30334`                                                             |
-| `node.perNodeServices.relayP2pService.externalDns.enabled`                | If true, adds an [external-dns](https://github.com/kubernetes-sigs/external-dns) annotation to set a DNS record directing to the relay-chain P2P Service                                                                                             | `false`                                                             |
-| `node.perNodeServices.relayP2pService.externalDns.hostname`               | Define the base hostname for the relay-chain P2P Service external-dns DNS record which will be  (eg. for `hostname: example.com`, the annotation set will be `external-dns.alpha.kubernetes.io/hostname: POD_NAME.example.com`)                      | `example.com`                                                       |
-| `node.perNodeServices.relayP2pService.externalDns.ttl`                    | Define the TTL to be set for the relay-chain P2P Service external-dns DNS record                                                                                                                                                                     | `300`                                                               |
-| `node.perNodeServices.relayP2pService.externalDns.customPrefix`           | Custom prefix to use instead of prefixing the hostname with the name of the Pod                                                                                                                                                                                             | `""`                                                               |
-| `node.perNodeServices.paraP2pService.enabled`                             | If true, creates a relay-chain P2P Service for every node in the statefulset exposing the HTTP, WS and Prometheus endpoints                                                                                                                          | `true`                                                              |
-| `node.perNodeServices.paraP2pService.type`                                | Define the type of the relay-chain P2P Services (`ClusterIP`, `NodePort` or `LoadBalancer`)                                                                                                                                                          | `ClusterIP`                                                         |
-| `node.perNodeServices.paraP2pService.annotations`                         | Annotations to be set on relay-chain P2P Services                                                                                                                                                                                                    | `{}`                                                                |
-| `node.perNodeServices.paraP2pService.port`                                | Port to use to expose the relay-chain P2P Service externally                                                                                                                                                                                         | `9944`                                                              |
-| `node.perNodeServices.paraP2pService.ws.enabled`                          | If true, creates a para-chain P2P Service for every node in the statefulset exposing the WebSocket P2P endpoint                                                                                                                                      | `false`                                                             |
-| `node.perNodeServices.paraP2pService.ws.port`                             | Port to use to expose the para-chain WebSocket P2P Service externally                                                                                                                                                                                | `30335`                                                             |
-| `node.perNodeServices.paraP2pService.externalDns.enabled`                 | If true, adds an [external-dns](https://github.com/kubernetes-sigs/external-dns) annotation to set a DNS record directing to the relay-chain P2P Service                                                                                             | `false`                                                             |
-| `node.perNodeServices.paraP2pService.externalDns.hostname`                | Define the base hostname for the relay-chain P2P Service external-dns DNS record which will be  (eg. for `hostname: example.com`, the annotation set will be `external-dns.alpha.kubernetes.io/hostname: POD_NAME.example.com`)                      | `example.com`                                                       |
-| `node.perNodeServices.paraP2pService.externalDns.ttl`                     | Define the TTL to be set for the relay-chain P2P Service external-dns DNS record                                                                                                                                                                     | `300`                                                               |
-| `node.perNodeServices.paraP2pService.externalDns.customPrefix`            | Custom prefix to use instead of prefixing the hostname with the name of the Pod                                                                                                                                                                                             | `""`                                                               |
-| `node.resources.requests`                                                 | The resources requests (cpu/memory) for nodes                                                                                                                                                                                                        | `{}`                                                                |
-| `node.serviceMonitor.enabled`                                             | If true, creates a Prometheus Operator ServiceMonitor                                                                                                                                                                                                | `false`                                                             |
-| `node.serviceMonitor.namespace`                                           | Prometheus namespace                                                                                                                                                                                                                                 | `nil`                                                               |
-| `node.serviceMonitor.internal`                                            | Prometheus scrape interval                                                                                                                                                                                                                           | `nil`                                                               |
-| `node.serviceMonitor.scrapeTimeout`                                       | Prometheus scrape timeout                                                                                                                                                                                                                            | `nil`                                                               |
-| `node.serviceMonitor.targetLabels`                                        | transfers labels on the Kubernetes Pod onto service monitor                                                                                                                                                                                          | `[nodes]`                                                           |
-| `node.tracing.enabled`                                                    | If true, creates a jaeger agent sidecar                                                                                                                                                                                                              | `false`                                                             |
-| `node.subtrateApiSiecar.enabled`                                          | If true, creates a substrate api sidecar                                                                                                                                                                                                             | `false`                                                             |
-| `node.perNodeServices.setPublicAddressToExternalIp.enabled`               | If true sets the `--public-addr` flag to be the NodePort p2p services external address                                                                                                                                                               | `false`                                                             |
-| `node.perNodeServices.setPublicAddressToExternalIP.ipRetrievalServiceUrl` | The external service to return the NodePort IP                                                                                                                                                                                                       | `https://ifconfig.io`                                               |
-
-### Other parameters
-
-| Parameter                          | Description                                                                                           | Default                                                                       |
-|------------------------------------|-------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
-| `image.repository`                 | Node image name                                                                                       | `parity/polkadot`                                                             |
-| `image.tag`                        | Node image tag                                                                                        | `latest`                                                                      |
-| `image.pullPolicy`                 | Node image pull policy                                                                                | `Always`                                                                      |
-| `initContainer.image.repository`   | Download-chain-snapshot init container image name                                                     | `alpine`                                                                      |
-| `initContainer.image.tag`          | Download-chain-snapshot init container image tag                                                      | `latest`                                                                      |
-| `googleCloudSdk.image.repository`  | Sync-chain-gcs init container image name                                                              | `google/cloud-sdk`                                                            |
-| `googleCloudSdk.image.tag`         | Sync-chain-gcs init container image tag                                                               | `slim`                                                                        |
-| `googleCloudSdk.serviceAccountKey` | Service account key (JSON) to inject into the Sync-chain-gcs init container using a Kubernetes secret | `nil`                                                                         |
-| `googleCloudSdk.gsutilFlags`       | Adds custom flags to the gsutil rsync command to copy the chain database from/to Gcs                  | `-m -o 'GSUtil:parallel_process_count=8' -o 'GSUtil:parallel_thread_count=4'` |
-| `ingress.enabled`                  | If true, creates an ingress                                                                           | `false`                                                                       |
-| `ingress.annotations`              | Annotations to add to the ingress (key/value pairs)                                                   | `{}`                                                                          |
-| `ingress.rules`                    | Set rules on the ingress                                                                              | `[]`                                                                          |
-| `ingress.tls`                      | Set TLS configuration on the ingress                                                                  | `[]`                                                                          |
-| `podSecurityContext`               | Set the pod security context for the substrate node container                                         | `{ runAsUser: 1000, runAsGroup: 1000, fsGroup: 1000 }`                        |
-| `jaegerAgent.image.repository`     | Jaeger agent image repository                                                                         | `jaegertracing/jaeger-agent`                                                  |
-| `jaegerAgent.image.tag`            | Jaeger agent image tag                                                                                | `1.28.0`                                                                      |
-| `jaegerAgent.ports.compactPort`    | Port to use for jaeger.thrift over compact thrift protocol                                            | `6831`                                                                        |
-| `jaegerAgent.ports.binaryPort`     | Port to use for jaeger.thrift over binary thrift protocol                                             | `6832`                                                                        |
-| `jaegerAgent.ports.samplingPort`   | Port for HTTP sampling strategies                                                                     | `5778`                                                                        |
-| `jaegerAgent.collector.url`        | The URL which jaeger agent sends data                                                                 | `nil`                                                                         |
-| `jaegerAgent.collector.port`       | The port which jaeger agent sends data                                                                | `14250`                                                                       |
-| `jaegerAgent.resources`       | Jaeger agent requests/limits                                                                | `{}`                                                                       |
-| `jaegerAgent.env`       | Jaeger agent environment variables                                                                | `{}`                                                                       |
-| `wsHealthExporter.image`           | WS Health Exporter image                                                                | `paritytech/ws-health-exporter`                                                                       |
-| `wsHealthExporter.tag`           | WS Health Exporter tag                                                                | `latest`                                                                       |
-| `wsHealthExporter.resources`           | WS Health Exporter requests/limits                                                                | `{}`                                                                       |
-| `wsHealthExporter.env`           | WS Health Exporter environment variables                                                                | `{}`                                                                       |
-| `extraContainers   `               | Sidecar containers to add to the node                                                                 | `[]`                                                                          |
-| `extraInitContainers   `           | Additional init containers to run in the pod                                                                 | `[]`                                                                          |
-| `serviceAccount`                   | ServiceAccount used in init containers                                                                | `{create: true, createRoleBinding: true,  annotations: {}}`                   |
-| `autoscaling.enabled`              | Enable the horizontal-pod-autoscaler                                                                  | `false`                                                                        |
-| `autoscaling.minReplicas`          | The minimum amount of HPA enabled replicas                                                            | `""`                                                                       |
-| `autoscaling.maxReplicas`          | The maximum amount of HPA enabled replicas                                                            | `""`                                                                       |
-| `autoscaling.targetCPU`            | The target average CPU utilization at which to scale up another pod                                   | `""`                                                                       |
-| `autoscaling.targetMemory`         | The target average memory utilization at which to scale up another pod                                | `""`                                                                       |
-| `autoscaling.additionalMetrics`    | A list of additional metric types use to scale up                                                     | `{}`                                                                       |
-| `retrieveServiceInfo.resources`    | Requests/Limits configuration for `retrieve-service-info` sidecar container                                                     | `{}`                                                                       |
-| `syncChainGCS.resources`    | Requests/Limits configuration for `sync-chain-gcs` sidecar container                                                     | `{}`                                                                       |
-| `syncRelayChainGCS.resources`    | Requests/Limits configuration for `sync-relay-chain-gcs` sidecar container                                                     | `{}`                                                                       |
-| `downloadChainspec.resources`    | Requests/Limits configuration for `download-chainspec` sidecar container                                                     | `{}`                                                                       |
-| `downloadRuntime.resources`    | Requests/Limits configuration for `download-runtime` sidecar container                                                     | `{}`                                                                       |
-| `persistGeneratedNodeKey.resources`    | Requests/Limits configuration for `persist-generated-node-key` sidecar container                                                     | `{}`                                                                       |
-| `injectKeys.resources`    | Requests/Limits configuration for `inject-*` sidecar containers                                                     | `{}`                                                                       |
+----------------------------------------------
+Autogenerated from chart metadata using [helm-docs v1.11.0](https://github.com/norwoodj/helm-docs/releases/v1.11.0)
