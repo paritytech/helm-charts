@@ -117,6 +117,10 @@ podSecurityContext:
   runAsGroup: 1000
   # -- Set container's Security Context fsGroup
   fsGroup: 1000
+  # -- Set container's Security Context readOnlyRootFilesystem
+  readOnlyRootFilesystem: true
+  # -- Set container's Security Context allowPrivilegeEscalation
+  allowPrivilegeEscalation: false
 
 # -- podDisruptionBudget configuration
 podDisruptionBudget:

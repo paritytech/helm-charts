@@ -450,8 +450,10 @@ If you're running a collator node:
 | podDisruptionBudget.enabled | bool | `false` | Enable podDisruptionBudget |
 | podDisruptionBudget.maxUnavailable | string | `nil` | maxUnavailable replicas |
 | podDisruptionBudget.minAvailable | string | `nil` | minAvailable replicas |
-| podSecurityContext | object | `{"fsGroup":1000,"runAsGroup":1000,"runAsUser":1000}` | SecurityContext holds pod-level security attributes and common container settings. This defaults to non root user with uid 1000 and gid 1000. ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
+| podSecurityContext | object | `{"allowPrivilegeEscalation":false,"fsGroup":1000,"readOnlyRootFilesystem":true,"runAsGroup":1000,"runAsUser":1000}` | SecurityContext holds pod-level security attributes and common container settings. This defaults to non root user with uid 1000 and gid 1000. ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
+| podSecurityContext.allowPrivilegeEscalation | bool | `false` | Set container's Security Context allowPrivilegeEscalation |
 | podSecurityContext.fsGroup | int | `1000` | Set container's Security Context fsGroup |
+| podSecurityContext.readOnlyRootFilesystem | bool | `true` | Set container's Security Context readOnlyRootFilesystem |
 | podSecurityContext.runAsGroup | int | `1000` | Set container's Security Context runAsGroup |
 | podSecurityContext.runAsUser | int | `1000` | Set container's Security Context runAsUser |
 | serviceAccount | object | `{"annotations":{},"create":true,"createRoleBinding":true,"name":""}` | Service account for the node to use. ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/ |
