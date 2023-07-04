@@ -86,6 +86,7 @@ spec:
           args:
             - -c
             - |
+              trap 'echo -e "Snapshot restoration failed. Checkout the logs for errors.\nRemoving /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }} ..."; rm -rf /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}' ERR
               set -eu -o pipefail {{ if .Values.initContainers.downloadChainSnapshot.debug }}-x{{ end }}
               if [ -d "/chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}" ]; then
                 echo "Database directory already exists, skipping chain snapshot download"
@@ -154,6 +155,7 @@ spec:
           args:
             - -c
             - |
+              trap 'echo -e "Snapshot restoration failed. Checkout the logs for errors.\nRemoving /chain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }} ..."; rm -rf /chain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}' ERR
               set -eu -o pipefail {{ if .Values.initContainers.downloadChainSnapshot.debug }}-x{{ end }}
               if [ -d "/chain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}" ]; then
                 echo "Database directory already exists, skipping chain snapshot download"
