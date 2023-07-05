@@ -524,7 +524,11 @@ node:
   # -- Pod management policy of stateful set.
   # ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies
   podManagementPolicy:
-
+  # -- Persistent volume claim retention policy of stateful set (ie. whether to retain or delete the attached PVCs when scaling down or deleting the stateful set).
+  # ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention
+  persistentVolumeClaimRetentionPolicy:
+#    whenDeleted: Delete
+#    whenScaled: Delete
   tracing:
     # -- Enable Jaeger Agent as a sidecar
     enabled: false

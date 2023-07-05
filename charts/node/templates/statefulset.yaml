@@ -15,6 +15,10 @@ spec:
     matchLabels:
   {{- $selectorLabels | nindent 6 }}
   podManagementPolicy: {{ default "OrderedReady" .Values.node.podManagementPolicy }}
+  {{- if .Values.node.persistentVolumeClaimRetentionPolicy }}
+  persistentVolumeClaimRetentionPolicy:
+    {{- toYaml .Values.node.persistentVolumeClaimRetentionPolicy | nindent 4 }}
+  {{- end }}
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.node.replicas | int }}
   {{- end }}
