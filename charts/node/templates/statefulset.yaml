@@ -87,10 +87,10 @@ spec:
             - -c
             - |
               set -eu -o pipefail {{ if .Values.initContainers.downloadChainSnapshot.debug }}-x{{ end }}
-              trap 'echo -e "Snapshot restoration failed. Checkout the logs for errors.\nRemoving /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }} ..."; rm -rf /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}' ERR
               if [ -d "/chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}" ]; then
                 echo "Database directory already exists, skipping chain snapshot download"
               else
+                trap 'echo -e "Snapshot restoration failed. Checkout the logs for errors.\nRemoving /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }} ..."; rm -rf /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}' ERR
                 PARALLEL_TRANFERS="$(($(nproc --all) * 5 < 50 ? $(nproc --all) * 5 : 50))" # MIN(vCPU_count * 5, 50)
                 echo "Downloading chain snapshot"
                 SNAPSHOT_URL="{{ .Values.node.chainData.chainSnapshot.url }}"
@@ -155,11 +155,11 @@ spec:
           args:
             - -c
             - |
-              trap 'echo -e "Snapshot restoration failed. Checkout the logs for errors.\nRemoving /chain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }} ..."; rm -rf /chain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}' ERR
               set -eu -o pipefail {{ if .Values.initContainers.downloadChainSnapshot.debug }}-x{{ end }}
               if [ -d "/chain-data/chains/${RELAY_CHAIN_PATH}/{{ $databasePath }}" ]; then
                 echo "Database directory already exists, skipping chain snapshot download"
               else
+                trap 'echo -e "Snapshot restoration failed. Checkout the logs for errors.\nRemoving /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }} ..."; rm -rf /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}' ERR
                 PARALLEL_TRANFERS="$(($(nproc --all) * 5 < 50 ? $(nproc --all) * 5 : 50))" # MIN(vCPU_count * 5, 50)
                 echo "Downloading chain snapshot"
                 SNAPSHOT_URL="{{ .Values.node.collatorRelayChain.chainData.chainSnapshot.url }}"
