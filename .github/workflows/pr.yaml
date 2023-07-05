@@ -57,9 +57,10 @@ jobs:
       if: steps.list-changed.outputs.changed
 
     - name: Create kind cluster
-      uses: helm/kind-action@v1.4.0
+      uses: helm/kind-action@v1.7.0
       with:
-        node_image: kindest/node:v1.21.10
+        node_image: kindest/node:v1.27.3
+        config: chart-testing/kind-config.yaml
       if: steps.list-changed.outputs.changed
 
     - name: Replace secrets in Helm charts

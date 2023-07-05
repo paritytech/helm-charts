@@ -9,5 +9,9 @@ node:
     storageClass: standard
   chainKeystore:
     storageClass: standard
+  podManagementPolicy: Parallel
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Delete
+    whenScaled: Delete
 image:
   tag: v0.9.43
