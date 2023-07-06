@@ -314,6 +314,19 @@ entries:
     version: 0.1.0
   node:
   - apiVersion: v2
+    created: "2023-07-06T11:03:00.396879727Z"
+    description: A Helm chart to deploy Substrate/Polkadot nodes
+    digest: e0533fdf4399ceb47b172604028caf95873ca809d0516f86f3a6f65cc2a20f0c
+    maintainers:
+    - email: devops+helm@parity.io
+      name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: node
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/node-5.0.2/node-5.0.2.tgz
+    version: 5.0.2
+  - apiVersion: v2
     created: "2023-07-03T16:34:14.489622178Z"
     description: A Helm chart to deploy Substrate/Polkadot nodes
     digest: 6e84860b6b770c0016bd96270012bc474fbe55fba67734dc055cc1d8a462b208
@@ -2432,4 +2445,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/testnet-manager-1.0.0/testnet-manager-1.0.0.tgz
     version: 1.0.0
-generated: "2023-07-03T16:34:14.490060693Z"
+generated: "2023-07-06T11:03:00.398064535Z"
