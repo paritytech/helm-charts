@@ -33,6 +33,14 @@ jobs:
       with:
         python-version: "3.11"
 
+    - name: Install pre-commit and helm-docs
+      run: |
+        pip install pre-commit==3.3.3
+        curl -fSsL -o - https://github.com/norwoodj/helm-docs/releases/download/v1.11.0/helm-docs_1.11.0_Linux_x86_64.tar.gz | tar -xz -C /usr/local/bin helm-docs
+
+    - name: Run pre-commit hooks
+      run: pre-commit run --all-files
+
     - name: Set up chart-testing
       uses: helm/chart-testing-action@v2.3.1
 
@@ -55,14 +63,6 @@ jobs:
           --lint-conf chart-testing/lintconf.yaml \
           --charts ${{ steps.list-changed.outputs.changed }}
       if: steps.list-changed.outputs.changed
-
-    - name: Install pre-commit and helm-docs
-      run: |
-        pip install pre-commit==3.3.3
-        curl -fSsL -o - https://github.com/norwoodj/helm-docs/releases/download/v1.11.0/helm-docs_1.11.0_Linux_x86_64.tar.gz | tar -xz -C /usr/local/bin helm-docs
-
-    - name: Run pre-commit hooks
-      run: pre-commit run --all-files
 
     - name: Create kind cluster
       uses: helm/kind-action@v1.7.0
