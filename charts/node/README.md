@@ -3,7 +3,12 @@ DO NOT EDIT README.md manually!
 We're using [helm-docs](https://github.com/norwoodj/helm-docs) to render values of the chart.
 If you updated values.yaml file make sure to render a new README.md locally before submitting a Pull Request.
 
-If you're using [pre-commit](https://pre-commit.com/) REAMDE.md will be updated automatically.
+If you're using [pre-commit](https://pre-commit.com/) make sure to install the hooks first:
+```
+pre-commit install
+```
+REAMDE.md will be updating automatically after that.
+
 Otherwise, you should install helm-docs and manually update README.md. Navigate to repository root and run:
 `helm-docs --chart-search-root=charts/node --template-files=README.md.gotmpl`
 

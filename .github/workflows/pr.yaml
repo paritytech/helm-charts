@@ -27,11 +27,19 @@ jobs:
     - name: Set up Helm
       uses: azure/setup-helm@v3.3
       with:
-        version: v3.8.1
+        version: v3.12.1
 
     - uses: actions/setup-python@v4
       with:
-        python-version: "3.10"
+        python-version: "3.11"
+
+    - name: Install pre-commit and helm-docs
+      run: |
+        pip install pre-commit==3.3.3
+        curl -fSsL -o - https://github.com/norwoodj/helm-docs/releases/download/v1.11.0/helm-docs_1.11.0_Linux_x86_64.tar.gz | tar -xz -C /usr/local/bin helm-docs
+
+    - name: Run pre-commit hooks
+      run: pre-commit run --all-files
 
     - name: Set up chart-testing
       uses: helm/chart-testing-action@v2.3.1
