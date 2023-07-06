@@ -56,6 +56,12 @@ jobs:
           --charts ${{ steps.list-changed.outputs.changed }}
       if: steps.list-changed.outputs.changed
 
+    - name: Install pre-commit
+      run: pip install pre-commit==3.3.3
+
+    - name: Run pre-commit hooks
+      run: pre-commit run --all-files
+
     - name: Create kind cluster
       uses: helm/kind-action@v1.7.0
       with:
@@ -82,9 +88,3 @@ jobs:
         --target-branch ${{ github.event.repository.default_branch }} \
         --charts ${{ steps.list-changed.outputs.changed }}
       if: steps.list-changed.outputs.changed
-
-    - name: Install pre-commit
-      run: pip install pre-commit==3.3.3
-
-    - name: Run pre-commit hooks
-      run: pre-commit run --all-files
