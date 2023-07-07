@@ -268,7 +268,7 @@ spec:
             - |
               set -eu -o pipefail {{ if .Values.initContainers.downloadRuntime.debug }}-x{{ end }}
               mkdir -p {{ .Values.node.wasmRuntimeOverridesPath }}
-              wget -nc -P {{ .Values.node.wasmRuntimeOverridesPath }} {{ .Values.node.wasmRuntimeUrl }}
+              test -f "{{ .Values.node.wasmRuntimeOverridesPath }}/$(basename {{ .Values.node.wasmRuntimeUrl }})" || wget -P {{ .Values.node.wasmRuntimeOverridesPath }} {{ .Values.node.wasmRuntimeUrl }}
           resources:
           {{- toYaml .Values.initContainers.downloadRuntime.resources | nindent 12 }}
           volumeMounts:
