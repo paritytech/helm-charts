@@ -398,7 +398,7 @@ node:
   #   - "--prometheus-port {{ .Values.node.prometheus.port }}"
   prometheus:
     # -- Expose Prometheus metrics
-    enabled: false
+    enabled: true
     # -- The port for exposed Prometheus metrics
     port: 9615
 
