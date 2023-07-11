@@ -1,5 +1,4 @@
 # These charts do not yet support generating README.md with helm-docs
-bridges-common-relay/
 common/
 polkadot-basic-notification/
 polkadot-introspector/
