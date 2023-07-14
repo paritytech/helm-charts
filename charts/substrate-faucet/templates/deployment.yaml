@@ -49,8 +49,6 @@ spec:
           {{- end }}
             - name: SMF_CONFIG_DEPLOYED_REF
               value: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-            - name: SMF_CONFIG_DEPLOYED_TIME
-              value: {{ now | date "2006-01-02T15:04:05" | quote }}
             - name: SMF_CONFIG_EXTERNAL_ACCESS
               value: {{ .Values.faucet.externalAccess | quote }}
           ports:
