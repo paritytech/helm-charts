@@ -2,7 +2,6 @@
 common/
 polkadot-basic-notification/
 polkadot-introspector/
-polkadot-runtime-exporter/
 polkadot-stps/
 staking-miner/
 substrate-faucet/
