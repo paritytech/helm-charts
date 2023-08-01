@@ -2339,6 +2339,19 @@ entries:
   substrate-telemetry:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2023-08-01T09:00:49.065108753Z"
+    description: A Helm chart for substrate-telemetry
+    digest: ef395d768890a0f44a9b0609dd2d2db08852014374fa97ac7ec49fe97eef71a7
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: substrate-telemetry
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/substrate-telemetry-2.3.0/substrate-telemetry-2.3.0.tgz
+    version: 2.3.0
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2022-08-22T14:16:04.44283444Z"
     description: A Helm chart for substrate-telemetry
     digest: b16c2d3b24281b19c1685fb3c9397226d5a566efe4a22b21bd0b3fd8ad85dc53
@@ -2548,4 +2561,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/testnet-manager-1.0.0/testnet-manager-1.0.0.tgz
     version: 1.0.0
-generated: "2023-07-14T07:33:57.686977291Z"
+generated: "2023-08-01T09:00:49.065508357Z"
