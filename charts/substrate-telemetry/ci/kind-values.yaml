@@ -1,0 +1,5 @@
+autoscaling:
+  shard:
+    enabled: true
+  frontend:
+    enabled: true
