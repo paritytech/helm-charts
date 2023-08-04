@@ -19,3 +19,4 @@ autoscaling:
   enabled: true
   targetCPU: 80
   targetMemory: 80
+  maxReplicas: 2
