@@ -12,6 +12,9 @@ service:
     targetPort: 80
     protocol: TCP
 
+autoscaling:
+  enabled: true
+
 env:
   RANDOM_ENV_VAR: justsomerandom
 

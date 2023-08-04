@@ -1,6 +1,6 @@
 {{ $fullname :=  include "node.fullname" . }}
 {{- if .Values.autoscaling.enabled }}
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ $fullname }}
