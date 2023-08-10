@@ -733,12 +733,25 @@ spec:
             - name: {{ $key }}
               value: {{ $val | squote }}
             {{- end }}
+          args:
+          {{- range .Values.substrateApiSidecar.args }}
+            - "{{ . }}"
+          {{- end }}
+          {{- if .Values.substrateApiSidecar.metrics.enabled }}
+            - "--prometheus"
+            - "--prometheus-port={{ .Values.substrateApiSidecar.metrics.port }}"
+          {{- end }}
           resources:
           {{- toYaml .Values.substrateApiSidecar.resources | nindent 12 }}
           ports:
             - containerPort: 8080
               name: api-sidecar
               protocol: TCP
+            {{- if .Values.substrateApiSidecar.metrics.enabled }}
+            - containerPort: {{ .Values.substrateApiSidecar.metrics.port }}
+              name: prom-sidecar
+              protocol: TCP
+            {{- end }}
         {{- end }}
         {{- if .Values.node.tracing.enabled }}
         - name: jaeger-agent-sidecar
