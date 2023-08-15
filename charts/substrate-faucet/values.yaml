@@ -125,3 +125,20 @@ ingress:
   ## @param ingress.enabled Specifies whether as Ingress should be created
   ##
   enabled: false
+
+postgresql:
+  global:
+    postgresql:
+      auth:
+        postgresPassword: "Secret!"
+  primary:
+    persistence:
+      storageClass: "ssd-csi"
+      size: 4Gi
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1024Mi
+      requests:
+        cpu: 250m
+        memory: 512Mi
