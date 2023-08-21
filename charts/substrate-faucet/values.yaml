@@ -133,7 +133,6 @@ postgresql:
         postgresPassword: "Secret!"
   primary:
     persistence:
-      storageClass: "ssd-csi"
       size: 4Gi
     resources:
       limits:
