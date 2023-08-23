@@ -130,6 +130,7 @@ postgresql:
   global:
     postgresql:
       auth:
+        database: faucet
         postgresPassword: "Secret!"
   primary:
     persistence:
