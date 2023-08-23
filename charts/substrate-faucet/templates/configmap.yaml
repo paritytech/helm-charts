@@ -7,4 +7,9 @@ data:
   {{- range $key, $val := .Values.faucet.config }}
   {{ $key }}: {{ $val | quote }}
   {{- end }}
+  POSTGRESQL_HOST: "{{ .Release.Name }}-postgresql"
+  POSTGRESQL_PORT: "5432"
+  POSTGRESQL_USERNAME: postgres
+  POSTGRESQL_DATABASE: postgres
+  POSTGRESQL_SSLMODE: disable
 {{- end }}

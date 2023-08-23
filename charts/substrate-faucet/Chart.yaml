@@ -2,7 +2,11 @@ apiVersion: v2
 name: substrate-faucet
 description: A Helm chart to deploy substrate-faucet
 type: application
-version: 2.2.2
+version: 3.0.0
 maintainers:
   - name: Parity
     url: https://github.com/paritytech/helm-charts
+dependencies:
+  - name: postgresql
+    version: "12.8.3"
+    repository: "https://charts.bitnami.com/bitnami"

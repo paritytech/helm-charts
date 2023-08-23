@@ -7,11 +7,12 @@ The helm chart installs the [Substrate Matrix faucet](https://github.com/parityt
 To deploy a Westend faucet:
 ```console
 helm repo add parity https://paritytech.github.io/helm-charts/
+helm dependency update
 helm install substrate-faucet parity/substrate-faucet \
     --set faucet.secret.SMF_CONFIG_FAUCET_ACCOUNT_MNEMONIC="//Alice" \
     --set faucet.secret.SMF_CONFIG_MATRIX_ACCESS_TOKEN="******" \
     --set faucet.config.SMF_CONFIG_MATRIX_SERVER="https://matrix.org" \
-    --set faucet.config.SMF_CONFIG_MATRIX_BOT_USER_ID="@test_bot_faucet:matrix.org" 
+    --set faucet.config.SMF_CONFIG_MATRIX_BOT_USER_ID="@test_bot_faucet:matrix.org" \
     --set faucet.config.SMF_CONFIG_NETWORK="westend" 
 ```
 

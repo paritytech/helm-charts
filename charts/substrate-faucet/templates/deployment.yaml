@@ -33,24 +33,15 @@ spec:
           env:
             - name: SMF_CONFIG_PORT
               value: "5555"
-          {{- range $key, $val := .Values.faucet.secret }}
-            - name: {{ $key }}
-              valueFrom:
-                secretKeyRef:
-                  key: {{ $key }}
-                  name: {{ $.Values.faucet.existingSecret | default (printf "%s-secret" $.Release.Name) }}
-          {{- end }}
-          {{- range $key, $val := .Values.faucet.config }}
-            - name: {{ $key }}
-              valueFrom:
-                configMapKeyRef:
-                  key: {{ $key }}
-                  name: {{ $.Values.faucet.existingConfigMap | default (printf "%s-config" $.Release.Name) }}
-          {{- end }}
             - name: SMF_CONFIG_DEPLOYED_REF
               value: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
             - name: SMF_CONFIG_EXTERNAL_ACCESS
               value: {{ .Values.faucet.externalAccess | quote }}
+          envFrom:
+            - configMapRef:
+                name: {{ $.Values.faucet.existingConfigMap | default (printf "%s-config" $.Release.Name) }}
+            - secretRef:
+                name: {{ $.Values.faucet.existingSecret | default (printf "%s-secret" $.Release.Name) }}
           ports:
             - name: http
               containerPort: 5555
