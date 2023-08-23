@@ -2151,6 +2151,22 @@ entries:
     version: 1.0.0
   substrate-faucet:
   - apiVersion: v2
+    created: "2023-08-23T14:23:26.931985552Z"
+    dependencies:
+    - name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.8.3
+    description: A Helm chart to deploy substrate-faucet
+    digest: 2edc7195ff72aa61f33041c74a97ac68edc837b35d8ad877611aa584eb6eeedd
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: substrate-faucet
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/substrate-faucet-3.0.1/substrate-faucet-3.0.1.tgz
+    version: 3.0.1
+  - apiVersion: v2
     created: "2023-08-23T10:58:04.536934852Z"
     dependencies:
     - name: postgresql
@@ -2641,4 +2657,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/testnet-manager-1.0.0/testnet-manager-1.0.0.tgz
     version: 1.0.0
-generated: "2023-08-23T10:58:04.537652509Z"
+generated: "2023-08-23T14:23:26.932486455Z"
