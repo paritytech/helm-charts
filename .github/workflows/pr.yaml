@@ -90,3 +90,24 @@ jobs:
         --target-branch ${{ github.event.repository.default_branch }} \
         --charts ${{ steps.list-changed.outputs.changed }}
       if: steps.list-changed.outputs.changed
+
+  validate-manifests:
+    runs-on: ubuntu-latest
+    container: docker.io/paritytech/kube-manifests-validation:k8s-1.25.9-gator-3.12.0-datree-1.9.19-9196b4c
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - run: |
+        git config --system --add safe.directory $GITHUB_WORKSPACE
+        git fetch origin "+${GITHUB_BASE_REF}:${GITHUB_BASE_REF}"
+
+    - name: Validate manifests
+      run: |
+        /app/validate-k8s-manifests.sh \
+          --datree-policy-config /app/datree-policies.yaml \
+          --git-ref-changed-paths $GITHUB_BASE_REF \
+          --skip-gatekeeper \
+          charts
