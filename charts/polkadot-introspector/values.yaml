@@ -1,41 +1,62 @@
-nameOverride: ""
-fullnameOverride: ""
-
-image:
-  repository: paritytech/polkadot-introspector
-  pullPolicy: Always
-  tag: latest
-
-imagePullSecrets: []
-
+# -- Number of replicas for the pod
 replicas: 1
 
+image:
+  # -- Image repository
+  repository: paritytech/polkadot-introspector
+  # -- Image pull policy
+  pullPolicy: Always
+  # -- Image tag
+  tag: latest
+
+# -- Reference to one or more secrets to be used when pulling images.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+imagePullSecrets: []
+# -- Provide a name in place of node for `app:` labels
+nameOverride: ""
+# -- Provide a name to substitute for the full names of resources
+fullnameOverride: ""
+# -- Additional common labels on pods and services
+extraLabels: {}
+
 introspector:
+  # -- Main subcommand to use by introspector (block-time,parachain-tracer)
   role: block-time
+  # -- List of RPC nodes to connect when in block-time mode
   rpcNodes:
     - wss://rpc.polkadot.io:443
     - wss://kusama-rpc.polkadot.io:443
+  # -- Automatically collect metrics for all parachain when in pararchain-tracer mode
   enableAllParas: false
+  # -- Parachain ID for which to collect metrics when in pararchain-tracer mode
   paraIds: []
+  # -- Prometheus Port to expose the metrics
   prometheusPort: 9615
-  # See https://github.com/paritytech/polkadot-introspector/blob/f0d77dc58b405e73b92b7dbb64252a8a76bd1984/README.md#building
-  # Value should be `polkadot` or `rococo`
-  runtime: polkadot
+  # -- Enable verbose logging
   verboseLogging: false
+  # -- Extra args to pass to the introspector command
   extraArgs: []
 
+# -- Service account for the node to use.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
 serviceAccount:
+  # -- Enable creation of a Service Account for the main container
   create: true
-#  annotations: {}
-#  name: ""
+  # -- Annotations to add to the Service Account
+  annotations: {}
 
-extraLabels: []
-
+# -- Annotations to add to the Pod
 podAnnotations: {}
 
+# -- SecurityContext holds pod-level security attributes and common container settings.
+# This defaults to non root user with uid 1000 and gid 1000.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
 podSecurityContext:
+  # -- Set container's Security Context runAsUser
   runAsUser: 1000
+  # -- Set container's Security Context runAsGroup
   runAsGroup: 1000
+  # -- Set container's Security Context fsGroup
   fsGroup: 1000
 
 securityContext: {}
@@ -46,36 +67,61 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+# -- Service
 service:
+  # -- Service type
   type: ClusterIP
+  # -- Service port
   port: 9615
 
+# -- Service Monitor of Prometheus-Operator
+# ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors
 serviceMonitor:
+  # -- Enables Service Monitor
   enabled: false
+  # -- Namespace to deploy Service Monitor. If not set deploys in the same namespace with the chart
+  namespace:
+  # -- Scrape interval
   interval: 1m
+  # -- Scrape timeout
   scrapeTimeout: 30s
+  # -- Labels to scrape
   targetLabels: []
+  # -- Relabelings config
+  relabelings: []
+  # -- Metric relabelings config
+  metricRelabelings: []
 
+# -- Creates an ingress resource
 ingress:
+  # -- Enable creation of Ingress
   enabled: false
-  className: ""
+  # -- Annotations to add to the Ingress
   annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
+  #  kubernetes.io/ingress.class: nginx
+  #  kubernetes.io/tls-acme: "true"
+  # -- Ingress class name
+  className: ""
+  # -- Ingress rules configuration
+  rules: []
+  #  - host: chart-example.local
+  #    paths:
+  #      - serviceName: node
+  #        servicePort: 9944
+  # -- Ingress TLS configuration
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
 
+# -- Resource limits & requests
 resources: {}
 
+# -- Define which Nodes the Pods are scheduled on
 nodeSelector: {}
 
+# -- Tolerations for use with node taints
 tolerations: []
 
+# -- Assign custom affinity rules
 affinity: {}

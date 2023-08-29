@@ -1,7 +1,6 @@
 # These charts do not yet support generating README.md with helm-docs
 common/
 polkadot-basic-notification/
-polkadot-introspector/
 polkadot-stps/
 staking-miner/
 substrate-faucet/
