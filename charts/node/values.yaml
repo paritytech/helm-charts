@@ -598,6 +598,13 @@ substrateApiSidecar:
     repository: parity/substrate-api-sidecar
     # -- Image tag
     tag: latest
+  metrics:
+    enabled: false
+    port: 9100
+  # -- Arguments to set on the API sidecar
+  args:
+    - "node"
+    - "build/src/main.js"
   # -- Environment variables to set on the API sidecar
   env: {}
   # -- Resource limits & requests
