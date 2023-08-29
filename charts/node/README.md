@@ -18,7 +18,7 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 
 # Substrate/Polkadot node helm chart
 
-![Version: 5.1.7](https://img.shields.io/badge/Version-5.1.7-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 5.2.1](https://img.shields.io/badge/Version-5.2.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 ## Maintainers
 
@@ -465,7 +465,8 @@ If you're running a collator node:
 | serviceAccount.create | bool | `true` | Enable creation of a Service Account for the main container |
 | serviceAccount.createRoleBinding | bool | `true` | Creates RoleBinding |
 | serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
-| substrateApiSidecar | object | `{"env":{},"image":{"repository":"parity/substrate-api-sidecar","tag":"latest"},"resources":{}}` | Configuration of Substrate API ref: https://github.com/paritytech/substrate-api-sidecar |
+| substrateApiSidecar | object | `{"args":["node","build/src/main.js"],"env":{},"image":{"repository":"parity/substrate-api-sidecar","tag":"latest"},"metrics":{"enabled":false,"port":9100},"resources":{}}` | Configuration of Substrate API ref: https://github.com/paritytech/substrate-api-sidecar |
+| substrateApiSidecar.args | list | `["node","build/src/main.js"]` | Arguments to set on the API sidecar |
 | substrateApiSidecar.env | object | `{}` | Environment variables to set on the API sidecar |
 | substrateApiSidecar.image.repository | string | `"parity/substrate-api-sidecar"` | Image repository |
 | substrateApiSidecar.image.tag | string | `"latest"` | Image tag |
