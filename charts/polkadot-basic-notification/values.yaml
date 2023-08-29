@@ -1,7 +1,5 @@
-# Default values for polkadot-basic-notification.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
+# -- polkadot-basic-notification configuration
+# See https://github.com/paritytech/polkadot-basic-notification for the details
 config:
   # number of items in configFiles is equals to replicaCount
   configFiles:
@@ -26,41 +24,58 @@ config:
           accessToken: "Pass via MATRIX_ACCESSTOKEN env variable secret"
           roomId: "!1234example4321:matrix.parity.io"
           server: "https://matrix.parity.io"
+  # -- Set configuratio variables as a Secret
   secret:
+    # -- Access token for the Matrix server
     MATRIX_ACCESSTOKEN: ""
+    # -- User ID for the Matrix server
     MATRIX_USERID: ""
-    # A name of the existing secret with MATRIX_ACCESSTOKEN and MATRIX_USERID. See secrets.yaml
+    # -- A name of the existing secret with MATRIX_ACCESSTOKEN and MATRIX_USERID. See secrets.yaml
     existingSecret: ""
 
+# -- Environment variables to set on the main container
 env: {}
 
+# -- Environment variables to set on the main container from a ConfigMap or a Secret
 envFrom: []
 
+# -- Image of the main container
 image:
+  # -- Image repository
   repository: paritytech/polkadot-basic-notification
+  # -- Image pull policy
   pullPolicy: Always
-  # Overrides the image tag whose default is the chart appVersion.
+  # -- Image tag
   tag: latest
 
+# -- Reference to one or more secrets to be used when pulling images.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
+
+# -- Provide a name in place of node for `app:` labels
 nameOverride: ""
+# -- Provide a name to substitute for the full names of resources
 fullnameOverride: ""
 
+# -- Service account to use.
 serviceAccount:
-  # Specifies whether a service account should be created
+  # -- Specifies whether a service account should be created
   create: true
-  # Annotations to add to the service account
+  # -- Annotations to add to the service account
   annotations: {}
-  # The name of the service account to use.
+  # -- The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
+# -- Service Monitor of Prometheus-Operator
+# ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors
 serviceMonitor:
+  # -- Enables Service Monitor
   enabled: false
+  # -- Annotations to assign to the ServiceMonitor
   annotations: {}
 
-  ## List of endpoints of service which Prometheus scrapes
-  ##
+  # -- List of endpoints of service which Prometheus scrapes
   endpoints:
   - path: /metrics
     port: http
@@ -69,11 +84,15 @@ serviceMonitor:
     scrapeTimeout: 30s
     honorLabels: true
 
+# -- Annotations to assign to the Pods
 podAnnotations: {}
 
+# -- SecurityContext holds pod-level security attributes and common container settings.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
 podSecurityContext: {}
   # fsGroup: 2000
 
+# -- SecurityContext settings for the main container
 securityContext: {}
   # capabilities:
   #   drop:
@@ -82,6 +101,7 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+# -- Resource limits & requests
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
@@ -94,8 +114,11 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
+# -- Define which Nodes the Pods are scheduled on
 nodeSelector: {}
 
+# -- Tolerations for use with node taints
 tolerations: []
 
+# -- Assign custom affinity rules
 affinity: {}

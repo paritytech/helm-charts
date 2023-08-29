@@ -1,0 +1,38 @@
+<!--
+DO NOT EDIT README.md manually!
+We're using [helm-docs](https://github.com/norwoodj/helm-docs) to render values of the chart.
+If you updated values.yaml file make sure to render a new README.md locally before submitting a Pull Request.
+
+If you're using [pre-commit](https://pre-commit.com/) make sure to install the hooks first:
+```
+pre-commit install
+```
+REAMDE.md will be updating automatically after that.
+
+Otherwise, you should install helm-docs and manually update README.md. Navigate to repository root and run:
+`helm-docs --chart-search-root=charts/polkadot-stps --template-files=README.md.gotmpl`
+
+You may encounter `files were modified by this hook` error after updating README.md.gotmpl file when using pre-commit.
+This is intended behaviour. Make sure to run `git add -A` once again to stage changes in the auto-updated REAMDE.md
+-->
+
+# Polkadot stps Helm chart
+
+The helm chart installs [Polkadot STPS](https://github.com/paritytech/polkadot-stps).
+
+{{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}{{ template "chart.appVersionBadge" . }}
+
+{{ template "chart.maintainersSection" . }}
+
+## Installing the chart
+
+```console
+helm repo add parity https://paritytech.github.io/helm-charts/
+helm install polkadot-stps parity/polkadot-stps
+```
+
+{{ template "chart.requirementsSection" . }}
+
+{{ template "chart.valuesSection" . }}
+
+{{ template "helm-docs.versionFooter" . }}

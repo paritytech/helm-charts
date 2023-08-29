@@ -1,43 +1,78 @@
+# -- Provide a name in place of node for `app:` labels
 nameOverride: ""
+# -- Provide a name to substitute for the full names of resources
 fullnameOverride: ""
 
+# -- Image for the main container
 image:
+  # -- Image repository
   repository: paritytech/polkadot-introspector
+  # -- Image pull policy
   pullPolicy: Always
+  # -- Image tag
   tag: latest
 
+# -- Reference to one or more secrets to be used when pulling images.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
 
+# -- Number of replicas to deploy
 replicas: 1
 
+# -- Introspector configuration
+# See https://github.com/paritytech/polkadot-introspector
 introspector:
+  # -- Role of the introspector
+  # See https://github.com/paritytech/polkadot-introspector#tools-available
   role: block-time
+  # -- RPC nodes to connect to
   rpcNodes:
     - wss://rpc.polkadot.io:443
     - wss://kusama-rpc.polkadot.io:443
+  # -- Enable all parachains monitoring
   enableAllParas: false
+  # -- Parachain IDs to monitor
   paraIds: []
+  # -- Prometheus exporter port
   prometheusPort: 9615
+  # -- Runtime type
   # See https://github.com/paritytech/polkadot-introspector/blob/f0d77dc58b405e73b92b7dbb64252a8a76bd1984/README.md#building
   # Value should be `polkadot` or `rococo`
   runtime: polkadot
+  # -- Enable verbose logging
   verboseLogging: false
+  # -- Extra arguments to pass to the Introspector CLI
   extraArgs: []
 
+# -- Service account for the node to use.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
 serviceAccount:
+  # -- Enable creation of a Service Account for the main container
   create: true
-#  annotations: {}
-#  name: ""
+  # -- Annotations to add to the Service Account
+  annotations: {}
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
 
+# -- Additional common labels on pods and services
 extraLabels: []
 
+# -- Annotations to add to the Pod
 podAnnotations: {}
 
+# -- SecurityContext holds pod-level security attributes and common container settings.
+# This defaults to non root user with uid 1000 and gid 1000.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
 podSecurityContext:
+  # -- Set container's Security Context runAsUser
   runAsUser: 1000
+  # -- Set container's Security Context runAsGroup
   runAsGroup: 1000
+  # -- Set container's Security Context fsGroup
   fsGroup: 1000
 
+# -- SecurityContext settings for the main container
 securityContext: {}
   # capabilities:
   #   drop:
@@ -46,36 +81,55 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+# -- Configration of the Service
 service:
-  type: ClusterIP
+  # -- Service type
+  type: ClusterIP # or NodePort, LoadBalancer
+  # -- Service port to expose
   port: 9615
 
+# -- Service Monitor of Prometheus-Operator
+  # ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors
 serviceMonitor:
+  # -- Enables Service Monitor
   enabled: false
+  # -- Scrape interval
   interval: 1m
+  # -- Scrape timeout
   scrapeTimeout: 30s
+  # -- Labels to scrape
   targetLabels: []
 
+# -- Creates an ingress resource
 ingress:
+  # -- Enable creation of Ingress
   enabled: false
+  # -- Ingress class name
   className: ""
+  # -- Annotations to add to the Ingress
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
+  # -- A list of hosts for the Ingress
   hosts:
     - host: chart-example.local
       paths:
         - path: /
           pathType: ImplementationSpecific
+  # -- Ingress TLS configuration
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
 
+# -- Resource limits & requests
 resources: {}
 
+# -- Define which Nodes the Pods are scheduled on
 nodeSelector: {}
 
+# -- Tolerations for use with node taints
 tolerations: []
 
+# -- Assign custom affinity rules
 affinity: {}

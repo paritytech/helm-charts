@@ -25,3 +25,4 @@ appVersion: "1.16.0"
 maintainers:
   - name: Parity
     url: https://github.com/paritytech/helm-charts
+    email: devops+helm@parity.io

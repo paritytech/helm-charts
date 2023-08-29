@@ -1,65 +1,96 @@
-# Default values for substrate-telemtry.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-
+# -- Number of replicas to deploy
 replicaCount:
+  # -- Number of Shard service replicas
   # NOTE: The core service is not scalable at the moment.
   shard: 1
+  # -- Number of Core service replicas
   core: 1
+  # -- Number of Frontend service replicas
   frontend: 1
 
+# -- Image to use for the service
 image:
+  # -- Image for the backend service
   backend:
+    # -- Image repository
     repository: docker.io/parity/substrate-telemetry-backend
+    # -- Image pull policy
     pullPolicy: IfNotPresent
-    # Overrides the image tag whose default is the chart appVersion.
+    # -- Image tag
     tag: latest
+  # -- Image for the frontend service
   frontend:
+    # -- Image repository
     repository: docker.io/parity/substrate-telemetry-frontend
+    # -- Image pull policy
     pullPolicy: IfNotPresent
-    # Overrides the image tag whose default is the chart appVersion.
+    # -- Image tag
     tag: latest
 
+# -- Reference to one or more secrets to be used when pulling images.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
+# -- Provide a name in place of node for `app:` labels
 nameOverride: ""
+# -- Provide a name to substitute for the full names of resources
 fullnameOverride: ""
 
+# -- Environment variables to set on the main containers
 envVars:
+  # -- Environment variables to set on the shard service
   shard: {}
+  # -- Environment variables to set on the core service
   core: {}
+  # -- Environment variables to set on the frontend service
   frontend:
-    # The frontend docker container makes this available to the UI,
+    # -- The frontend docker container makes this available to the UI,
     # so that it knows where to look for feed information:
     SUBSTRATE_TELEMETRY_URL: "wss://core-service-domain.com"
 
+# -- Extra arguments to pass to the services
 extraArgs:
+  # -- Extra arguments to pass to the shard service
   shard: {}
+  # -- Extra arguments to pass to the core service
   core: {}
 
+# -- Service Monitor of Prometheus-Operator
+# ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors
 serviceMonitor:
+  # -- Expose ServiceMonitor on the core service
   # Only core service has Prometheus metrics exposed at the moment.
   core:
+    # -- Enables Service Monitor
     enabled: false
+    # -- Scrape interval
     interval: ""
+    # -- Additional labels to assign to the ServiceMonitor
     additionalLabels: {}
+    # -- Annotations to assign to the ServiceMonitor
     annotations: {}
-    # scrapeTimeout: 10s
+    # -- Scrape timeout
+    scrapeTimeout: 10s
 
+# -- Service account for the node to use.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
 serviceAccount:
-  # Specifies whether a service account should be created
-  create: false
-  # Annotations to add to the service account
+  # -- Enable creation of a Service Account for the main container
+  create: true
+  # -- Annotations to add to the Service Account
   annotations: {}
-  # The name of the service account to use.
+  # -- The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
+# -- Annotations to add to the Pod
 podAnnotations: {}
 
+# -- SecurityContext holds pod-level security attributes and common container settings.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
 podSecurityContext: {}
   # fsGroup: 2000
 
+# -- SecurityContext settings
 securityContext: {}
   # capabilities:
   #   drop:
@@ -68,37 +99,59 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+# -- Configration of the Service
 service:
+  # -- Configration of the Service for the Shard service
   shard:
+    # -- Service type
     type: ClusterIP
+    # -- Service port to expose
     port: 80
+    # -- A port of the service where the traffic is forwarded
     targetPort: 8000
+    # -- Additional annotations to assign to the Service object
     annotations: {}
     # nodePort: 31000
     # externalTrafficPolicy: Cluster
     # sessionAffinity: None
+  # -- Configration of the Service for the Core service
   core:
+    # -- Service type
     type: ClusterIP
+    # -- Service port to expose
     port: 80
+    # -- A port of the service where the traffic is forwarded
     targetPort: 8000
+    # -- Additional annotations to assign to the Service object
     annotations: {}
     # nodePort: 31000
     # externalTrafficPolicy: Cluster
     # sessionAffinity: None
+  # -- Configration of the Service for the Frontend service
   frontend:
+    # -- Service type
     type: ClusterIP
+    # -- Service port to expose
     port: 80
+    # -- A port of the service where the traffic is forwarded
     targetPort: 8000
+    # -- Additional annotations to assign to the Service object
     annotations: {}
     # nodePort: 31000
     # externalTrafficPolicy: Cluster
     # sessionAffinity: None
 
+# -- Creates an ingress resource
 ingress:
+  # -- Ingress configuration for the Shard service
   shard:
+    # -- Enable Ingress for the Shard service
     enabled: false
+    # -- Ingress class name
     className: ""
+    # -- Annotations to add to the Ingress
     annotations: {}
+    # -- A list of hosts for the Ingress
     rules:
       - host: shard.example.local
         http:
@@ -117,14 +170,22 @@ ingress:
                   number: 80
             path: /submit/
             pathType: Exact
+    # -- Ingress TLS configuration
     tls:
+      # -- Secret name for the TLS certificate
       - secretName: shard.example.local
+        # -- A list of hosts for the Ingress with TLS enabled
         hosts:
           - shard.example.local
+  # -- Ingress configuration for the Core service
   core:
+    # -- Enable Ingress for the Core service
     enabled: false
+    # -- Ingress class name
     className: ""
+    # -- Annotations to add to the Ingress
     annotations: {}
+    # -- A list of hosts for the Ingress
     rules:
       - host: feed.example.local
         http:
@@ -143,14 +204,22 @@ ingress:
                   number: 80
             path: /feed/
             pathType: Exact
+    # -- Ingress TLS configuration
     tls:
+      # -- Secret name for the TLS certificate
       - secretName: feed.example.local
+        # -- A list of hosts for the Ingress with TLS enabled
         hosts:
           - feed.example.local
+  # -- Ingress configuration for the Frontend service
   frontend:
+    # -- Enable Ingress for the Frontend service
     enabled: false
+    # -- Ingress class name
     className: ""
+    # -- Annotations to add to the Ingress
     annotations:
+    # -- A list of hosts for the Ingress
     rules:
       - host: example.local
         http:
@@ -162,17 +231,21 @@ ingress:
                   number: 80
             path: /
             pathType: Prefix
+    # -- Ingress TLS configuration
     tls:
+      # -- Secret name for the TLS certificate
       - secretName: example.local
+        # -- A list of hosts for the Ingress with TLS enabled
         hosts:
           - example.local
 
-
+# -- Resource limits & requests
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # -- Resource limits & requests for the Frontend service
   frontend: {}
   #  limits:
   #    cpu: 100m
@@ -180,6 +253,7 @@ resources:
   #  requests:
   #    cpu: 100m
   #    memory: 128Mi
+  # -- Resource limits & requests for the Shard service
   shard: {}
   #  limits:
   #    cpu: 100m
@@ -187,6 +261,7 @@ resources:
   #  requests:
   #    cpu: 100m
   #    memory: 128Mi
+  # -- Resource limits & requests for the Core service
   core: {}
   #  limits:
   #    cpu: 100m
@@ -195,23 +270,39 @@ resources:
   #    cpu: 100m
   #    memory: 128Mi
 
+# -- Autoscaling configuration
 autoscaling:
+  # -- Autoscaling configuration for the Shard service
   # NOTE: The core service is not scalable at the moment.
   shard:
+    # -- Enables autoscaling
     enabled: false
+    # -- Minimum number of replicas
     minReplicas: 2
+    # -- Maximum number of replicas
     maxReplicas: 6
+    # -- Target CPU utilization percentage
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
+  # -- Autoscaling configuration for the Frontend service
   frontend:
+    # -- Enables autoscaling
     enabled: false
+    # -- Minimum number of replicas
     minReplicas: 1
+    # -- Maximum number of replicas
     maxReplicas: 6
+    # -- Target CPU utilization percentage
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
+  # -- Autoscaling configuration for the Core service
   core:
+    # -- Enables autoscaling
     enabled: false
 
+# -- Define which Nodes the Pods are scheduled on
 nodeSelector: {}
+# -- Assign custom affinity rules
 affinity: {}
+# -- Tolerations for use with node taints
 tolerations: []

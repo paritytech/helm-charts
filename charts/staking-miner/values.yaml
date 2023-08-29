@@ -1,374 +1,301 @@
-## @section Global parameters
-## Global Docker image parameters
-## Please, note that this will override the image parameters, including dependencies, configured to use the global value
-## Current available global Docker image parameters: imageRegistry, imagePullSecrets
-
-## @param global.imageRegistry Global Docker image registry
-## @param global.imagePullSecrets Global Docker registry secret names as an array
-##
+# -- Global Docker image parameters
 global:
+  # -- Docker image registry
   imageRegistry: ""
-  ## E.g.
-  ## imagePullSecrets:
-  ##   - myRegistryKeySecretName
-  ##
+  # E.g.
+  # imagePullSecrets:
+  #   - myRegistryKeySecretName
+  # -- Docker registry secret names as an array
   imagePullSecrets: []
 
-## @section Common parameters
-
-## @param kubeVersion Override Kubernetes version
-##
+# -- Override Kubernetes version
 kubeVersion: ""
-## @param nameOverride String to partially override common.names.name
-##
+# -- Provide a name in place of node for `app:` labels
 nameOverride: ""
-## @param fullnameOverride String to fully override common.names.fullname
-##
+# -- Provide a name to substitute for the full names of resources
 fullnameOverride: ""
-## @param namespaceOverride String to fully override common.names.namespace
-##
+# -- Override namespace where the chart is deployed
 namespaceOverride: ""
-## @param commonLabels Labels to add to all deployed objects
-##
+# -- Labels to add to all deployed objects
 commonLabels: {}
-## @param commonAnnotations Annotations to add to all deployed objects
-##
+# -- Annotations to add to all deployed objects
 commonAnnotations: {}
-## @param clusterDomain Kubernetes cluster domain name
-##
+# -- Kubernetes cluster domain name
 clusterDomain: cluster.local
-## @param extraDeploy Array of extra objects to deploy with the release
-##
+# -- Array of extra objects to deploy with the release
 extraDeploy: []
 
-## Enable diagnostic mode in the deployment
-##
+# -- Enable diagnostic mode in the deployment
 diagnosticMode:
-  ## @param diagnosticMode.enabled Enable diagnostic mode (all probes will be disabled and the command will be overridden)
-  ##
+  # -- Enable diagnostic mode (all probes will be disabled and the command will be overridden)
   enabled: false
-  ## @param diagnosticMode.command Command to override all containers in the deployment
-  ##
+  # -- Command to override all containers in the deployment
   command:
     - sleep
-  ## @param diagnosticMode.args Args to override all containers in the deployment
-  ##
+  # -- Args to override all containers in the deployment
   args:
     - infinity
 
-## @section staking-miner Parameters
-## @param stakingMiner.config A config for staking miner. Parameter is parsed as a JSON string containing a list of dicts. A number of dicts must match the number of replicas. Each dict may contain a 'seed' and 'uri' keys. Its values matches the SEED and URI environment variables as defined in staking-miner.
-## @param stakingMiner.existingSecret A name of the existing secret with staking-miner's config. Must be a JSON encoded string that matches stakingMiner.config's format. See secrets.yaml
-## @param stakingMiner.prometheus.enabled Enable exposing the prometheus port
-## @param stakingMiner.prometheus.port Set the prometheus port
+# -- staking-miner Parameters
 stakingMiner:
+  # -- A config for staking miner. Parameter is parsed as a JSON string containing a list of dicts. A number of dicts must match the number of replicas. Each dict may contain a 'seed' and 'uri' keys. Its values matches the SEED and URI environment variables as defined in staking-miner.
   config: '[{"seed":"0x44","uri":"ws://localhost:443"}]'
+  # -- A name of the existing secret with staking-miner's config. Must be a JSON encoded string that matches stakingMiner.config's format. See secrets.yaml
   existingSecret: ""
+  # -- Prometheus exporter configuration
   prometheus:
+    # -- Enable exposing the Prometheus port
     enabled: false
+    # -- Set the Prometheus port
     port: 9999
-## Parameters for init container that generates config for staking-miner
-## @param generateConfig.image.registry init-container image registry
-## @param generateConfig.image.repository init-container image repository
-## @param generateConfig.image.tag init-container image tag (immutable tags are recommended)
-## @param generateConfig.image.pullPolicy init-container image pull policy
-## @param generateConfig.image.pullSecrets init-container image pull secrets
-## @param generateConfig.resources init-container requests/limits
+
+# -- Parameters for init container that generates config for staking-miner
 generateConfig:
+  # -- Image configuration
   image:
+    # -- init-container image registry
     registry: docker.io
+    # -- init-container image repository
     repository: paritytech/tools
+    # -- init-container image tag
     tag: latest
-    ## Specify a imagePullPolicy
-    ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
-    ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
-    ##
+    # -- Specify a imagePullPolicy
+    # Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+    # ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
     pullPolicy: IfNotPresent
-    ## Optionally specify an array of imagePullSecrets.
-    ## Secrets must be manually created in the namespace.
-    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-    ## e.g:
-    ## pullSecrets:
-    ##   - myRegistryKeySecretName
-    ##
+    # -- Optionally specify an array of imagePullSecrets.
+    # Secrets must be manually created in the namespace.
+    # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    # e.g:
+    # pullSecrets:
+    #   - myRegistryKeySecretName
     pullSecrets: []
+  # -- init-container requests/limits
   resources: {}
 
-## @param waitRuntimeUpgrade.enabled Wait until chain will have same spec version as staking miner
-## @param waitRuntimeUpgrade.resources Resources configuration for the wait container
-##
+
+# -- waitRuntimeUpgrade configuration
 waitRuntimeUpgrade:
+  # -- Wait until chain will have same spec version as staking miner
   enabled: false
+  # -- Resources configuration for the wait container
   resources: {}
 
-## Parity staking-miner image
-## ref: https://hub.docker.com/r/paritytech/staking-miner/tags/
-## @param image.registry staking-miner image registry
-## @param image.repository staking-miner image repository
-## @param image.tag staking-miner image tag (immutable tags are recommended)
-## @param image.pullPolicy staking-miner image pull policy
-## @param image.pullSecrets staking-miner image pull secrets
-##
+
+# -- Parity staking-miner image
+# ref: https://hub.docker.com/r/paritytech/staking-miner/tags/
 image:
+  # -- staking-miner image registry
   registry: docker.io
+  # -- staking-miner image repository
   repository: paritytech/staking-miner
+  # -- staking-miner image tag (immutable tags are recommended)
   tag: master
-  ## Specify a imagePullPolicy
-  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
-  ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
-  ##
+  # -- Specify a imagePullPolicy
+  # Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+  # ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
   pullPolicy: IfNotPresent
-  ## Optionally specify an array of imagePullSecrets.
-  ## Secrets must be manually created in the namespace.
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-  ## e.g:
-  ## pullSecrets:
-  ##   - myRegistryKeySecretName
-  ##
+  # -- Optionally specify an array of imagePullSecrets.
+  # Secrets must be manually created in the namespace.
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  # e.g:
+  # pullSecrets:
+  #   - myRegistryKeySecretName
   pullSecrets: []
-## @param replicaCount Number of staking-miner replicas to deploy
-##
+# -- Number of staking-miner replicas to deploy
 replicaCount: 1
-## @param customLivenessProbe Custom livenessProbe that overrides the default one
-##
+# -- Custom livenessProbe that overrides the default one
 customLivenessProbe: {}
-## @param customReadinessProbe Custom readinessProbe that overrides the default one
-##
+# -- Custom readinessProbe that overrides the default one
 customReadinessProbe: {}
-## @param customStartupProbe Custom startupProbe that overrides the default one
-##
+# -- Custom startupProbe that overrides the default one
 customStartupProbe: {}
-## staking-miner resource requests and limits
-## ref: http://kubernetes.io/docs/user-guide/compute-resources/
-## @param resources.limits The resources limits for the staking-miner containers
-## @param resources.requests The requested resources for the staking-miner containers
-##
+# -- staking-miner resource requests and limits
+# ref: http://kubernetes.io/docs/user-guide/compute-resources/
 resources:
+  # -- The resources limits for the staking-miner containers
   limits: {}
+  # -- The requested resources for the staking-miner containers
   requests: {}
-## Configure Pods Security Context
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-## @param podSecurityContext.enabled Enabled staking-miner pods' Security Context
-## @param podSecurityContext.fsGroup Set staking-miner pod's Security Context fsGroup
-##
+# -- Configure Pods Security Context
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
 podSecurityContext:
+  # -- Enable staking-miner pods' Security Context
   enabled: true
+  # -- Set staking-miner pods' Security Context fsGroup
   fsGroup: 1001
-## Configure Container Security Context
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
-## @param containerSecurityContext.enabled Enabled staking-miner containers' Security Context
-## @param containerSecurityContext.runAsUser Set staking-miner containers' Security Context runAsUser
-## @param containerSecurityContext.runAsNonRoot Set staking-miner containers' Security Context runAsNonRoot
-## @param containerSecurityContext.readOnlyRootFilesystem Set staking-miner containers' Security Context runAsNonRoot
-##
+# -- Configure Container Security Context
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
 containerSecurityContext:
+  # -- Enable staking-miner containers' Security Context
   enabled: true
+  # -- Set staking-miner containers' Security Context runAsUser
   runAsUser: 1001
+  # -- Set staking-miner containers' Security Context runAsNonRoot
   runAsNonRoot: true
+  # -- Set staking-miner containers' Security Context readOnlyRootFilesystem
   readOnlyRootFilesystem: false
 
-## @param command Override default container command (useful when using custom images)
-##
+# -- Override default container command (useful when using custom images)
 command: ["/bin/sh"]
-## @param args Override default container args (useful when using custom images)
-##
+# -- Override default container args (useful when using custom images)
 args:
 - -c
 - |
   staking-miner monitor --seed-or-path /config/seed --uri $(cat /config/uri) seq-phragmen
-## @param hostAliases staking-miner pods host aliases
-## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
-##
+# -- staking-miner pods host aliases
+# https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
 hostAliases: []
-## @param podLabels Extra labels for staking-miner pods
-## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-##
+# Extra labels for staking-miner pods
+# ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 podLabels: {}
-## @param podAnnotations Annotations for staking-miner pods
-## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
-##
+# -- Annotations for staking-miner pods
+# ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
 podAnnotations: {}
-## @param podAffinityPreset Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
-## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
-##
+# -- Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
+# ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
 podAffinityPreset: ""
-## @param podAntiAffinityPreset Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
-## ref: https://kubernetes.io/docs/concepts/schedulinfg-eviction/assign-pod-node/#inter-pod-afinity-and-anti-affinity
-##
+# -- Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
+# ref: https://kubernetes.io/docs/concepts/schedulinfg-eviction/assign-pod-node/#inter-pod-afinity-and-anti-affinity
 podAntiAffinityPreset: soft
-## Pod Disruption Budget configuration
-## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb
-## @param pdb.create Enable/disable a Pod Disruption Budget creation
-## @param pdb.minAvailable Minimum number/percentage of pods that should remain scheduled
-## @param pdb.maxUnavailable Maximum number/percentage of pods that may be made unavailable
-##
+# -- Pod Disruption Budget configuration
+# ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb
 pdb:
+  # -- Enable/disable a Pod Disruption Budget creation
   create: false
+  # -- Minimum number/percentage of pods that should remain scheduled
   minAvailable: 1
+  # -- Maximum number/percentage of pods that may be made unavailable
   maxUnavailable: ""
-## Node affinity preset
-## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
-##
+# -- Node affinity preset
+# ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
 nodeAffinityPreset:
-  ## @param nodeAffinityPreset.type Node affinity preset type. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
-  ##
+  # -- Node affinity preset type. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
   type: ""
-  ## @param nodeAffinityPreset.key Node label key to match. Ignored if `affinity` is set
-  ##
+  # -- Node label key to match. Ignored if `affinity` is set
   key: ""
-  ## @param nodeAffinityPreset.values Node label values to match. Ignored if `affinity` is set
-  ## E.g.
-  ## values:
-  ##   - e2e-az1
-  ##   - e2e-az2
-  ##
+  # -- Node label values to match. Ignored if `affinity` is set
+  # E.g.
+  # values:
+  #   - e2e-az1
+  #   - e2e-az2
   values: []
-## @param affinity Affinity for staking-miner pods assignment
-## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-## NOTE: `podAffinityPreset`, `podAntiAffinityPreset`, and `nodeAffinityPreset` will be ignored when it's set
-##
+# -- Affinity for staking-miner pods assignment
+# ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+# NOTE: `podAffinityPreset`, `podAntiAffinityPreset`, and `nodeAffinityPreset` will be ignored when it's set
 affinity: {}
-## @param nodeSelector Node labels for staking-miner pods assignment
-## ref: https://kubernetes.io/docs/user-guide/node-selection/
-##
+# -- Node labels for staking-miner pods assignment
+# ref: https://kubernetes.io/docs/user-guide/node-selection/
 nodeSelector: {}
-## @param tolerations Tolerations for staking-miner pods assignment
-## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-##
+# -- Tolerations for staking-miner pods assignment
+# ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 tolerations: []
-## @param updateStrategy.type staking-miner statefulset strategy type
-## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
-##
+# -- staking-miner statefulset strategy type
+# ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
 updateStrategy:
-  ## StrategyType
-  ## Can be set to RollingUpdate or OnDelete
-  ##
+  # -- StrategyType
+  # Can be set to RollingUpdate or OnDelete
   type: RollingUpdate
 
-## @param podManagementPolicy Statefulset Pod management policy, it needs to be Parallel to be able to complete the cluster join
-## Ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies
-##
+# -- Statefulset Pod management policy, it needs to be Parallel to be able to complete the cluster join
+# Ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies
 podManagementPolicy: OrderedReady
 
-## @param priorityClassName staking-miner pods' priorityClassName
-##
+# -- staking-miner pods' priorityClassName
 priorityClassName: ""
-## @param topologySpreadConstraints Topology Spread Constraints for pod assignment spread across your cluster among failure-domains. Evaluated as a template
-## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/#spread-constraints-for-pods
-##
+# -- Topology Spread Constraints for pod assignment spread across your cluster among failure-domains. Evaluated as a template
+# Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/#spread-constraints-for-pods
 topologySpreadConstraints: {}
-## @param schedulerName Name of the k8s scheduler (other than default) for staking-miner pods
-## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
-##
+# -- Name of the k8s scheduler (other than default) for staking-miner pods
+# ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
 schedulerName: ""
-## @param terminationGracePeriodSeconds Seconds Redmine pod needs to terminate gracefully
-## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods
-##
+# -- Seconds a Pod needs to terminate gracefully
+# ref: https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods
 terminationGracePeriodSeconds: ""
-## @param lifecycleHooks for the staking-miner container(s) to automate configuration before or after startup
-##
+# -- lifecycleHooks for the staking-miner container(s) to automate configuration before or after startup
 lifecycleHooks: {}
-## @param extraEnvVars Array with extra environment variables to add to staking-miner nodes
-## e.g:
-## extraEnvVars:
-##   - name: FOO
-##     value: "bar"
-##
+# -- Array with extra environment variables to add to staking-miner nodes
+# e.g:
+# extraEnvVars:
+#   - name: FOO
+#     value: "bar"
 extraEnvVars: []
-## @param extraEnvVarsCM Name of existing ConfigMap containing extra env vars for staking-miner nodes
-##
+# -- Name of existing ConfigMap containing extra env vars for staking-miner nodes
 extraEnvVarsCM: ""
-## @param extraEnvVarsSecret Name of existing Secret containing extra env vars for staking-miner nodes
-##
+# -- Name of existing Secret containing extra env vars for staking-miner nodes
 extraEnvVarsSecret: ""
-## @param extraVolumes Optionally specify extra list of additional volumes for the staking-miner pod(s)
-##
+# -- Optionally specify extra list of additional volumes for the staking-miner pod(s)
 extraVolumes: []
-## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts for the staking-miner container(s)
-##
+# -- Optionally specify extra list of additional volumeMounts for the staking-miner container(s)
 extraVolumeMounts: []
-## @param sidecars Add additional sidecar containers to the staking-miner pod(s)
-## e.g:
-## sidecars:
-##   - name: your-image-name
-##     image: your-image
-##     imagePullPolicy: Always
-##     ports:
-##       - name: portname
-##         containerPort: 1234
-##
+# -- Add additional sidecar containers to the staking-miner pod(s)
+# e.g:
+# sidecars:
+#   - name: your-image-name
+#     image: your-image
+#     imagePullPolicy: Always
+#     ports:
+#       - name: portname
+#         containerPort: 1234
 sidecars: {}
-## @param initContainers Add additional init containers to the staking-miner pod(s)
-## ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
-## e.g:
-## initContainers:
-##  - name: your-image-name
-##    image: your-image
-##    imagePullPolicy: Always
-##    command: ['sh', '-c', 'echo "hello world"']
-##
+# -- Add additional init containers to the staking-miner pod(s)
+# ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+# e.g:
+# initContainers:
+#  - name: your-image-name
+#    image: your-image
+#    imagePullPolicy: Always
+#    command: ['sh', '-c', 'echo "hello world"']
 initContainers: {}
 
-## @section Other Parameters
+# @section Other Parameters
 
-## RBAC configuration
-##
+# RBAC configuration
 rbac:
-  ## @param rbac.create Specifies whether RBAC resources should be created
-  ##
+  # -- Specifies whether RBAC resources should be created
   create: false
-  ## @param rbac.rules Custom RBAC rules to set
-  ## e.g:
-  ## rules:
-  ##   - apiGroups:
-  ##       - ""
-  ##     resources:
-  ##       - pods
-  ##     verbs:
-  ##       - get
-  ##       - list
-  ##
+  # -- Custom RBAC rules to set
+  # e.g:
+  # rules:
+  #   - apiGroups:
+  #       - ""
+  #     resources:
+  #       - pods
+  #     verbs:
+  #       - get
+  #       - list
   rules: []
 
-## ServiceAccount configuration
-##
+# ServiceAccount configuration
 serviceAccount:
-  ## @param serviceAccount.create Specifies whether a ServiceAccount should be created
-  ##
+  # -- Specifies whether a ServiceAccount should be created
   create: true
-  ## @param serviceAccount.name The name of the ServiceAccount to use.
-  ## If not set and create is true, a name is generated using the common.names.fullname template
-  ##
+  # -- The name of the ServiceAccount to use.
+  # If not set and create is true, a name is generated using the common.names.fullname template
   name: ""
-  ## @param serviceAccount.annotations Additional Service Account annotations (evaluated as a template)
-  ##
+  # -- Additional Service Account annotations (evaluated as a template)
   annotations: {}
-  ## @param serviceAccount.automountServiceAccountToken Automount service account token for the server service account
-  ##
+  # -- Automount service account token for the server service account
   automountServiceAccountToken: true
 
-## ServiceMonitor configuration
-##
+# ServiceMonitor configuration
 serviceMonitor:
-  ## @param serviceMonitor.enabled Specifies whether a ServiceMonitor should be created
-  ##
+  # -- Specifies whether a ServiceMonitor should be created
   enabled: false
-  ## @param serviceMonitor.annotations Set the ServiceMonitor annotations
-  ##
+  # -- Set the ServiceMonitor annotations
   annotations: {}
 
-  ## Prometheus endpoints scrape configuration
-  ##
-  ## @param serviceMonitor.endpoint.path HTTP path to scrape for metrics.
-  ## @param serviceMonitor.endpoint.port Name of the service port this endpoint refers to
-  ## @param serviceMonitor.endpoint.interval Interval at which metrics should be scraped
-  ## @param serviceMonitor.endpoint.scheme HTTP scheme to use for scraping.
-  ## @param serviceMonitor.endpoint.scrapeTimeout Timeout after which the scrape is ended
-  ## @param serviceMonitor.endpoint.honorLabels Chooses the metric’s labels on collisions with target labels.
+  # -- Prometheus endpoints scrape configuration
   endpoint:
+    # -- HTTP path to scrape for metrics.
     path: /metrics
+    # -- Name of the service port this endpoint refers to
     port: prom
+    # -- Interval at which metrics should be scraped
     interval: 1m
+    # -- HTTP scheme to use for scraping.
     scheme: http
+    # -- Timeout after which the scrape is ended
     scrapeTimeout: 30s
+    # -- Chooses the metric’s labels on collisions with target labels.
     honorLabels: true

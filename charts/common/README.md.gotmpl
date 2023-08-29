@@ -1,0 +1,25 @@
+<!--
+DO NOT EDIT README.md manually!
+We're using [helm-docs](https://github.com/norwoodj/helm-docs) to render values of the chart.
+If you updated values.yaml file make sure to render a new README.md locally before submitting a Pull Request.
+
+If you're using [pre-commit](https://pre-commit.com/) make sure to install the hooks first:
+```
+pre-commit install
+```
+REAMDE.md will be updating automatically after that.
+
+Otherwise, you should install helm-docs and manually update README.md. Navigate to repository root and run:
+`helm-docs --chart-search-root=charts/common --template-files=README.md.gotmpl`
+
+You may encounter `files were modified by this hook` error after updating README.md.gotmpl file when using pre-commit.
+This is intended behaviour. Make sure to run `git add -A` once again to stage changes in the auto-updated REAMDE.md
+-->
+
+# Generic Helm Chart
+
+{{ template "chart.requirementsSection" . }}
+
+{{ template "chart.valuesSection" . }}
+
+{{ template "helm-docs.versionFooter" . }}

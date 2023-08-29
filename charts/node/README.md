@@ -16,7 +16,7 @@ You may encounter `files were modified by this hook` error after updating README
 This is intended behaviour. Make sure to run `git add -A` once again to stage changes in the auto-updated REAMDE.md
 -->
 
-# Substrate/Polkadot node helm chart
+# Substrate/Polkadot node Helm chart
 
 ![Version: 5.1.7](https://img.shields.io/badge/Version-5.1.7-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
