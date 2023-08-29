@@ -1,49 +1,39 @@
-# Default values for common.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-## Provide a name in place of node for `app:` labels
-##
+# -- Provide a name in place of node for `app:` labels
 nameOverride: ""
 
-## Provide a name to substitute for the full names of resources
-##
+# -- Provide a name to substitute for the full names of resources
 fullnameOverride: ""
 
-## Provide a name to substitute for the full names of resources
-##
+# -- Provide a name to substitute for the full names of resources
 namespaceOverride: ""
 
-## Additional common labels on resources
-##
+# -- Additional common labels on resources
 extraLabels: {}
 
-## Image to use for the chart
-##
+# -- Image to use for the chart
 image:
+  # -- Image repository
   repository: nginx
+  # -- Image pull policy
   pullPolicy: IfNotPresent
+  # -- Image tag
   tag: "latest"
 
-## Override default container args
-##
+# -- Override default container args
 args: []
 
-## Override default container command
-##
+# -- Override default container command
 command: []
 
-## Number of replicas for the pod
-##
+# -- Number of replicas for the pod
 replicaCount: 1
 
-## Reference to one or more secrets to be used when pulling images
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-##
+# -- Reference to one or more secrets to be used when pulling images
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
 
-## Define init container
-## ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+# -- Define init container
+# ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
 # initContainers:
 #   - name: init-container
 #     image: busybox:1.28
@@ -52,34 +42,29 @@ imagePullSecrets: []
 #       - name: name
 #         mountPath: "/path"
 
-## Service account for the pod to use
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
-##
+# -- Service account for the pod to use
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
 serviceAccount:
   create: true
   annotations: {}
-    ## uncomment if you're using workload indentity
-    ##
+    # uncomment if you're using workload indentity
     # iam.gke.io/gcp-service-account: 'mysa@gcp-project-id.iam.gserviceaccount.com'
-
-  ## The name of the service account to use.
-  ## If not set and create is true, a name is generated using the fullname template
-  ##
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-## Annotations to add to the pod
-##
+# -- Annotations to add to the pod
 podAnnotations: {}
 
-## SecurityContext holds pod-level security attributes and common container settings.
-## This defaults to non root user with uid 1000 and gid 1000.
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
-##
+# -- SecurityContext holds pod-level security attributes and common container settings.
+# This defaults to non root user with uid 1000 and gid 1000.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
 podSecurityContext: {}
   # fsGroup: 1000
   # runAsNonRoot: true
   # runAsUser: 1000
   # runAsGroup: 1000
+# -- SecurityContext settings for the main container
 containerSecurityContext: {}
   # capabilities:
   #   drop:
@@ -89,8 +74,7 @@ containerSecurityContext: {}
   # runAsUser: 1000
   # runAsGroup: 1000
 
-## Environment variable to add to the pods
-##
+# -- Environment variable to add to the pods
 env: {}
   # VAR: "value"
   # VAR2:
@@ -99,8 +83,7 @@ env: {}
   #       key: my-key
   #       name: env-secret
 
-## Environment variables from secrets or configmaps to add to the pods
-##
+# -- Environment variables from secrets or configmaps to add to the pods
 envFrom: []
 #  - configMapRef:
 #      name: env-configmap
@@ -108,13 +91,11 @@ envFrom: []
 #      name: env-secret
 
 
-## Additional Pod Spec
-##
+# -- Additional Pod Spec
 additionalPodSpec: {}
 
-## Creates a secret resource
-## The value must be base64 encoded
-##
+# -- Creates a secret resource
+# The value must be base64 encoded
 secrets: {}
 # admin: <base64-encoded>
 
@@ -122,16 +103,18 @@ secrets: {}
 # privateRegistry:
 #  dockerconfigjson: <base64-encoded>
 
-## Creates a configmap resource
-##
+# -- Creates a configmap resource
 config: {}
 
-## Creates a service resource
-##
+# -- Creates a service resource
 service:
+  # -- Annotations to add to the Service resource
   annotations: {}
+  # -- Service type
   type: ClusterIP
+  # -- Session Affinitiy type
   sessionAffinity: ""
+  # -- Ports to expose on the service
   ports:
     # - name: http
     #   port: 80
@@ -142,26 +125,31 @@ service:
     #   targetPort: 9090
     #   protocol: TCP
 
-## Creates an ingress resource
-##
+# -- Creates an ingress resource
 ingress:
+  # -- Enable creation of Ingress
   enabled: false
+  # -- Ingress class name
   className: ""
+  # -- Annotations to add to the Ingress
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
+  # -- A list of hosts for the Ingress
   hosts:
     - host: chart-example.local
       paths:
         - path: /
           pathType: ImplementationSpecific
+  # -- Ingress TLS configuration
   tls:
+  # -- Secrets to use for TLS configuration
   - secretName: chart-example-tls
+    # -- A list of hosts for the Ingress with TLS enabled
     hosts:
       - chart-example.local
 
-## Resource limits & requests
-##
+# -- Resource limits & requests
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
@@ -174,21 +162,17 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
-## Define which Nodes the Pods are scheduled on.
-##
+# -- Define which Nodes the Pods are scheduled on.
 nodeSelector: {}
 
-## Tolerations for use with node taints
-##
+# -- Tolerations for use with node taints
 tolerations: []
 
-## Assign custom affinity rules
-##
+# -- Assign custom affinity rules
 affinity: {}
 
-## Controller Container liveness/readiness probe configuration
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-##
+# -- Controller Container liveness probe configuration
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 livenessProbe: {}
   # failureThreshold: 3
   # successThreshold: 1
@@ -198,6 +182,7 @@ livenessProbe: {}
   #   port: 80
   # periodSeconds: 10
 
+# -- Controller Container readiness probe configuration
 readinessProbe: {}
   # failureThreshold: 3
   # successThreshold: 1
@@ -207,6 +192,7 @@ readinessProbe: {}
   #   port: 80
   # periodSeconds: 10
 
+# -- Controller Container startup probe configuration
 startupProbe: {}
   # failureThreshold: 3
   # successThreshold: 1
@@ -216,18 +202,20 @@ startupProbe: {}
   #   port: 80
   # periodSeconds: 10
 
-## Annotations to add to the pod of statefulset
-##
+# -- Annotations to add to the pod of statefulset
 stateful:
   annotations: {}
 
-## If enabled, creates a PVC and deploy the pod as statefulset
-##
+# -- If enabled, creates a PVC and deploy the pod as statefulset
 persistence:
+  # -- Enable PVC creation
   enabled: false
+  # -- PVC access mode
   accessModes:
   - ReadWriteOnce
+  # -- PVC storage size
   size: 50Gi
+  # -- Annotations to add to the PVC
   annotations: {}
   # selector:
   #   matchLabels:
@@ -236,31 +224,33 @@ persistence:
   # existingClaim:
   # storageClassName:
 
-## See `kubectl explain poddisruptionbudget.spec` for more
-## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+# -- See `kubectl explain poddisruptionbudget.spec` for more
+# ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
 podDisruptionBudget: {}
   # minAvailable: 1
   # maxUnavailable: 1
 
-## Autoscaling should be enabled for statefulsets
-## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
-##
+# -- Autoscaling should be enabled for statefulsets
+# ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
 autoscaling:
+  # -- Enable autoscaling
   enabled: false
+  # -- Minimum number of pods
   minReplicas: 1
+  # -- Maximum number of pods
   maxReplicas: 100
+  # -- Target CPU utilization percentage
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-## If enabled, create service monitor of Prometheus-Operator
-## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors
-##
+# -- If enabled, create service monitor of Prometheus-Operator
+# ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors
 serviceMonitor:
+  # -- Enables Service Monitor
   enabled: false
+  # -- Annotations to assign to the ServiceMonitor
   annotations: {}
-
-  ## List of endpoints of service which Prometheus scrapes
-  ##
+  # -- List of endpoints of service which Prometheus scrapes
   endpoints:
   - path: /metrics
     port: http
@@ -269,17 +259,16 @@ serviceMonitor:
     scrapeTimeout: 30s
     honorLabels: true
 
-  ## Propagate certain service labels to Prometheus.
+  # -- Propagate certain service labels to Prometheus.
   targetLabels: []
 
-# Extra volumes to be added in addition to those specified under `defaultVolumes`.
+# -- Extra volumes to be added in addition to those specified under `defaultVolumes`.
 extraVolumes: []
 
-# Extra volume mounts together. Corresponds to `extraVolumes`.
+# -- Extra volume mounts together. Corresponds to `extraVolumes`.
 extraVolumeMounts: []
 
-## If enabled, create cloudsql proxy resources
-##
+# -- If enabled, create cloudsql proxy resources
 cloudsql:
   enabled: false
   service:

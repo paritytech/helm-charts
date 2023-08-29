@@ -6,6 +6,7 @@ version: 2.0.0
 maintainers:
   - name: Parity
     url: https://github.com/paritytech/helm-charts
+    email: devops+helm@parity.io
 dependencies:
 - name: common
   version: 1.14.1

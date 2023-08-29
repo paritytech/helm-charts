@@ -10,15 +10,15 @@ pre-commit install
 REAMDE.md will be updating automatically after that.
 
 Otherwise, you should install helm-docs and manually update README.md. Navigate to repository root and run:
-`helm-docs --chart-search-root=charts/polkadot-introspector --template-files=README.md.gotmpl`
+`helm-docs --chart-search-root=charts/polkadot-stps --template-files=README.md.gotmpl`
 
 You may encounter `files were modified by this hook` error after updating README.md.gotmpl file when using pre-commit.
 This is intended behaviour. Make sure to run `git add -A` once again to stage changes in the auto-updated REAMDE.md
 -->
 
-# Polkadot Introspector Helm chart
+# Polkadot stps Helm chart
 
-The helm chart installs the [Polkadot introspector](https://github.com/paritytech/polkadot-introspector).
+The helm chart installs [Polkadot STPS](https://github.com/paritytech/polkadot-stps).
 
 {{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}{{ template "chart.appVersionBadge" . }}
 
@@ -28,7 +28,7 @@ The helm chart installs the [Polkadot introspector](https://github.com/paritytec
 
 ```console
 helm repo add parity https://paritytech.github.io/helm-charts/
-helm install polkadot-introspector parity/polkadot-introspector
+helm install polkadot-stps parity/polkadot-stps
 ```
 
 {{ template "chart.requirementsSection" . }}

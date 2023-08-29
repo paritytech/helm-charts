@@ -1,144 +1,117 @@
-## @section Global parameters
-## Global Docker image parameters
-## Official image tags: https://hub.docker.com/r/paritytech/faucet/tags/
-##
-
+# -- Docker image parameters
 image:
-  ## @param image.repository Image repository
+  # -- Image repository
   repository: paritytech/faucet
-  ## @param image.tag Image tag (immutable tags are recommended)
+  # -- Image tag (immutable tags are recommended)
   tag: latest
-  ## @param image.pullPolicy Image pull policy
+  # -- Image pull policy
   pullPolicy: Always
-  ## @param image.pullSecrets Image pull policy
+  # -- Image pull policy
   pullSecrets: []
 
-## @section Faucet parameters
-
+# -- Faucet parameters
 faucet:
-  ## @param faucet.existingConfigMap existingConfigMap
-  ##
+  # -- existingConfigMap
   existingConfigMap: ''
-  ## @param faucet.existingSecret existingSecret
-  ##
+  # -- existingSecret
   existingSecret: ''
-
-  ## @param faucet.externalAccess externalAccess
-  ##
+  # -- externalAccess
   externalAccess: false
 
   secret:
-    ## @param faucet.secret.SMF_CONFIG_FAUCET_ACCOUNT_MNEMONIC Mnemonic seed for the faucet account
-    ##
+    # -- Mnemonic seed for the faucet account
     SMF_CONFIG_FAUCET_ACCOUNT_MNEMONIC: "this is a fake mnemonic"
-    ## @param faucet.secret.SMF_CONFIG_RECAPTCHA_SECRET A secret recaptcha token used to validate external requests
-    ##
+    # -- A secret recaptcha token used to validate external requests
     SMF_CONFIG_RECAPTCHA_SECRET: "fakeRecaptchaSecret"
-    ## @param faucet.secret.SMF_CONFIG_MATRIX_ACCESS_TOKEN Matrix Bot access token
-    ##
+    # -- Matrix Bot access token
     SMF_CONFIG_MATRIX_ACCESS_TOKEN: "ThisIsNotARealAccessToken"
 
   config:
-    ## @param faucet.config.SMF_CONFIG_NETWORK network name: rococo, westend, wococo, etc.
-    ##
+    # -- network name: rococo, westend, wococo, etc.
     SMF_CONFIG_NETWORK: "rococo"
-    ## @param faucet.config.SMF_CONFIG_MATRIX_SERVER Matrix server URL
-    ##
+    # -- Matrix server URL
     SMF_CONFIG_MATRIX_SERVER: "https://matrix.org"
-    ## @param faucet.config.SMF_CONFIG_MATRIX_CONFIG_USER_ID Bot user ID
-    ##
+    # -- Bot user ID
     SMF_CONFIG_MATRIX_BOT_USER_ID: "@test_bot_faucet:matrix.org"
-    ## @param faucet.config.SMF_CONFIG_FAUCET_IGNORE_LIST A list of Matrix accounts that will be silently ignored. Example: \"@alice:matrix.org,@bob:domain.com\"
-    ##
+    # -- A list of Matrix accounts that will be silently ignored. Example: \"@alice:matrix.org,@bob:domain.com\"
     SMF_CONFIG_FAUCET_IGNORE_LIST: ''
 
-
-## @section Common parameters
-
-## @param replicaCount Number of replicas pods for the faucet (recommended to keep it at 1)
-##
+# -- Number of replicas pods for the faucet (recommended to keep it at 1)
 replicaCount: 1
-## @param extraLabels Labels to add to all deployed objects
-##
+# -- Labels to add to all deployed objects
 extraLabels: []
-## @param nameOverride String to partially override common.names.name
-##
+# -- String to partially override common.names.name
 nameOverride: ""
-## @param fullnameOverride String to fully override common.names.fullname
-##
+# -- String to fully override common.names.fullname
 fullnameOverride: ""
-## ServiceAccount configuration
-##
 
+# -- ServiceAccount configuration
 serviceAccount:
-  ## @param serviceAccount.create Specifies whether a ServiceAccount should be created
-  ##
+  # -- Specifies whether a ServiceAccount should be created
   create: true
-  ## @param serviceAccount.name The name of the ServiceAccount to use.
-  ## If not set and create is true, a name is generated using the common.names.fullname template
-  ##
+  # -- The name of the ServiceAccount to use.
+  # If not set and create is true, a name is generated using the common.names.fullname template
   name: ""
-## Pods Security Context
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-## @param podSecurityContext Set pods' Security Context
-##
+# -- Pods Security Context
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
 podSecurityContext: {}
-## Resource requests and limits
-## ref: http://kubernetes.io/docs/user-guide/compute-resources/
-## @param resources.limits The resources limits for containers
-## @param resources.requests The requested resources for containers
-##
+# -- Resource requests and limits
+# ref: http://kubernetes.io/docs/user-guide/compute-resources/
 resources:
+  # -- The resources limits for containers
   limits: {}
+  # -- The requested resources for containers
   requests: {}
-## @param nodeSelector Node labels for pods assignment
-## ref: https://kubernetes.io/docs/user-guide/node-selection/
-##
+# -- Node labels for pods assignment
+# ref: https://kubernetes.io/docs/user-guide/node-selection/
 nodeSelector: {}
-## @param tolerations Tolerations for pods assignment
-## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-##
+# -- Tolerations for pods assignment
+# ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 tolerations: []
-## @param affinity Affinity for pods assignment
-## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-##
+# -- Affinity for pods assignment
+# ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
 affinity: {}
-## ServiceMonitor configuration
-##
+# -- ServiceMonitor configuration
 serviceMonitor:
-  ## @param serviceMonitor.enabled Specifies whether a ServiceMonitor should be created
-  ##
+  # -- Specifies whether a ServiceMonitor should be created
   enabled: false
-  ## @param serviceMonitor.interval Duration between scrapes of the target endpoint
-  ##
+  # -- Duration between scrapes of the target endpoint
   interval: 1m
-  ## @param serviceMonitor.scrapeTimeout Timeout for each scrape request
-  ##
+  # -- Timeout for each scrape request
   scrapeTimeout: 30s
-  ## @param serviceMonitor.targetLabels List of target labels to be added to all metrics collected from this service monitor
-  ##
+  # -- List of target labels to be added to all metrics collected from this service monitor
   targetLabels: []
 
-## Ingress configuration
-##
+# -- Ingress configuration
 ingress:
-  ## @param ingress.enabled Specifies whether as Ingress should be created
-  ##
+  # -- Specifies whether as Ingress should be created
   enabled: false
 
+# -- PostgreSQL configuration
 postgresql:
   global:
     postgresql:
+      # -- Auth configuration
       auth:
+        # -- Database name
         database: faucet
+        # -- Database password
         postgresPassword: "Secret!"
+  # -- Primary PostgreSQL configuration
   primary:
+    # -- Storage configuration
     persistence:
+      # -- Storage size
       size: 4Gi
+    # -- Resources requests/limits for the container
     resources:
       limits:
+        # -- CPU limit
         cpu: 500m
+        # -- Memory limit
         memory: 1024Mi
       requests:
+        # -- CPU requests
         cpu: 250m
+        # -- Memory requests
         memory: 512Mi

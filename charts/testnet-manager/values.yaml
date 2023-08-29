@@ -1,6 +1,5 @@
-# Default values for validator-manager.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# -- Configuration of validator-manager.
+# This is a YAML-formatted file. Declare variables to be passed into your templates.
 args:
   server:
     - "-m"
@@ -25,38 +24,54 @@ args:
     - "--enable-stdio-inheritance"
     - "--workers=1"
 
+# -- Configuration of external validators
 externalValidators: []
 
-## Extra Environment variables
-##
+# -- Extra Environment variables
 extraEnv: []
 
+# -- Additional common labels on pods and services
 extraLabels: []
 
+# -- Replicas count
 replicaCount: 1
 
+# -- Image of the main container
 image:
+  # -- Image repository
   repository: paritytech/testnet-manager
+  # -- Image pull policy
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
+  # -- Image tag
   tag: "latest"
 
+# -- Reference to one or more secrets to be used when pulling images.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
+# -- Provide a name in place of node for `app:` labels
 nameOverride: ""
+# -- Provide a name to substitute for the full names of resources
 fullnameOverride: ""
 
+# -- Service account to use.
 serviceAccount:
-  # Specifies whether a service account should be created
+  # -- Specifies whether a service account should be created
   create: true
-  #name: testnet-manager
-  # Annotations to add to the service account
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+  # -- Annotations to add to the service account
   annotations: {}
 
+# -- Annotations to assign to the Pods
 podAnnotations: {}
 
+# -- SecurityContext holds pod-level security attributes and common container settings.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
 podSecurityContext: {}
   # fsGroup: 2000
 
+# -- SecurityContext settings for the main container
 securityContext: {}
   # capabilities:
   #   drop:
@@ -65,21 +80,32 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+# -- Configure parameters of the Service
 service:
+  # -- Service type
   type: ClusterIP
+  # -- Exposed Service port
   port: 80
 
+# -- Creates an ingress resource
 ingress:
+  # -- Enable creation of Ingress
   enabled: false
   #annotations:
   #host:
 
+# -- Resource limits & requests
 resources:
   limits:
+    # -- CPU resource limits
     cpu: 2
+    # -- Memory resource limits
     memory: 2Gi
   requests:
+    # -- CPU resource requests
     cpu: 500m
+    # -- Memory resource requests
     memory: 128Mi
 
+# -- Define which Nodes the Pods are scheduled on
 nodeSelector: {}
