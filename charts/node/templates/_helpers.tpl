@@ -39,8 +39,6 @@ helm.sh/chart: {{ include "node.chart" . }}
 {{ include "node.serviceLabels" . }}
 app.kubernetes.io/version: {{ .Values.image.tag | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-chain: {{ .Values.node.chain }}
-role: {{ .Values.node.role }}
 {{- if or .Values.node.chainData.pruning ( not ( kindIs "invalid" .Values.node.chainData.pruning ) ) }}
 {{- if ge ( int .Values.node.chainData.pruning ) 1 }}
 pruning: {{ .Values.node.chainData.pruning | quote }}

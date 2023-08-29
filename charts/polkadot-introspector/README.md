@@ -20,7 +20,7 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 
 The helm chart installs the [Polkadot introspector](https://github.com/paritytech/polkadot-introspector).
 
-![Version: 0.4.4](https://img.shields.io/badge/Version-0.4.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.0](https://img.shields.io/badge/AppVersion-1.0.0-informational?style=flat-square)
+![Version: 0.4.5](https://img.shields.io/badge/Version-0.4.5-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.0](https://img.shields.io/badge/AppVersion-1.0.0-informational?style=flat-square)
 
 ## Maintainers
 
@@ -40,27 +40,24 @@ helm install polkadot-introspector parity/polkadot-introspector
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Assign custom affinity rules |
-| extraLabels | list | `[]` | Additional common labels on pods and services |
+| extraLabels | object | `{}` | Additional common labels on pods and services |
 | fullnameOverride | string | `""` | Provide a name to substitute for the full names of resources |
-| image | object | `{"pullPolicy":"Always","repository":"paritytech/polkadot-introspector","tag":"latest"}` | Image for the main container |
 | image.pullPolicy | string | `"Always"` | Image pull policy |
 | image.repository | string | `"paritytech/polkadot-introspector"` | Image repository |
 | image.tag | string | `"latest"` | Image tag |
 | imagePullSecrets | list | `[]` | Reference to one or more secrets to be used when pulling images. ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/ |
-| ingress | object | `{"annotations":{},"className":"","enabled":false,"hosts":[{"host":"chart-example.local","paths":[{"path":"/","pathType":"ImplementationSpecific"}]}],"tls":[]}` | Creates an ingress resource |
+| ingress | object | `{"annotations":{},"className":"","enabled":false,"rules":[],"tls":[]}` | Creates an ingress resource |
 | ingress.annotations | object | `{}` | Annotations to add to the Ingress |
 | ingress.className | string | `""` | Ingress class name |
 | ingress.enabled | bool | `false` | Enable creation of Ingress |
-| ingress.hosts | list | `[{"host":"chart-example.local","paths":[{"path":"/","pathType":"ImplementationSpecific"}]}]` | A list of hosts for the Ingress |
+| ingress.rules | list | `[]` | Ingress rules configuration |
 | ingress.tls | list | `[]` | Ingress TLS configuration |
-| introspector | object | `{"enableAllParas":false,"extraArgs":[],"paraIds":[],"prometheusPort":9615,"role":"block-time","rpcNodes":["wss://rpc.polkadot.io:443","wss://kusama-rpc.polkadot.io:443"],"runtime":"polkadot","verboseLogging":false}` | Introspector configuration See https://github.com/paritytech/polkadot-introspector |
-| introspector.enableAllParas | bool | `false` | Enable all parachains monitoring |
-| introspector.extraArgs | list | `[]` | Extra arguments to pass to the Introspector CLI |
-| introspector.paraIds | list | `[]` | Parachain IDs to monitor |
-| introspector.prometheusPort | int | `9615` | Prometheus exporter port |
-| introspector.role | string | `"block-time"` | Role of the introspector See https://github.com/paritytech/polkadot-introspector#tools-available |
-| introspector.rpcNodes | list | `["wss://rpc.polkadot.io:443","wss://kusama-rpc.polkadot.io:443"]` | RPC nodes to connect to |
-| introspector.runtime | string | `"polkadot"` | Runtime type See https://github.com/paritytech/polkadot-introspector/blob/f0d77dc58b405e73b92b7dbb64252a8a76bd1984/README.md#building Value should be `polkadot` or `rococo` |
+| introspector.enableAllParas | bool | `false` | Automatically collect metrics for all parachain when in pararchain-tracer mode |
+| introspector.extraArgs | list | `[]` | Extra args to pass to the introspector command |
+| introspector.paraIds | list | `[]` | Parachain ID for which to collect metrics when in pararchain-tracer mode |
+| introspector.prometheusPort | int | `9615` | Prometheus Port to expose the metrics |
+| introspector.role | string | `"block-time"` | Main subcommand to use by introspector (block-time,parachain-tracer) |
+| introspector.rpcNodes | list | `["wss://rpc.polkadot.io:443","wss://kusama-rpc.polkadot.io:443"]` | List of RPC nodes to connect when in block-time mode |
 | introspector.verboseLogging | bool | `false` | Enable verbose logging |
 | nameOverride | string | `""` | Provide a name in place of node for `app:` labels |
 | nodeSelector | object | `{}` | Define which Nodes the Pods are scheduled on |
@@ -69,19 +66,21 @@ helm install polkadot-introspector parity/polkadot-introspector
 | podSecurityContext.fsGroup | int | `1000` | Set container's Security Context fsGroup |
 | podSecurityContext.runAsGroup | int | `1000` | Set container's Security Context runAsGroup |
 | podSecurityContext.runAsUser | int | `1000` | Set container's Security Context runAsUser |
-| replicas | int | `1` | Number of replicas to deploy |
+| replicas | int | `1` | Number of replicas for the pod |
 | resources | object | `{}` | Resource limits & requests |
-| securityContext | object | `{}` | SecurityContext settings for the main container |
-| service | object | `{"port":9615,"type":"ClusterIP"}` | Configration of the Service |
-| service.port | int | `9615` | Service port to expose |
+| securityContext | object | `{}` |  |
+| service | object | `{"port":9615,"type":"ClusterIP"}` | Service |
+| service.port | int | `9615` | Service port |
 | service.type | string | `"ClusterIP"` | Service type |
-| serviceAccount | object | `{"annotations":{},"create":true,"name":""}` | Service account for the node to use. ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/ |
+| serviceAccount | object | `{"annotations":{},"create":true}` | Service account for the node to use. ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/ |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the Service Account |
 | serviceAccount.create | bool | `true` | Enable creation of a Service Account for the main container |
-| serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
-| serviceMonitor | object | `{"enabled":false,"interval":"1m","scrapeTimeout":"30s","targetLabels":[]}` | Service Monitor of Prometheus-Operator ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors |
+| serviceMonitor | object | `{"enabled":false,"interval":"1m","metricRelabelings":[],"namespace":null,"relabelings":[],"scrapeTimeout":"30s","targetLabels":[]}` | Service Monitor of Prometheus-Operator ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors |
 | serviceMonitor.enabled | bool | `false` | Enables Service Monitor |
 | serviceMonitor.interval | string | `"1m"` | Scrape interval |
+| serviceMonitor.metricRelabelings | list | `[]` | Metric relabelings config |
+| serviceMonitor.namespace | string | `nil` | Namespace to deploy Service Monitor. If not set deploys in the same namespace with the chart |
+| serviceMonitor.relabelings | list | `[]` | Relabelings config |
 | serviceMonitor.scrapeTimeout | string | `"30s"` | Scrape timeout |
 | serviceMonitor.targetLabels | list | `[]` | Labels to scrape |
 | tolerations | list | `[]` | Tolerations for use with node taints |
