@@ -40,9 +40,9 @@ spec:
               {{- fail (printf "Error: introspector.role='%s' is not supported, it must be validated by this regex '%s'" .Values.introspector.role $rolesSupported) }}
               {{- else }}
               {{-  if eq .Values.introspector.role "block-time"}}
-              exec polkadot-introspector/{{ .Values.introspector.runtime }}/polkadot-block-time \
+              exec polkadot-introspector/polkadot-block-time \
               {{- else if eq .Values.introspector.role "parachain-tracer"}}
-              exec polkadot-introspector/{{ .Values.introspector.runtime }}/polkadot-parachain-tracer \
+              exec polkadot-introspector/polkadot-parachain-tracer \
               {{- if .Values.introspector.enableAllParas }}
               --all \
               {{- else }}
