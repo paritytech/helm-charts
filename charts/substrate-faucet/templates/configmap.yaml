@@ -7,4 +7,8 @@ data:
   {{- range $key, $val := .Values.faucet.config }}
   {{ $key }}: {{ $val | quote }}
   {{- end }}
+  SMF_CONFIG_DB_HOST: "{{ .Release.Name }}-postgresql"
+  SMF_CONFIG_DB_PORT: "5432"
+  SMF_CONFIG_DB_USERNAME: postgres
+  SMF_CONFIG_DB_DATABASE_NAME: "{{ .Values.postgresql.global.postgresql.auth.database }}"
 {{- end }}
