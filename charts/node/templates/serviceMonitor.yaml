@@ -53,6 +53,25 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
   {{- end }}
+  {{- if .Values.substrateApiSidecar.metrics.enabled }}
+    - port: prom-sidecar
+      path: /metrics
+    {{- if $.Values.node.serviceMonitor.interval }}
+      interval: {{ $.Values.node.serviceMonitor.interval }}
+    {{- end }}
+    {{- if $.Values.node.serviceMonitor.scrapeTimeout }}
+      scrapeTimeout: {{ $.Values.node.serviceMonitor.scrapeTimeout }}
+      honorLabels: true
+    {{- end }}
+    {{- with .Values.node.serviceMonitor.relabelings }}
+      relabelings:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.node.serviceMonitor.metricRelabelings }}
+      metricRelabelings:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+   {{- end }}
   namespaceSelector:
     matchNames:
       - {{ $.Release.Namespace }}
