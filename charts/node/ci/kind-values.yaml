@@ -1,18 +1,20 @@
 node:
   chain: dev
   role: invalid
-  dataVolumeSize: 1G
   flags:
   - "--force-authoring"
   - "--alice"
   chainData:
     storageClass: standard
+    volumeSize: 1Gi
   chainKeystore:
     storageClass: standard
   podManagementPolicy: Parallel
   persistentVolumeClaimRetentionPolicy:
     whenDeleted: Delete
     whenScaled: Delete
+  substrateApiSidecar:
+    enabled: true
 image:
   tag: v0.9.43
 autoscaling:
@@ -20,3 +22,7 @@ autoscaling:
   targetCPU: 80
   targetMemory: 80
   maxReplicas: 2
+
+substrateApiSidecar:
+  metrics:
+    enabled: true
