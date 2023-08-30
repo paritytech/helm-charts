@@ -34,13 +34,15 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             {{- if .Values.relayHeaders.enabled }}
-            - "relay-headers {{ .Values.relayHeaders.name }}"
+            - "relay-headers"
+            - "{{ .Values.relayHeaders.name }}"
             {{- range $key, $value := .Values.relayHeaders.params }}
             - "--{{ $key }} {{ $value }}"
             {{- end }}
             {{- end }}
             {{- if .Values.relayHeadersAndMessages.enabled }}
-            - "relay-headers-and-messages {{ .Values.relayHeadersAndMessages.name }}"
+            - "relay-headers-and-messages"
+            - "{{ .Values.relayHeadersAndMessages.name }}"
             {{- range $key, $value := .Values.relayHeadersAndMessages.params }}
             {{- if kindIs "slice" $value }}
             {{- range $param := $value }}
