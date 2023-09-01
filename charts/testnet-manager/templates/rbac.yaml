@@ -118,5 +118,5 @@ subjects:
   namespace: {{ $.Release.Namespace }}
 roleRef:
   kind: ClusterRole
-  name: {{ $fullName }}-node-reader
+  name: {{ $fullName }}-read-node
   apiGroup: rbac.authorization.k8s.io
