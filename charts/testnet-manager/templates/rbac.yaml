@@ -27,9 +27,18 @@ rules:
     resources: ["statefulsets"]
     verbs: ["get", "list"]
 ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ $fullName }}-volume-reader
+rules:
+  - apiGroups: [""]
+    resources: ["persistentvolumes", "persistentvolumeclaims"]
+    verbs: ["get", "list"]
+---
 # Creat Role bindings
 {{- $serviceAccountName := include "testnet-manager.serviceAccountName" . -}}
-# Allow the testnet-manager service account to read pods in the rococo namespace
+# Allow the testnet-manager service account to read pods in the current namespace
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -44,7 +53,7 @@ subjects:
   name: {{ $serviceAccountName }}
   namespace: {{ $.Release.Namespace }}
 ---
-# Allow the testnet-manager service account to read configmaps in the rococo namespace
+# Allow the testnet-manager service account to read configmaps in the current namespace
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -59,7 +68,7 @@ subjects:
   name: {{ $serviceAccountName }}
   namespace: {{ $.Release.Namespace }}
 ---
-# Allow the testnet-manager service account to read statefulsets in the rococo namespace
+# Allow the testnet-manager service account to read statefulsets in the current namespace
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -74,3 +83,40 @@ subjects:
     name: {{ $serviceAccountName }}
     namespace: {{ $.Release.Namespace }}
 ---
+# Allow the testnet-manager service account to read volumes in the current namespace
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ $fullName }}-read-volume
+  namespace: {{ $.Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ $fullName }}-volume-reader
+subjects:
+  - kind: ServiceAccount
+    name: {{ $serviceAccountName }}
+    namespace: {{ $.Release.Namespace }}
+---
+# Allow the testnet-manager service account to read nodes of the pod in the current namespace
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ $fullName }}-read-node
+rules:
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ $fullName }}-node-reader
+subjects:
+- kind: ServiceAccount
+  name: {{ $serviceAccountName }}
+  namespace: {{ $.Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: {{ $fullName }}-read-node
+  apiGroup: rbac.authorization.k8s.io
