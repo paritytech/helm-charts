@@ -20,7 +20,7 @@ When submitting a PR make sure that:
 - You accepted the [CLA](https://colineberhardt.github.io/cla-bot/#what-is-a-cla);
 - Your PR passes CI jobs for linting and tests (automatically done by the CI pipeline);
 - Your PR follows [Helm best practices](https://helm.sh/docs/chart_best_practices/);
-- Any change (even if it only updates the docs) to a chart leads to a version bump following [semver](https://semver.org/) principles. This is the version that is going to be merged in the GitHub repository and published to the Helm registry.
+- Any change (even if it only updates the docs) to a chart leads to a version bump following [semver](https://semver.org/) principles. This is the version that is going to be merged in the GitHub repository and published to the Helm registry. Update the version in the `Chart.yaml` file.
 
 ### Documentation Requirements
 
