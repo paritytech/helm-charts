@@ -111,6 +111,10 @@ spec:
     - port: {{ $.Values.node.perNodeServices.apiService.relayChainPrometheusPort | int }}
       name: prom-relaychain
     {{- end }}
+    {{- if $.Values.substrateApiSidecar.metrics.enabled }}
+    - port: {{ $.Values.substrateApiSidecar.metrics.port | int }}
+      name: prom-sidecar
+    {{- end }}
 {{- end }}
 ---
 {{- if $.Values.node.perNodeServices.relayP2pService.enabled }}
