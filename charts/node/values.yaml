@@ -258,7 +258,7 @@ node:
     # -- Name of the Relay Chain to connect
     relayChain: ""
     # -- Path to the file containing the chainspec of the collator relay-chain
-    # Set to /chain-data instead of /relaychain-data to avoid 
+    # Set to /chain-data instead of /relaychain-data to avoid
     # deploying uncessary persitent volume
     relayChainCustomChainspecPath: ""
     # -- (string) URL to retrive custom chain spec
@@ -285,7 +285,7 @@ node:
       # -- (string) Path on the volume to store chain data
       chainPath: ""
       # -- Storage class to use for persistent volume
-      storageClass: "" 
+      storageClass: ""
       # -- Size of the volume
       volumeSize: 100Gi
       # -- Annotations to add to the volumeClaimTemplates
