@@ -239,7 +239,7 @@ node:
   isParachain: false
 
   # -- EXPERIMENTAL!!!
-  # Run the collator node without a relay chain
+  # Run the collator node without a relay chain via external relay chain
   # ref: https://github.com/paritytech/cumulus#external-relay-chain-node
   # Enabling this option will disable the values of collatorRelayChain
   externalRelayChain:
@@ -248,12 +248,29 @@ node:
     # -- List of Relay Chain RPCs to connect
     relayChainRpcUrls: []
 
+  # -- EXPERIMENTAL!!!
+  # Run the collator node without a relay chain via light client
+  # ref: https://github.com/paritytech/cumulus/pull/2270
+  # Enabling this option will disable the values of collatorRelayChain
+  lightClientMode:
+    # -- Enable deployment of the external collator
+    enabled: false
+    # -- Name of the Relay Chain to connect
+    relayChain: ""
+    # -- Path to the file containing the chainspec of the collator relay-chain
+    # Set to /chain-data instead of /relaychain-data to avoid 
+    # deploying uncessary persitent volume
+    relayChainCustomChainspecPath: ""
+    # -- (string) URL to retrive custom chain spec
+    relayChainCustomChainspecUrl: ""
+
   collatorRelayChain:
     # -- Name of the Relay Chain to connect
     chain: polkadot
 
     # -- Path to the file containing the chainspec of the collator relay-chain
-    customChainspecPath: "/relaychain-data/relay_chain_chainspec.json"
+    # Set to /relaychain-data to use additional volume
+    customChainspecPath: ""
     # -- (string) URL to retrive custom chain spec
     customChainspecUrl:
     chainData:
@@ -268,7 +285,7 @@ node:
       # -- (string) Path on the volume to store chain data
       chainPath: ""
       # -- Storage class to use for persistent volume
-      storageClass: ""
+      storageClass: "" 
       # -- Size of the volume
       volumeSize: 100Gi
       # -- Annotations to add to the volumeClaimTemplates
