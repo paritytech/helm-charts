@@ -236,7 +236,7 @@ node:
   # -- Deploy a collator node.
   # ref: https://wiki.polkadot.network/docs/learn-collator
   # If Collator is enabled, collator image must be used
-  isParachain: true
+  isParachain: false
 
   # -- EXPERIMENTAL!!!
   # Run the collator node without a relay chain via external relay chain
@@ -244,7 +244,7 @@ node:
   # Enabling this option will disable the values of collatorRelayChain
   collatorExternalRelayChain:
     # -- Enable deployment of the external collator
-    enabled: true
+    enabled: false
     # -- List of Relay Chain RPCs to connect
     relayChainRpcUrls: []
 
@@ -254,7 +254,7 @@ node:
   # Enabling this option will disable the values of collatorRelayChain
   collatorLightClient:
     # -- Enable deployment of the external collator
-    enabled: true
+    enabled: false
     # -- Name of the Relay Chain to connect
     relayChain: ""
     # -- Path to the file containing the chainspec of the collator relay-chain
