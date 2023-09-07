@@ -236,15 +236,15 @@ node:
   # -- Deploy a collator node.
   # ref: https://wiki.polkadot.network/docs/learn-collator
   # If Collator is enabled, collator image must be used
-  isParachain: false
+  isParachain: true
 
   # -- EXPERIMENTAL!!!
   # Run the collator node without a relay chain via external relay chain
   # ref: https://github.com/paritytech/cumulus#external-relay-chain-node
   # Enabling this option will disable the values of collatorRelayChain
-  externalRelayChain:
+  collatorExternalRelayChain:
     # -- Enable deployment of the external collator
-    enabled: false
+    enabled: true
     # -- List of Relay Chain RPCs to connect
     relayChainRpcUrls: []
 
@@ -252,17 +252,15 @@ node:
   # Run the collator node without a relay chain via light client
   # ref: https://github.com/paritytech/cumulus/pull/2270
   # Enabling this option will disable the values of collatorRelayChain
-  lightClientMode:
+  collatorLightClient:
     # -- Enable deployment of the external collator
-    enabled: false
+    enabled: true
     # -- Name of the Relay Chain to connect
     relayChain: ""
     # -- Path to the file containing the chainspec of the collator relay-chain
-    # Set to /chain-data instead of /relaychain-data to avoid
-    # deploying uncessary persitent volume
-    relayChainCustomChainspecPath: ""
+    relayChainCustomChainspecPath: "/chain-data/relay_chain_chainspec.json"
     # -- (string) URL to retrive custom chain spec
-    relayChainCustomChainspecUrl: ""
+    relayChainCustomChainspecUrl:
 
   collatorRelayChain:
     # -- Name of the Relay Chain to connect
@@ -270,7 +268,7 @@ node:
 
     # -- Path to the file containing the chainspec of the collator relay-chain
     # Set to /relaychain-data to use additional volume
-    customChainspecPath: ""
+    customChainspecPath: "/relaychain-data/relay_chain_chainspec.json"
     # -- (string) URL to retrive custom chain spec
     customChainspecUrl:
     chainData:
