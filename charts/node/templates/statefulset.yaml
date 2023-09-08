@@ -715,7 +715,7 @@ spec:
               name: chain-data
             - mountPath: /keystore
               name: chain-keystore
-            {{- if and .Values.node.isParachain (and (not .Values.node.collatorExternalRelayChain.enabled ) (not .Values.node.collatorLightClient.enabled)) }}
+            {{- if and .Values.node.isParachain (not .Values.node.collatorExternalRelayChain.enabled) (not .Values.node.collatorLightClient.enabled) }}
             - mountPath: /relaychain-data
               name: relaychain-data
             - mountPath: /relaychain-keystore
