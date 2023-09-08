@@ -92,6 +92,10 @@ node:
 
 ## Upgrade
 
+### From v5.x.x to v5.3.0 (⚠️ breaking changes)
+- The following flags have changed:
+  - `externalRelayChain.*` -> replaced with `collatorExternalRelayChain.*` to match to new naming convention of different modes;
+
 ### From v4.x.x to v5.0.0 (⚠️ breaking changes)
 - Chain backup upload functionality has been removed. I.e., the `node.enableChainBackupGcs` flag is no longer available. Backup upload was implemented in the form of init container. Since backup init container starts before the main container runs, the node does not have a chance to sync to the latest block. Instead, backup container syncs the DB chunks from the time the node was last online which most of the times would be a stale data. Additionally, after backup is completed the node will continue to run which is not always necessary as you probably just wanted to make a backup and exit the script. A more complete solution for making node backups will be published in the future releases of the chart;
 - Chain backup download scripts have been updated to use [`rclone`](https://rclone.org/). Multiple flags associated with this functionality have changed. Chain backup and relay chain backup restoration are now controlled by `node.chainData.chainSnapshot.*` and `node.collatorRelayChain.chainData.chainSnapshot.*` blocks of flags accordingly.
