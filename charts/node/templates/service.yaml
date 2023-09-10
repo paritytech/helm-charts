@@ -115,6 +115,9 @@ spec:
     - port: {{ $.Values.substrateApiSidecar.metrics.port | int }}
       name: prom-sidecar
     {{- end }}
+    {{- with $.Values.node.perNodeServices.apiService.extraPorts }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 {{- end }}
 ---
 {{- if $.Values.node.perNodeServices.relayP2pService.enabled }}
@@ -158,6 +161,9 @@ spec:
       port: {{ $.Values.node.perNodeServices.relayP2pService.ws.port | int }}
       targetPort: 30334
     {{- end }}
+    {{- with $.Values.node.perNodeServices.relayP2pService.extraPorts }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 {{- end }}
 ---
 {{- if and $.Values.node.isParachain $.Values.node.perNodeServices.paraP2pService.enabled }}
@@ -200,6 +206,9 @@ spec:
     - name: ws
       port: {{ $.Values.node.perNodeServices.paraP2pService.ws.port | int }}
       targetPort: 30335
+    {{- end }}
+    {{- with $.Values.node.perNodeServices.paraP2pService.extraPorts }}
+    {{- toYaml . | nindent 4 }}
     {{- end }}
 {{- end }}
 ---
