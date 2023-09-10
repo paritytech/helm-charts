@@ -679,6 +679,18 @@ spec:
             {{- end }}
             - containerPort: 30333
               name: p2p
+            {{- if and (not .Values.node.isParachain) .Values.node.perNodeServices.relayP2pService.ws.enabled }}
+            - containerPort: 30334
+              name: p2p-ws
+            {{- end }}
+            {{- if and .Values.node.isParachain .Values.node.perNodeServices.paraP2pService.enabled }}
+            - containerPort: 30334
+              name: para-p2p
+            {{- if .Values.node.perNodeServices.paraP2pService.ws.enabled  }}
+            - containerPort: 30335
+              name: para-p2p-ws
+            {{- end }}
+            {{- end }}
           {{- if .Values.node.enableStartupProbe }}
           # On startup, retry the connection to the /health endpoint every 10s for 5 min before killing the container
           startupProbe:
@@ -799,6 +811,9 @@ spec:
             {{- end }}
           resources:
           {{- toYaml .Values.wsHealthExporter.resources | nindent 12 }}
+          ports:
+            - containerPort: 8001
+              name: http-ws-health-exporter
           {{- if .Values.node.enableSidecarReadinessProbe }}
           readinessProbe:
             httpGet:

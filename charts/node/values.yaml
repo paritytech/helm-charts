@@ -461,7 +461,7 @@ node:
         # -- Custom prefix to use instead of prefixing the hostname with the name of the Pod
         customPrefix: ""
       # -- Additional ports on per node Services
-      extraPorts: [ ]
+      extraPorts: []
     # -- If enabled, create service to expose relay chain P2P
     relayP2pService:
       enabled: false
@@ -490,7 +490,7 @@ node:
         # -- WS port
         port: 30334
       # -- Additional ports on per node Services
-      extraPorts: [ ]
+      extraPorts: []
     # -- If enabled, create service to expose parachain P2P
     paraP2pService:
       # -- Enable exposing parachain P2P Service
@@ -520,7 +520,7 @@ node:
         # -- WS port
         port: 30335
       # -- Additional ports on per node Services
-      extraPorts: [ ]
+      extraPorts: []
     setPublicAddressToExternalIp:
       # -- If enabled, set `--public-addr` flag to be the NodePort p2p services external address
       enabled: false

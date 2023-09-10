@@ -20,15 +20,19 @@ spec:
     {{- if $.Values.node.substrateApiSidecar.enabled }}
     - port: 8080
       name: api-sidecar
+      targetPort: api-sidecar
     {{- end }}
     {{- if $.Values.node.legacyRpcFlags }}
     - port: 9933
       name: http-rpc
+      targetPort: http-rpc
     - port: 9944
       name: websocket-rpc
+      targetPort: websocket-rpc
     {{- else }}
     - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
       name: rpc
+      targetPort: rpc
     {{- /* Legacy RPC port, to be removed in the next major chart version */}}
     - port: {{ $.Values.node.perNodeServices.apiService.httpPort | int }}
       name: http-rpc
@@ -41,14 +45,17 @@ spec:
     {{- if and $.Values.node.serviceMonitor.enabled (not $.Values.node.perNodeServices.apiService.enabled) }}
     - port: {{ .Values.node.prometheus.port | int }}
       name: prometheus
+      targetPort: prometheus
     {{- end }}
     {{- if and $.Values.node.collatorRelayChain.prometheus.enabled (not $.Values.node.perNodeServices.apiService.enabled) }}
     - port: {{ $.Values.node.perNodeServices.apiService.relayChainPrometheusPort | int }}
       name: prom-relaychain
+      targetPort: prom-relaychain
     {{- end }}
     {{- if or .Values.node.enableSidecarReadinessProbe .Values.node.enableSidecarLivenessProbe }}
     - port: 8001
       name: http-ws-health-exporter
+      targetPort: http-ws-health-exporter
     {{- end }}
 ---
 {{range $i := until (max .Values.autoscaling.maxReplicas .Values.node.replicas | int) }}
@@ -91,11 +98,14 @@ spec:
     {{- if $.Values.node.legacyRpcFlags }}
     - port: 9933
       name: http-rpc
+      targetPort: http-rpc
     - port: 9944
       name: websocket-rpc
+      targetPort: websocket-rpc
     {{- else }}
     - port: {{ $.Values.node.perNodeServices.apiService.rpcPort | int }}
       name: rpc
+      targetPort: rpc
     {{- /* Legacy RPC port, to be removed in the next major chart version */}}
     - port: {{ $.Values.node.perNodeServices.apiService.httpPort | int }}
       name: http-rpc
@@ -107,13 +117,16 @@ spec:
     {{- end }}
     - port: {{ $.Values.node.perNodeServices.apiService.prometheusPort | int }}
       name: prometheus
+      targetPort: prometheus
     {{- if $.Values.node.collatorRelayChain.prometheus.enabled }}
     - port: {{ $.Values.node.perNodeServices.apiService.relayChainPrometheusPort | int }}
       name: prom-relaychain
+      targetPort: prom-relaychain
     {{- end }}
     {{- if $.Values.substrateApiSidecar.metrics.enabled }}
     - port: {{ $.Values.substrateApiSidecar.metrics.port | int }}
       name: prom-sidecar
+      targetPort: prom-sidecar
     {{- end }}
     {{- with $.Values.node.perNodeServices.apiService.extraPorts }}
     {{- toYaml . | nindent 4 }}
@@ -155,11 +168,11 @@ spec:
   ports:
     - name: p2p
       port: {{ $.Values.node.perNodeServices.relayP2pService.port | int }}
-      targetPort: 30333
+      targetPort: p2p
     {{- if $.Values.node.perNodeServices.relayP2pService.ws.enabled }}
     - name: ws
       port: {{ $.Values.node.perNodeServices.relayP2pService.ws.port | int }}
-      targetPort: 30334
+      targetPort: p2p-ws
     {{- end }}
     {{- with $.Values.node.perNodeServices.relayP2pService.extraPorts }}
     {{- toYaml . | nindent 4 }}
@@ -201,11 +214,11 @@ spec:
   ports:
     - name: p2p
       port: {{ $.Values.node.perNodeServices.paraP2pService.port | int }}
-      targetPort: 30334
+      targetPort: para-p2p
     {{- if $.Values.node.perNodeServices.paraP2pService.ws.enabled }}
     - name: ws
       port: {{ $.Values.node.perNodeServices.paraP2pService.ws.port | int }}
-      targetPort: 30335
+      targetPort: para-p2p-ws
     {{- end }}
     {{- with $.Values.node.perNodeServices.paraP2pService.extraPorts }}
     {{- toYaml . | nindent 4 }}
