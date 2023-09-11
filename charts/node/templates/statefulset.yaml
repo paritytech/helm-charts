@@ -649,6 +649,7 @@ spec:
                 {{- end }}
                 {{- end }}
                 {{- end }}
+                {{- end }}
                 {{- if .Values.node.perNodeServices.relayP2pService.enabled }}
                 {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
                 --public-addr=/ip4/${EXTERNAL_IP}/tcp/${RELAY_CHAIN_P2P_PORT} \
@@ -662,7 +663,6 @@ spec:
                 {{- end }}
                 {{- if  (and (not .Values.node.collatorExternalRelayChain.enabled) (not .Values.node.collatorLightClient.enabled)) }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30333 \
-                {{- end }}
                 {{- end }}
           env:
             - name: CHAIN
