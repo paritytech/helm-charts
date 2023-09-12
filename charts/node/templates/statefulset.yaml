@@ -618,7 +618,7 @@ spec:
                 {{- if and .Values.node.isParachain (not .Values.node.collatorExternalRelayChain.enabled ) }}
                 -- \
                 {{- if  .Values.node.collatorLightClient.enabled }}
-                 --chain={{ if .Values.node.collatorLightClient.relayChainCustomChainspecUrl }}{{ .Values.node.collatorLightClient.relayChainCustomChainspecPath }}{{ else }}{{.Values.node.collatorLightClient.relayChain}}{{ end }}
+                --chain={{ if .Values.node.collatorLightClient.relayChainCustomChainspecUrl }}{{ .Values.node.collatorLightClient.relayChainCustomChainspecPath }}{{ else }}{{.Values.node.collatorLightClient.relayChain}}{{ end }}
                 {{- else if .Values.node.collatorRelayChain.customChainspecUrl }}
                 --chain={{ .Values.node.collatorRelayChain.customChainspecPath }} \
                 {{- end }}
