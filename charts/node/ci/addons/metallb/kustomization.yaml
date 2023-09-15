@@ -1,0 +1,14 @@
+helmCharts:
+- name: metallb
+  includeCRDs: true
+  valuesFile: values.yaml
+  releaseName: metallb
+  version: 0.13.11
+  repo: https://metallb.github.io/metallb
+
+namespace: metallb-system
+
+resources:
+- ns.yaml
+- ipaddresses.yaml
+- l2advertisement.yaml

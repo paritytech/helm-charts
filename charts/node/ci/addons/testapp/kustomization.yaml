@@ -1,0 +1,6 @@
+namespace: testapp
+
+resources:
+- ns.yaml
+- testapp.yaml
+- ingress.yaml

@@ -1,0 +1,21 @@
+helmCharts:
+- name: metrics-server
+  includeCRDs: true
+  releaseName: metrics-server
+  version: 3.11.0
+  repo: https://kubernetes-sigs.github.io/metrics-server/
+
+namespace: metrics-server
+
+resources:
+- ns.yaml
+
+patches:
+- patch: |-
+    - op: add
+      path: /spec/template/spec/containers/0/args/-
+      value: --kubelet-insecure-tls
+  target:
+    version: v1
+    kind: Deployment
+    name: metrics-server
