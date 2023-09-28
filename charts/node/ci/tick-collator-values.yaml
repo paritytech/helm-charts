@@ -7,6 +7,11 @@ node:
   chainData:
     storageClass: standard
     volumeSize: 1Gi
+    chainPath: tick_v9
+    chainSnapshot:
+      enabled: true
+      method: http-filelist
+      url: http://tick-collator-backup-server.node-test.svc
   chainKeystore:
     storageClass: standard
     mountInMemory:
@@ -51,3 +56,7 @@ terminationGracePeriodSeconds: 10
 substrateApiSidecar:
   metrics:
     enabled: true
+
+initContainers:
+  downloadChainSnapshot:
+    debug: true

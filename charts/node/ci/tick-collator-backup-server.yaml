@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tick-collator-backup-server
+spec:
+  selector:
+    matchLabels:
+      app: tick-collator-backup-server
+  template:
+    metadata:
+      labels:
+        app: tick-collator-backup-server
+    spec:
+      containers:
+      - name: tick-collator-backup-server
+        image: localhost/tick-collator-backup:latest
+        imagePullPolicy: Never
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - name: http
+          containerPort: 80
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: tick-collator-backup-server
+spec:
+  selector:
+    app: tick-collator-backup-server
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 80
