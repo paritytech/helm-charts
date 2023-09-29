@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tick-collator-backup-server
+  name: assets-server
 spec:
   selector:
     matchLabels:
-      app: tick-collator-backup-server
+      app: assets-server
   template:
     metadata:
       labels:
-        app: tick-collator-backup-server
+        app: assets-server
     spec:
       containers:
-      - name: tick-collator-backup-server
-        image: docker.io/library/tick-collator-backup:latest
+      - name: assets-server
+        image: docker.io/library/nginx-assets-server:latest
         imagePullPolicy: Never
         resources:
           limits:
@@ -26,10 +26,10 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: tick-collator-backup-server
+  name: assets-server
 spec:
   selector:
-    app: tick-collator-backup-server
+    app: assets-server
   ports:
   - name: http
     protocol: TCP

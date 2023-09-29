@@ -1,0 +1,5 @@
+namespace: assets-server
+
+resources:
+- ns.yaml
+- nginx-assets-server.yaml

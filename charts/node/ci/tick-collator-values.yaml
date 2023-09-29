@@ -11,7 +11,7 @@ node:
     chainSnapshot:
       enabled: true
       method: http-filelist
-      url: http://tick-collator-backup-server.node-test.svc
+      url: http://assets-server.node-test.svc
   chainKeystore:
     storageClass: standard
     mountInMemory:
@@ -25,7 +25,7 @@ node:
   enableSidecarReadinessProbe: true
   isParachain: true
   collatorRelayChain:
-    customChainspecUrl: https://f002.backblazeb2.com/file/spinka-kurs/rococo-local.json # TODO: replace
+    customChainspecUrl: http://assets-server.node-test.svc/rococo-local.json
     chainData:
       storageClass: standard
       volumeSize: 1Gi

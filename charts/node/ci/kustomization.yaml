@@ -16,4 +16,3 @@ namespace: *namespace
 
 resources:
 - ns.yaml
-- tick-collator-backup-server.yaml

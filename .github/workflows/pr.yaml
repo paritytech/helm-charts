@@ -85,17 +85,16 @@ jobs:
         done
       if: steps.list-changed.outputs.changed
 
-    # - name: Run chart-testing (install)
-    #   run: |
-    #     ct install \
-    #     --target-branch ${{ github.event.repository.default_branch }} \
-    #     --charts ${{ steps.list-changed.outputs.changed }}
-    #   if: steps.list-changed.outputs.changed
-
     - name: Run ginkgo tests
       run: |
         export KUBECONFIG=~/.kube/config
-        cd charts/node/ci && make test
+        CHANGED_CHARTS=${{ steps.list-changed.outputs.changed }}
+        for chart in ${CHANGED_CHARTS//,/$IFS}
+        do
+          if [[ -f charts/$chart/ci/Makefile ]]; then
+            cd charts/$chart/ci && make test
+          fi
+        done
 
   validate-manifests:
     runs-on: ubuntu-latest
