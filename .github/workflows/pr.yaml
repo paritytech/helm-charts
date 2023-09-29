@@ -93,9 +93,8 @@ jobs:
     #   if: steps.list-changed.outputs.changed
 
     - name: Run ginkgo tests
-      env:
-        KUBECONFIG: ~/.kube/config
       run: |
+        export KUBECONFIG=~/.kube/config
         cd charts/node/ci && make test
 
   validate-manifests:
