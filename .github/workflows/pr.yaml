@@ -85,6 +85,10 @@ jobs:
         done
       if: steps.list-changed.outputs.changed
 
+    - uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
+
     - name: Run ginkgo tests
       run: |
         export KUBECONFIG=~/.kube/config
