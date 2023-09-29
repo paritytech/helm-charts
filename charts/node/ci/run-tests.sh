@@ -11,6 +11,9 @@ until kustomize build --enable-helm addons | kubectl apply -f -; do
   sleep 10
 done
 
+echo "Waiting for addons to be ready..."
+sleep 30
+
 kustomize build --enable-helm . | kubectl apply -f -
 
 cd ginkgo && go test --namespace node-test
