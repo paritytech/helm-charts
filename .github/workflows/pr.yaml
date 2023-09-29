@@ -89,10 +89,10 @@ jobs:
       run: |
         export KUBECONFIG=~/.kube/config
         CHANGED_CHARTS=${{ steps.list-changed.outputs.changed }}
-        for chart in ${CHANGED_CHARTS//,/$IFS}
-        do
-          if [[ -f charts/$chart/ci/Makefile ]]; then
-            cd charts/$chart/ci && make test
+        for chart in ${CHANGED_CHARTS//,/$IFS}; do
+          if [[ -f $chart/ci/Makefile ]]; then
+            pushd $chart/ci && make test
+            popd
           fi
         done
 
