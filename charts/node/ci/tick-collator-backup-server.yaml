@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: tick-collator-backup-server
-        image: localhost/tick-collator-backup:latest
+        image: docker.io/library/tick-collator-backup:latest
         imagePullPolicy: Never
         resources:
           limits:

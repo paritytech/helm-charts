@@ -829,7 +829,7 @@ spec:
           {{- toYaml .Values.wsHealthExporter.resources | nindent 12 }}
           ports:
             - containerPort: 8001
-              name: http-ws-health-exporter
+              name: http-ws-he
           {{- if .Values.node.enableSidecarReadinessProbe }}
           readinessProbe:
             httpGet:
