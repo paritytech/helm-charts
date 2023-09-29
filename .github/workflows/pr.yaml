@@ -92,6 +92,11 @@ jobs:
     #     --charts ${{ steps.list-changed.outputs.changed }}
     #   if: steps.list-changed.outputs.changed
 
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
+
     - name: Run ginkgo tests
       run: |
         export KUBECONFIG=~/.kube/config
