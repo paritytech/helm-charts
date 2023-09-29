@@ -16,4 +16,4 @@ sleep 30
 
 kustomize build --enable-helm . | kubectl apply -f -
 
-cd ginkgo && go test --namespace node-test
+cd ginkgo && go test --namespace node-test --kubeconfig ${KUBECONFIG:-$HOME/.kube/config}
