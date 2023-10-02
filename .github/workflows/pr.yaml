@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
+  lint-test:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -84,6 +84,11 @@ jobs:
           sed -i "s/__GITHUB_SECRET_STAKING_MINER_CONFIG_SEED/$STAKING_MINER_CONFIG_SEED/g" $f
         done
       if: steps.list-changed.outputs.changed
+
+    - uses: actions/setup-go@v4
+      with:
+        go-version: '1.20'
+        cache-dependency-path: "charts/**/ginkgo/go.sum"
 
     - name: Run ginkgo tests
       run: |
