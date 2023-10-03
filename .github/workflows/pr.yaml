@@ -51,7 +51,7 @@ jobs:
     - name: Run chart-testing (list-changed)
       id: list-changed
       run: |
-        changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }})
+        changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }} --excluded-charts node)
         if [[ -n "$changed" ]]; then
           echo "changed=$(echo "$changed" | tr '\n' ',' | sed 's/,$/\n/')" >> $GITHUB_OUTPUT
         fi
@@ -61,7 +61,7 @@ jobs:
         ct lint \
           --target-branch ${{ github.event.repository.default_branch }} \
           --lint-conf chart-testing/lintconf.yaml \
-          --charts ${{ steps.list-changed.outputs.changed }}
+          --charts ${{ steps.list-changed.outputs.changed }},charts/node
       if: steps.list-changed.outputs.changed
 
     - name: Create kind cluster
@@ -90,7 +90,6 @@ jobs:
         ct install \
         --target-branch ${{ github.event.repository.default_branch }} \
         --charts ${{ steps.list-changed.outputs.changed }}
-        --excluded-charts node
       if: steps.list-changed.outputs.changed
 
     - uses: actions/setup-go@v4
