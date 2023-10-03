@@ -30,7 +30,6 @@ var _ = Describe("tick-collator", Ordered, func() {
 
 	When("a collator node (tick) is running", func() {
 		It("should post a healthy status", func() {
-
 			getAvailableReplicas := func(ss *appsv1.StatefulSet) int32 { return ss.Status.AvailableReplicas }
 			getOpts := metav1.GetOptions{}
 
