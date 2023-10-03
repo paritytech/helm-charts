@@ -55,20 +55,27 @@ var _ = Describe("dev-rpc", Ordered, func() {
 			loadbalancerIP := rpcIngress.Status.LoadBalancer.Ingress[0].IP
 			rpcHostname := rpcIngress.Spec.Rules[0].Host
 
-			reqJSON := []byte(`{"id":42, "jsonrpc":"2.0", "method": "rpc_methods"}`)
-			req, err := http.NewRequest("POST", fmt.Sprintf("http://%s", loadbalancerIP), bytes.NewBuffer(reqJSON))
-			Expect(err).NotTo(HaveOccurred())
-			req.Host = rpcHostname
-			req.Header.Set("Content-Type", "application/json")
-			resp, err := http.DefaultClient.Do(req)
-			Expect(err).NotTo(HaveOccurred())
-			Expect(resp.StatusCode).To(Equal(http.StatusOK))
-			defer resp.Body.Close()
-			respBody, err := io.ReadAll(resp.Body)
-			Expect(err).NotTo(HaveOccurred())
+			var resp *http.Response
+			var respBody []byte
 			var respBodyJSON map[string]interface{}
-			errJSON := json.Unmarshal(respBody, &respBodyJSON)
-			Expect(errJSON).NotTo(HaveOccurred())
+
+			Eventually(func(g Gomega) int {
+				reqJSON := []byte(`{"id":42, "jsonrpc":"2.0", "method": "rpc_methods"}`)
+				req, err := http.NewRequest("POST", fmt.Sprintf("http://%s", loadbalancerIP), bytes.NewBuffer(reqJSON))
+				g.Expect(err).NotTo(HaveOccurred())
+				req.Host = rpcHostname
+				req.Header.Set("Content-Type", "application/json")
+				resp, err = http.DefaultClient.Do(req)
+				g.Expect(err).NotTo(HaveOccurred())
+				defer resp.Body.Close()
+				g.Expect(resp.StatusCode).To(Equal(http.StatusOK))
+				respBody, err = io.ReadAll(resp.Body)
+				g.Expect(err).NotTo(HaveOccurred())
+				errJSON := json.Unmarshal(respBody, &respBodyJSON)
+				g.Expect(errJSON).NotTo(HaveOccurred())
+				return resp.StatusCode
+			}, timeout, PollingInterval).Should(Equal(http.StatusOK))
+
 			Expect(respBodyJSON).To(HaveKey("result"))
 		})
 	})
