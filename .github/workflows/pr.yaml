@@ -89,7 +89,8 @@ jobs:
       run: |
         ct install \
         --target-branch ${{ github.event.repository.default_branch }} \
-        --charts ${{ steps.list-changed.outputs.changed }}
+        # Exclude charts/node as it is covered by proper tests. Exclude more charts if needed
+        --charts $(echo "${{ steps.list-changed.outputs.changed }}" | sed -E 's|charts/node,?||g')
       if: steps.list-changed.outputs.changed
 
     - uses: actions/setup-go@v4
