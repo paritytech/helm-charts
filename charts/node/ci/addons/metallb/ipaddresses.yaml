@@ -1,0 +1,8 @@
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: kind-default
+spec:
+  addresses:
+  # - 10.89.0.247-10.89.0.252 # for Podman
+  - 172.18.255.240-172.18.255.250 # for Docker

@@ -54,8 +54,8 @@ spec:
     {{- end }}
     {{- if or .Values.node.enableSidecarReadinessProbe .Values.node.enableSidecarLivenessProbe }}
     - port: 8001
-      name: http-ws-health-exporter
-      targetPort: http-ws-health-exporter
+      name: http-ws-he
+      targetPort: http-ws-he
     {{- end }}
 ---
 {{range $i := until (max .Values.autoscaling.maxReplicas .Values.node.replicas | int) }}

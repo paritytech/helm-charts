@@ -1,0 +1,18 @@
+helmGlobals:
+  chartHome: ../../
+helmCharts:
+- name: node
+  valuesFile: tick-collator-values.yaml
+  releaseName: tick-collator
+  repo: &repoName https://paritytech.github.io/helm-charts/
+  namespace: &namespace node-test
+- name: node
+  valuesFile: dev-rpc-values.yaml
+  releaseName: dev-rpc
+  repo: *repoName
+  namespace: *namespace
+
+namespace: *namespace
+
+resources:
+- ns.yaml

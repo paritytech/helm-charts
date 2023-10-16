@@ -1,0 +1,62 @@
+node:
+  chain: tick
+  role: collator
+  command: polkadot-parachain
+  flags:
+  - "--alice"
+  chainData:
+    storageClass: standard
+    volumeSize: 1Gi
+    chainPath: tick_v9
+    chainSnapshot:
+      enabled: true
+      method: http-filelist
+      url: http://assets-server.assets-server.svc
+  chainKeystore:
+    storageClass: standard
+    mountInMemory:
+      enabled: true
+  podManagementPolicy: Parallel
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Delete
+    whenScaled: Delete
+  substrateApiSidecar:
+    enabled: true
+  enableSidecarReadinessProbe: true
+  isParachain: true
+  collatorRelayChain:
+    customChainspecUrl: http://assets-server.assets-server.svc/rococo-local.json
+    chainData:
+      storageClass: standard
+      volumeSize: 1Gi
+    chainKeystore:
+      mountInMemory:
+        enabled: true
+image:
+  tag: 1.0.0
+  repository: docker.io/parity/polkadot-parachain
+autoscaling:
+  enabled: true
+  targetCPU: 80
+  targetMemory: 80
+  maxReplicas: 2
+wsHealthExporter:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32M
+    limits:
+      cpu: 200m
+      memory: 64M
+  env:
+    WSHE_NODE_MAX_UNSYNCHRONIZED_BLOCK_DRIFT: "4"
+    WSHE_NODE_MIN_PEERS: "0"
+terminationGracePeriodSeconds: 10
+
+substrateApiSidecar:
+  metrics:
+    enabled: true
+
+initContainers:
+  downloadChainSnapshot:
+    debug: true

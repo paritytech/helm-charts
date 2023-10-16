@@ -1,0 +1,6 @@
+controller:
+  image:
+    tag: v0.13.11
+speaker:
+  image:
+    tag: v0.13.11

@@ -1,0 +1,12 @@
+helmCharts:
+- name: ingress-nginx
+  includeCRDs: true
+  releaseName: ingress-nginx
+  valuesFile: values.yaml
+  version: 4.7.2
+  repo: https://kubernetes.github.io/ingress-nginx
+
+namespace: ingress-nginx
+
+resources:
+- ns.yaml

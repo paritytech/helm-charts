@@ -1,0 +1,5 @@
+resources:
+- metallb
+- metrics-server
+- nginx-ingress-controller
+- nginx-assets-server

@@ -1,0 +1,3 @@
+controller:
+  config:
+    worker-processes: 2 # https://github.com/kubernetes/ingress-nginx/issues/6141
