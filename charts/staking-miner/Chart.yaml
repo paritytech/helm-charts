@@ -2,7 +2,7 @@ apiVersion: v2
 name: staking-miner
 description: A Helm chart to deploy staking miner (https://github.com/paritytech/staking-miner)
 type: application
-version: 2.0.0
+version: 2.0.1
 maintainers:
   - name: Parity
     url: https://github.com/paritytech/helm-charts
