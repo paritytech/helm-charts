@@ -31,18 +31,34 @@ helm install polkadot-node parity/node
 
 This will deploy a single Polkadot node with the default configuration.
 
-### Deploying a node with data synced from a snapshot archive (eg. [Polkashot](https://polkashots.io/))
+### Public snapshots
+You can use the following public URLs to download chain snapshots:
+- https://snapshots.polkadot.io/polkadot-paritydb-prune
+- https://snapshots.polkadot.io/polkadot-rocksdb-prune
+- https://snapshots.polkadot.io/polkadot-rocksdb-archive
+- https://snapshots.polkadot.io/kusama-paritydb-prune
+- https://snapshots.polkadot.io/kusama-rocksdb-prune
+- https://snapshots.polkadot.io/kusama-rocksdb-archive
+- https://snapshots.polkadot.io/westend-paritydb-archive
+- https://snapshots.polkadot.io/westend-paritydb-prune
+- https://snapshots.polkadot.io/westend-rocksdb-prune
+- https://snapshots.polkadot.io/westend-rocksdb-archive
+- https://snapshots.polkadot.io/westend-collectives-rocksdb-archive
 
-Polkadot:
-```console
-helm install polkadot-node parity/node --set node.chainData.chainSnapshot.enabled=true --set node.chainData.chainSnapshot.method=http-single-tar-lz4 --set node.chainData.chainSnapshot.url=https://dot-rocksdb.polkashots.io/snapshot
+For example, to restore Polkadot pruned snapshot running ParityDB, configure chart values like the following:
+```yaml
+node:
+  chain: polkadot
+  role: full
+  chainData:
+    chainSnapshot:
+      enabled: true
+      method: http-filelist
+      url: https://snapshots.polkadot.io/polkadot-paritydb-prune
+    pruning: 256
 ```
 
-Kusama:
-```console
-helm install kusama-node parity/node --set node.chain=kusama --set node.chainData.chainSnapshot.enabled=true --set node.chainData.chainSnapshot.method=http-single-tar-lz4 --set node.chainData.chainSnapshot.url=https://ksm-rocksdb.polkashots.io/snapshot --set node.chainData.chainPath=ksmcc3
-```
-⚠️ For some chains where the local directory name is different from the chain ID, `node.chainData.chainPath` needs to be set to a custom value.
+Polkadot and Kusama backups are pruned at 256 blocks. Westend backups are pruned at 1000 blocks.
 
 ### Resizing the node disk
 
@@ -110,30 +126,6 @@ node:
   - `node.collatorRelayChain.chainData.snapshotUrl` -> replaced with `node.collatorRelayChain.chainData.chainSnapshot.url`
   - `node.collatorRelayChain.chainData.snapshotFormat` -> replaced with `node.collatorRelayChain.chainData.chainSnapshot.method`
   - `node.collatorRelayChain.chainData.GCSBucketUrl` -> replaced with `node.collatorRelayChain.chainData.chainSnapshot.url`
-
-#### Public snapshots
-You can now use the following public URLs to download chain snapshots:
-- https://snapshots.polkadot.io/polkadot-paritydb-prune
-- https://snapshots.polkadot.io/polkadot-rocksdb-prune
-- https://snapshots.polkadot.io/polkadot-paritydb-archive
-- https://snapshots.polkadot.io/polkadot-rocksdb-archive
-- https://snapshots.polkadot.io/kusama-paritydb-prune
-- https://snapshots.polkadot.io/kusama-rocksdb-prune
-- https://snapshots.polkadot.io/kusama-paritydb-archive
-- https://snapshots.polkadot.io/kusama-rocksdb-archive
-
-For example, to restore Polkadot pruned snapshot running ParityDB, configure chart values like the following:
-```yaml
-node:
-  chain: polkadot
-  role: full
-  chainData:
-    chainSnapshot:
-      enabled: true
-      method: http-filelist
-      url: https://snapshots.polkadot.io/polkadot-paritydb-prune
-    pruning: 1000
-```
 
 ### v4.6.0 (⚠️ breaking change)
 
