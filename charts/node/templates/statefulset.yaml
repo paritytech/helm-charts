@@ -468,7 +468,7 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
       containers:
-        - name: {{ .Values.node.chain }}
+        - name: {{ .Values.node.chain | replace "_" "-" }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: [ "/bin/sh" ]
