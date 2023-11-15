@@ -531,9 +531,9 @@ spec:
                 --database={{ .Values.node.chainData.database }} \
                 {{- end }}
                 {{- if ge ( int .Values.node.chainData.pruning ) 1 }}
-                --pruning={{ .Values.node.chainData.pruning }} \
+                --blocks-pruning={{ .Values.node.chainData.pruning }} \
                 {{- else if and ( not ( kindIs "invalid" .Values.node.chainData.pruning ) ) ( eq 0 ( int .Values.node.chainData.pruning ) ) }}
-                --pruning=archive \
+                --blocks-pruning=archive \
                 {{- end }}
                 {{- if eq .Values.node.role "collator" }}
                 --collator \
@@ -630,9 +630,9 @@ spec:
                 --database={{ .Values.node.collatorRelayChain.chainData.database }} \
                 {{- end }}
                 {{- if ge ( int .Values.node.collatorRelayChain.chainData.pruning ) 1 }}
-                --pruning={{ .Values.node.collatorRelayChain.chainData.pruning }} \
+                --blocks-pruning={{ .Values.node.collatorRelayChain.chainData.pruning }} \
                 {{- else if and ( not ( kindIs "invalid" .Values.node.collatorRelayChain.chainData.pruning ) ) ( eq 0 ( int .Values.node.collatorRelayChain.chainData.pruning ) ) }}
-                --pruning=archive \
+                --blocks-pruning=archive \
                 {{- end }}
                 {{- if .Values.node.collatorRelayChain.prometheus.enabled }}
                 --prometheus-external \

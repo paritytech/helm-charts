@@ -18,7 +18,7 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 
 # Substrate/Polkadot node Helm chart
 
-![Version: 5.4.3](https://img.shields.io/badge/Version-5.4.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 5.4.4](https://img.shields.io/badge/Version-5.4.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 ## Maintainers
 
@@ -190,6 +190,7 @@ An error will be thrown if any of those flags are set directly.
 - `--light`
 - `--database`
 - `--pruning`
+- `--blocks-pruning`
 - `--prometheus-external`
 - `--prometheus-port`
 - `--node-key`
