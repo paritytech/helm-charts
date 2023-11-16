@@ -107,6 +107,9 @@ node:
 ```
 
 ## Upgrade
+### From v5.x.x to v5.5.0 (⚠️ breaking changes)
+- The pruning flag is now using `--blocks-pruning` which starts from polkadot version 0.928
+- The flag `--pruning` is now allowed in both .Values.node.flags and .Values.node.collatorRelayChain.flags. When using `--pruning`, ensure that the values of .Values.node.chainData.pruning and .Values.node.collatorRelayChain.chainData.pruning are explicitly set to false to maintain previous behavior.
 
 ### From v5.x.x to v5.3.0 (⚠️ breaking changes)
 - The following flags have changed:
