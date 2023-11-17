@@ -18,7 +18,7 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 
 # Substrate/Polkadot node Helm chart
 
-![Version: 5.4.3](https://img.shields.io/badge/Version-5.4.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 5.5.0](https://img.shields.io/badge/Version-5.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 ## Maintainers
 
@@ -111,6 +111,9 @@ node:
 ```
 
 ## Upgrade
+### From v5.x.x to v5.5.0 (⚠️ breaking changes)
+- The pruning flag is now using `--blocks-pruning` which starts from polkadot version v0.9.28
+- The flag `--pruning` is now allowed in both .Values.node.flags and .Values.node.collatorRelayChain.flags. When using `--pruning`, ensure that the values of .Values.node.chainData.pruning and .Values.node.collatorRelayChain.chainData.pruning are explicitly set to `false` to maintain previous behavior.
 
 ### From v5.x.x to v5.3.0 (⚠️ breaking changes)
 - The following flags have changed:
@@ -304,7 +307,7 @@ If you're running a collator node:
 | node.chainData.database | string | `"rocksdb"` | Database backend engine to use |
 | node.chainData.kubernetesVolumeSnapshot | string | `nil` | If set, create a clone of the volume (using volumeClaimTemplates.dataSource.VolumeSnapshot) and use it to store chain data |
 | node.chainData.kubernetesVolumeToClone | string | `nil` | If set, create a clone of the volume (using volumeClaimTemplates.dataSource.PersistentVolumeClaim) and use it to store chain data |
-| node.chainData.pruning | int | `1000` | Set the amount of blocks to retain. If set to 0 archive node will be run |
+| node.chainData.pruning | int | `1000` | Set the amount of blocks to retain. If set to 0 archive node will be run. If deprecated `--pruning` flags is used in `node.flags`, set this to `false`. |
 | node.chainData.storageClass | string | `""` | Storage class to use for persistent volume |
 | node.chainData.volumeSize | string | `"100Gi"` | Size of the volume for chain data |
 | node.chainKeystore | object | `{"accessModes":["ReadWriteOnce"],"annotations":{},"kubernetesVolumeSnapshot":null,"kubernetesVolumeToClone":null,"mountInMemory":{"enabled":false,"sizeLimit":null},"storageClass":"","volumeSize":"10Mi"}` | Configure chain keystore parameters |
@@ -336,7 +339,7 @@ If you're running a collator node:
 | node.collatorRelayChain.chainData.database | string | `"rocksdb"` | Database backend engine to use for the collator relay-chain database |
 | node.collatorRelayChain.chainData.kubernetesVolumeSnapshot | string | `nil` | If set, create a clone of the volume (using volumeClaimTemplates.dataSource.VolumeSnapshot) and use it to store relay-chain data |
 | node.collatorRelayChain.chainData.kubernetesVolumeToClone | string | `nil` | If set, create a clone of the volume (using volumeClaimTemplates.dataSource.PersistentVolumeClaim) and use it to store relay-chain data |
-| node.collatorRelayChain.chainData.pruning | int | `1000` | Set the amount of blocks to retain for the collator relay-chain database. If set to 0 archive node will be run |
+| node.collatorRelayChain.chainData.pruning | int | `1000` | Set the amount of blocks to retain for the collator relay-chain database. If set to 0 archive node will be run. If deprecated `--pruning` flags is used in `node.collatorRelayChain.flags`, set this to `false`. |
 | node.collatorRelayChain.chainData.storageClass | string | `""` | Storage class to use for persistent volume |
 | node.collatorRelayChain.chainData.volumeSize | string | `"100Gi"` | Size of the volume |
 | node.collatorRelayChain.chainKeystore.accessModes | list | `["ReadWriteOnce"]` | Access mode of the volume |
