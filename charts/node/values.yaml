@@ -275,8 +275,8 @@ node:
     chainData:
       # -- Database backend engine to use for the collator relay-chain database
       database: rocksdb
-      # -- Set the amount of blocks to retain for the collator relay-chain database. 
-      # If set to 0 archive node will be run. If --pruning flags is used, set this to false.
+      # -- Set the amount of blocks to retain for the collator relay-chain database.
+      # If set to 0 archive node will be run. If deprecated `--pruning` flags is used in `node.collatorRelayChain.flags`, set this to `false`.
       pruning: 1000
       # -- (string) If set, create a clone of the volume (using volumeClaimTemplates.dataSource.VolumeSnapshot) and use it to store relay-chain data
       kubernetesVolumeSnapshot:
