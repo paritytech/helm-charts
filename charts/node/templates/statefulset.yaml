@@ -78,6 +78,9 @@ spec:
       labels:
       {{- include "node.labels" . | nindent 8 }}
     spec:
+      {{- with .Values.dnsPolicy }}
+      dnsPolicy: {{ . }}
+      {{- end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
       {{- toYaml . | nindent 8 }}
