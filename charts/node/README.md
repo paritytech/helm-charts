@@ -18,7 +18,7 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 
 # Substrate/Polkadot node Helm chart
 
-![Version: 5.5.0](https://img.shields.io/badge/Version-5.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 5.5.1](https://img.shields.io/badge/Version-5.5.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 ## Maintainers
 
@@ -244,6 +244,7 @@ If you're running a collator node:
 | autoscaling.minReplicas | int | `1` | Maintain min number of replicas |
 | autoscaling.targetCPU | string | `nil` | Target CPU utilization that triggers scale up |
 | autoscaling.targetMemory | string | `nil` | Target memory utilization that triggers scale up |
+| dnsPolicy | string | `""` | Field dnsPolicy can be set to 'ClusterFirst', 'Default', 'None', or 'ClusterFirstWithHostNet' or '' to not specify dnsPolicy and let Kubernetes use its default behavior |
 | extraContainers | list | `[]` | Additional containers to run in the pod |
 | extraInitContainers | list | `[]` | Additional init containers to run in the pod |
 | extraLabels | object | `{}` | Additional common labels on pods and services |

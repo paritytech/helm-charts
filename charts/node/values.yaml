@@ -674,6 +674,9 @@ jaegerAgent:
 # -- Annotations to add to the Pod
 podAnnotations: {}
 
+# -- Field dnsPolicy can be set to 'ClusterFirst', 'Default', 'None', or 'ClusterFirstWithHostNet' or '' to not specify dnsPolicy and let Kubernetes use its default behavior
+dnsPolicy: ""
+
 # -- Define which Nodes the Pods are scheduled on
 nodeSelector: {}
 
