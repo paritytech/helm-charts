@@ -98,5 +98,5 @@ Create the database path depending on the database backend in use (rocksdb or pa
 Define a regex matcher to check if the passed node flags are managed by the chart already
 */}}
 {{- define "node.chartManagedFlagsRegex" -}}
-{{- "(\\W|^)(--name|--base-path|--chain|--blocks-pruning|--validator|--collator|--light|--database|--prometheus-external|--prometheus-port|--node-key|--wasm-runtime-overrides|--jaeger-agent|--rpc-external|--unsafe-rpc-external|--ws-external|--unsafe-ws-external|--rpc-methods|--rpc-cors|--rpc-port|--ws-port|--enable-offchain-indexing)(\\W|$)" }}
+{{- "(\\W|^)(--name|--base-path|--chain|--state-pruning|--validator|--collator|--light|--database|--prometheus-external|--prometheus-port|--node-key|--wasm-runtime-overrides|--jaeger-agent|--rpc-external|--unsafe-rpc-external|--ws-external|--unsafe-ws-external|--rpc-methods|--rpc-cors|--rpc-port|--ws-port|--enable-offchain-indexing)(\\W|$)" }}
 {{- end }}
