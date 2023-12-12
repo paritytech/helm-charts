@@ -142,11 +142,11 @@ ingress:
         paths:
           - path: /
             pathType: ImplementationSpecific
-          # backend:
-          #   service:
-          #     name: signet-frontend
-          #     port:
-          #       name: http
+            # backend:
+            #   service:
+            #     name: signet-frontend
+            #     port:
+            #       name: http
   # -- Ingress TLS configuration
   tls:
   # -- Secrets to use for TLS configuration
