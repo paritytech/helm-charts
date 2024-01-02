@@ -711,9 +711,9 @@ spec:
             {{- end }}
             {{- end }}
           {{- if .Values.node.enableStartupProbe }}
-          # On startup, retry the connection to the /health endpoint every 10s for 5 min before killing the container
+          # On startup, retry the connection to the /health endpoint every 10s for failureThreshold * 10 = 300s before killing the container
           startupProbe:
-            failureThreshold: 30
+            failureThreshold: {{ .Values.node.startupProbeFailureThreshold }}
             periodSeconds: 10
             httpGet:
               path: /health

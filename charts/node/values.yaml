@@ -562,6 +562,8 @@ node:
 
   # -- Enable Node container's startup probe
   enableStartupProbe: true
+  # -- On startup, the number of attempts to check the probe before restarting the pod
+  startupProbeFailureThreshold: 30
 
   # -- Enable Node readiness probe through `paritytech/ws-health-exporter` running as a sidecar container
   enableSidecarReadinessProbe: false
