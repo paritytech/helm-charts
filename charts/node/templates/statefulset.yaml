@@ -2,6 +2,8 @@
 {{ $selectorLabels :=  include "node.selectorLabels" . }}
 {{ $serviceLabels :=  include "node.serviceLabels" .  }}
 {{ $serviceAccountName :=  include "node.serviceAccountName" . }}
+{{ $chainPath := include "node.chainPath" . }}
+{{ $collatorRelayChainPath := include "node.collatorRelayChainPath" . }}
 {{ $databasePath := include "node.databasePath" . }}
 {{ $chartManagedFlagsRegex := include "node.chartManagedFlagsRegex" . }}
 apiVersion: apps/v1
@@ -138,7 +140,7 @@ spec:
               fi
           env:
             - name: CHAIN_PATH
-              value: {{ default .Values.node.chain .Values.node.chainData.chainPath }}
+              value: {{ default $chainPath .Values.node.chainData.chainPath }}
             - name: METHOD
               value: {{ .Values.node.chainData.chainSnapshot.method }}
             {{- with .Values.initContainers.downloadChainSnapshot.extraEnvVars }}
@@ -207,7 +209,7 @@ spec:
               fi
           env:
             - name: RELAY_CHAIN_PATH
-              value: {{ default .Values.node.collatorRelayChain.chain .Values.node.collatorRelayChain.chainData.chainPath }}
+              value: {{ default $collatorRelayChainPath .Values.node.collatorRelayChain.chainData.chainPath }}
             - name: METHOD
               value: {{ .Values.node.collatorRelayChain.chainData.chainSnapshot.method }}
             {{- with .Values.initContainers.downloadChainSnapshot.extraEnvVars }}

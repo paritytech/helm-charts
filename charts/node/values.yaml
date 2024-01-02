@@ -10,9 +10,9 @@ extraLabels: {}
 # -- Image of Polkadot Node.
 image:
   # -- Image repository
-  repository: parity/polkadot
+  repository:
   # -- Image tag
-  tag: latest
+  tag:
   # -- Image pull policy
   pullPolicy: Always
   # -- Adds `-x` shell option to container.
@@ -147,7 +147,6 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
-
 # -- Deploy a substrate node.
 # ref: https://docs.substrate.io/tutorials/v3/private-network/
 node:
@@ -167,7 +166,6 @@ node:
     type: "RollingUpdate"
     # -- Can be an int or a %
     maxUnavailable: 1
-
 
   # -- Node may require custom name for chainspec file.
   # ref:  moonbeam https://github.com/PureStake/moonbeam/issues/1104#issuecomment-996787548
@@ -192,7 +190,7 @@ node:
     chainPath:
     # -- Storage class to use for persistent volume
     storageClass: ""
-    # -- Size of the volume for chain data
+    # -- Size of the chain data volume
     volumeSize: 100Gi
     # -- Annotations to add to the volumeClaimTemplates
     annotations: {}
@@ -202,7 +200,7 @@ node:
       # -- Enable chain snapshot restoration
       enabled: false
       # -- Restoration method. One of: gcs, s3, http-single-tar, http-single-tar-lz4, http-filelist
-      method: gcs
+      method: http-filelist
       # -- A URL to download chain backup
       url: ""
       # -- A remote file name containing names of DB file chunks. Appended to `url`
@@ -367,7 +365,7 @@ node:
       # secretName: existing-node-secret
       # secretKey: my-node-key
 
-  # -- Component to inject secrets via annotation of Hashicorp Vault
+  # -- Inject secrets via Hashicorp Vault annotations
   # ref: https://www.vaultproject.io/docs/platform/k8s/injector/annotations
   vault:
     # -- Configures the authentication path for the Kubernetes auth method
@@ -404,9 +402,9 @@ node:
       # vaultKey: key
       # vaultKeyAppendPodIndex: false
 
-  # -- If enabled, generate a persistent volume to use for the keys
+  # -- If enabled, generate and persist a node-key in the keystore volume
   persistGeneratedNodeKey: false
-  # -- Name of the secret containig the key
+  # -- Node key secret string (this option should be limited to development and testing as it will leak the node key secret in the helm config)
   customNodeKey:
 
   # -- Expose metrics via Prometheus format in /metrics endpoint.
