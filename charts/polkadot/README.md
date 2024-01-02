@@ -1,0 +1,103 @@
+<!--
+DO NOT EDIT README.md manually!
+We're using [helm-docs](https://github.com/norwoodj/helm-docs) to render values of the chart.
+If you updated values.yaml file make sure to render a new README.md locally before submitting a Pull Request.
+
+If you're using [pre-commit](https://pre-commit.com/) make sure to install the hooks first:
+```
+pre-commit install
+```
+REAMDE.md will be updating automatically after that.
+
+Otherwise, you should install helm-docs and manually update README.md. Navigate to repository root and run:
+`helm-docs --chart-search-root=charts/node --template-files=README.md.gotmpl`
+
+You may encounter `files were modified by this hook` error after updating README.md.gotmpl file when using pre-commit.
+This is intended behaviour. Make sure to run `git add -A` once again to stage changes in the auto-updated REAMDE.md
+-->
+
+# Polkadot node Helm chart
+
+![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.5.0](https://img.shields.io/badge/AppVersion-1.5.0-informational?style=flat-square)
+
+## Maintainers
+
+| Name | Email | Url |
+| ---- | ------ | --- |
+| Parity | <devops+helm@parity.io> | <https://github.com/paritytech/helm-charts> |
+
+## Installing the chart
+
+```console
+helm repo add parity https://paritytech.github.io/helm-charts/
+helm install polkadot parity/polkadot
+```
+
+This will deploy a single Polkadot node with the default configuration, using a pruned database snapshot for fast setup.
+
+### Public database snapshots
+
+You can use public database snapshots from [snapshots.polkadot.io](https://snapshots.polkadot.io/), eg:
+
+- https://snapshots.polkadot.io/polkadot-paritydb-prune
+- https://snapshots.polkadot.io/polkadot-rocksdb-prune
+- https://snapshots.polkadot.io/polkadot-rocksdb-archive
+- https://snapshots.polkadot.io/kusama-paritydb-prune
+- https://snapshots.polkadot.io/kusama-rocksdb-prune
+- https://snapshots.polkadot.io/kusama-rocksdb-archive
+- https://snapshots.polkadot.io/westend-paritydb-archive
+- https://snapshots.polkadot.io/westend-paritydb-prune
+- https://snapshots.polkadot.io/westend-rocksdb-prune
+- https://snapshots.polkadot.io/westend-rocksdb-archive
+- https://snapshots.polkadot.io/westend-collectives-rocksdb-archive
+
+For example, to restore a Kusama pruned node ParityDB database from a snapshot, use the following chart values:
+```yaml
+node:
+    node:
+      chain: kusama
+      chainData:
+        chainSnapshot:
+          enabled: true
+          url: https://snapshots.polkadot.io/kusama-paritydb-prune
+        pruning: 256
+```
+
+Polkadot and Kusama backups are pruned at 256 blocks. Westend backups are pruned at 1000 blocks.
+
+### Resizing the node disk
+
+Refer to the ["Resizing the node disk section" of the node chart](https://github.com/paritytech/helm-charts/tree/main/charts/node#resizing-the-node-disk).
+
+### Optional Vault Integration
+
+Refer to the ["Optional Vault Integration section" of the node chart](https://github.com/paritytech/helm-charts/tree/main/charts/node#optional-vault-integration).
+
+## Requirements
+
+| Repository | Name | Version |
+|------------|------|---------|
+| https://paritytech.github.io/helm-charts/ | node | 5.6.0 |
+
+## Values
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| node.image.repository | string | `"parity/polkadot"` | Image repository |
+| node.image.tag | string | `"1.5.0"` | Image tag |
+| node.node.chain | string | `"polkadot"` | Embedded chain specification to use (eg: polkadot, kusama, paseo, rococo, westend) |
+| node.node.chainData.chainSnapshot.enabled | bool | `true` | Enable restoring the chain datababase from a snapshot using  [rclone](https://rclone.org/) |
+| node.node.chainData.chainSnapshot.method | string | `"http-filelist"` | Restoration method. One of: gcs, s3, http-single-tar, http-single-tar-lz4, http-filelist |
+| node.node.chainData.chainSnapshot.url | string | `"https://snapshots.polkadot.io/polkadot-paritydb-prune"` | The URL to download the chain database snapshot |
+| node.node.chainData.database | string | `"paritydb"` | Database backend engine to use |
+| node.node.chainData.pruning | int | `256` | State-pruning to set |
+| node.node.chainData.volumeSize | string | `nil` | Size of the chain data volume |
+| node.node.chainKeystore.mountInMemory.enabled | bool | `false` | Enable mounting keystore in memory keystore using an emptyDir volume |
+| node.node.command | string | `"polkadot"` | Command to run within the container |
+| node.node.existingSecrets | string | `nil` | Inject keys from already existing Kubernetes secrets |
+| node.node.flags | string | `nil` | Flags to add to the Polkadot binary |
+| node.node.keys | string | `nil` | Keys to set on the node. |
+| node.node.vault | string | `nil` | Inject secrets via Hashicorp Vault annotations |
+
+----------------------------------------------
+Autogenerated from chart metadata using [helm-docs v1.12.0](https://github.com/norwoodj/helm-docs/releases/v1.12.0)
