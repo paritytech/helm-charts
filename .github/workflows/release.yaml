@@ -22,9 +22,9 @@ jobs:
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
       - name: Install Helm
-        uses: azure/setup-helm@v3.3
+        uses: azure/setup-helm@v3
         with:
-          version: v3.12.1
+          version: v3.13.3
 
       - name: Install additional Helm repos
         run: |
@@ -38,7 +38,7 @@ jobs:
           private_key: ${{ secrets.CHART_UPDATER_APP_KEY }}
 
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.5.0
+        uses: helm/chart-releaser-action@v1.6.0
         env:
           CR_TOKEN: ${{ steps.generate-github-app-token.outputs.token }}
           CR_SKIP_EXISTING: true
