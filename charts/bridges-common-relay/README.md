@@ -18,7 +18,7 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 
 # Parity Bridges Common helm chart
 
-![Version: 0.2.4](https://img.shields.io/badge/Version-0.2.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.2.5](https://img.shields.io/badge/Version-0.2.5-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 This helm chart installs [Parity Bridges Common](https://github.com/paritytech/parity-bridges-common) relayer.
 
@@ -57,7 +57,7 @@ helm install bridges-common-relay parity/bridges-common-relay
 | prometheus.enabled | bool | `false` | Expose Prometheus metrics |
 | prometheus.port | int | `9615` | The port for exposed Prometheus metrics |
 | relayHeaders.enabled | bool | `false` |  |
-| relayHeaders.name | string | `"rococo-to-bridge-hub-wococo"` |  |
+| relayHeaders.name | string | `"kusama-to-bridge-hub-polkadot"` |  |
 | relayHeaders.params.source-host | string | `"ws://rpc.example"` |  |
 | relayHeaders.params.source-port | int | `9955` |  |
 | relayHeaders.params.target-host | string | `"ws://rpc.example"` |  |
