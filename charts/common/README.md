@@ -45,11 +45,11 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 | image.repository | string | `"nginx"` | Image repository |
 | image.tag | string | `"latest"` | Image tag |
 | imagePullSecrets | list | `[]` | Reference to one or more secrets to be used when pulling images ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/ |
-| ingress | object | `{"annotations":{},"className":"","enabled":false,"hosts":[{"host":"chart-example.local","paths":[{"path":"/","pathType":"ImplementationSpecific"}]}],"tls":[{"hosts":["chart-example.local"],"secretName":"chart-example-tls"}]}` | Creates an ingress resource |
+| ingress | object | `{"annotations":{},"className":"","enabled":false,"rules":[{"host":"chart-example.local","http":{"paths":[{"path":"/","pathType":"ImplementationSpecific"}]}}],"tls":[{"hosts":["chart-example.local"],"secretName":"chart-example-tls"}]}` | Creates an ingress resource |
 | ingress.annotations | object | `{}` | Annotations to add to the Ingress |
 | ingress.className | string | `""` | Ingress class name |
 | ingress.enabled | bool | `false` | Enable creation of Ingress |
-| ingress.hosts | list | `[{"host":"chart-example.local","paths":[{"path":"/","pathType":"ImplementationSpecific"}]}]` | A list of hosts for the Ingress |
+| ingress.rules | list | `[{"host":"chart-example.local","http":{"paths":[{"path":"/","pathType":"ImplementationSpecific"}]}}]` | A list of hosts for the Ingress |
 | ingress.tls | list | `[{"hosts":["chart-example.local"],"secretName":"chart-example-tls"}]` | Ingress TLS configuration |
 | ingress.tls[0] | object | `{"hosts":["chart-example.local"],"secretName":"chart-example-tls"}` | Secrets to use for TLS configuration |
 | ingress.tls[0].hosts | list | `["chart-example.local"]` | A list of hosts for the Ingress with TLS enabled |
