@@ -155,7 +155,7 @@ spec:
             runAsUser: 0
           {{- end }}
         {{- end }}
-        {{- if and .Values.node.collatorRelayChain.chainData.chainSnapshot.enabled (and (not .Values.node.collatorExternalRelayChain.enabled ) (not .Values.node.collatorLightClient.enabled)) }}
+        {{- if and .Values.node.collatorRelayChain.chainData.chainSnapshot.enabled (include "node.hasCollatorRelaychain" .) }}
         - name: download-relay-chain-snapshot
           image: {{ .Values.initContainers.downloadChainSnapshot.image.repository }}:{{ .Values.initContainers.downloadChainSnapshot.image.tag }}
           command: [ "/bin/sh" ]
@@ -264,7 +264,7 @@ spec:
           volumeMounts:
             - mountPath: /chain-data
               name: chain-data
-            {{- if and .Values.node.isParachain .Values.node.collatorRelayChain.customChainspecUrl (and (not .Values.node.collatorExternalRelayChain.enabled ) (not .Values.node.collatorLightClient.enabled))}}
+            {{- if and .Values.node.collatorRelayChain.customChainspecUrl (include "node.hasCollatorRelaychain" .) }}
             - mountPath: /relaychain-data
               name: relaychain-data
             {{- end }}
@@ -435,7 +435,7 @@ spec:
             - |
               set -eu -o pipefail {{ if .Values.initContainers.retrieveServiceInfo.debug }}-x{{ end }}
               POD_INDEX="${HOSTNAME##*-}"
-              {{- if and .Values.node.perNodeServices.relayP2pService.enabled (and (not .Values.node.collatorExternalRelayChain.enabled ) (not .Values.node.collatorLightClient.enabled)) (eq .Values.node.perNodeServices.relayP2pService.type "NodePort") }}
+              {{- if and .Values.node.perNodeServices.relayP2pService.enabled (include "node.hasRelaychain" .) (eq .Values.node.perNodeServices.relayP2pService.type "NodePort") }}
               RELAY_CHAIN_P2P_PORT="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-relay-chain-p2p -o jsonpath='{.spec.ports[?(@.name=="p2p")].nodePort}')"
               {{- if .Values.node.perNodeServices.relayP2pService.ws.enabled }}
               RELAY_CHAIN_P2P_PORT_WS="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-relay-chain-p2p -o jsonpath='{.spec.ports[?(@.name=="ws")].nodePort}')"
@@ -446,7 +446,7 @@ spec:
               echo "Retrieved Kubernetes service node port from {{ $fullname }}-${POD_INDEX}-relay-chain-p2p"
               echo "Saved ${RELAY_CHAIN_P2P_PORT} to /chain-data/relay_chain_p2p_port"
               {{- end }}
-              {{- if and .Values.node.perNodeServices.paraP2pService.enabled  (eq .Values.node.perNodeServices.paraP2pService.type "NodePort") }}
+              {{- if and .Values.node.isParachain .Values.node.perNodeServices.paraP2pService.enabled  (eq .Values.node.perNodeServices.paraP2pService.type "NodePort") }}
               PARA_CHAIN_P2P_PORT="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-para-chain-p2p -o jsonpath='{.spec.ports[0].nodePort}')"
               echo "${PARA_CHAIN_P2P_PORT}" > /chain-data/para_chain_p2p_port
               echo "Retrieved Kubernetes service node port from {{ $fullname }}-${POD_INDEX}-para-chain-p2p, saved ${PARA_CHAIN_P2P_PORT} to /chain-data/para_chain_p2p_port"
@@ -484,7 +484,7 @@ spec:
               EXTERNAL_IP="$(cat /chain-data/node_external_ip)"
               echo "EXTERNAL_IP=${EXTERNAL_IP}"
               {{- end }}
-              {{- if  and (not .Values.node.collatorExternalRelayChain.enabled) (not .Values.node.collatorLightClient.enabled) }}
+              {{- if (include "node.hasRelaychain" .) }}
               {{- if and .Values.node.perNodeServices.relayP2pService.enabled (eq .Values.node.perNodeServices.relayP2pService.type "NodePort")  }}
               {{- /* For NodePort services, set the p2p port to the value saved in the retrieve-service-info init container */}}
               RELAY_CHAIN_P2P_PORT="$(cat /chain-data/relay_chain_p2p_port)"
@@ -653,7 +653,7 @@ spec:
                 {{- end }}
                 {{- end }}
                 {{- end }}
-                {{- if .Values.node.perNodeServices.relayP2pService.enabled }}
+                {{- if and .Values.node.perNodeServices.relayP2pService.enabled (include "node.hasRelaychain" .) }}
                 {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
                 --public-addr=/ip4/${EXTERNAL_IP}/tcp/${RELAY_CHAIN_P2P_PORT} \
                 {{- if .Values.node.perNodeServices.relayP2pService.ws.enabled }}
@@ -664,7 +664,7 @@ spec:
                 --listen-addr=/ip4/0.0.0.0/tcp/30334/ws \
                 {{- end }}
                 {{- end }}
-                {{- if  (and (not .Values.node.collatorExternalRelayChain.enabled) (not .Values.node.collatorLightClient.enabled)) }}
+                {{- if (include "node.hasRelaychain" .) }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30333 \
                 {{- end }}
           env:
@@ -730,7 +730,7 @@ spec:
               name: chain-data
             - mountPath: /keystore
               name: chain-keystore
-            {{- if and .Values.node.isParachain (not .Values.node.collatorExternalRelayChain.enabled) (not .Values.node.collatorLightClient.enabled) }}
+            {{- if (include "node.hasCollatorRelaychain" .) }}
             - mountPath: /relaychain-data
               name: relaychain-data
             - mountPath: /relaychain-keystore
@@ -911,7 +911,7 @@ spec:
             sizeLimit: {{ .Values.node.chainKeystore.mountInMemory.sizeLimit }}
             {{- end }}
       {{- end }}
-      {{- if and .Values.node.isParachain .Values.node.collatorRelayChain.chainKeystore.mountInMemory.enabled }}
+      {{- if and (include "node.hasCollatorRelaychain" .) .Values.node.collatorRelayChain.chainKeystore.mountInMemory.enabled }}
         - name: relaychain-keystore
           emptyDir:
             medium: "Memory"
@@ -970,7 +970,7 @@ spec:
           requests:
             storage: {{ .Values.node.chainKeystore.volumeSize }}
     {{- end }}
-    {{- if and .Values.node.isParachain (and (not .Values.node.collatorExternalRelayChain.enabled ) (not .Values.node.collatorLightClient.enabled)) }}
+    {{- if (include "node.hasCollatorRelaychain" .) }}
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
