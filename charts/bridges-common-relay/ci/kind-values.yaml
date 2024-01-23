@@ -1,2 +1,7 @@
-relayHeaders:
-  enabled: true
+params:
+  - relay-headers
+  - kusama-to-bridge-hub-polkadot
+  - --source-host=ws://rpc.example
+  - --source-port=9955
+  - --target-host=ws://rpc.example
+  - --target-port=9944
