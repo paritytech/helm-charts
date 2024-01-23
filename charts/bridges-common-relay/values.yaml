@@ -30,39 +30,8 @@ serviceAccount:
   # -- Service Account name
   name: ""
 
-relayHeaders:
-  enabled: false
-  name: kusama-to-bridge-hub-polkadot
-  params:
-    source-host: ws://rpc.example
-    source-port: 9955
-    target-host: ws://rpc.example
-    target-port: 9944
-    # target-signer: //Bob
-    # or
-    # target-signer-file: /path/to/bob/seed
+params: []
 
-relayHeadersAndMessages:
-  enabled: false
-  name: bridge-hub-rococo-bridge-hub-wococo
-  params: {}
-    #  rococo-host: localhost
-    #  rococo-port: 9942
-    #  bridge-hub-rococo-host: localhost
-    #  bridge-hub-rococo-port: 8943
-    #  bridge-hub-rococo-signer: //Charlie
-    #  wococo-headers-to-bridge-hub-rococo-signer: //Bob
-    #  wococo-parachains-to-bridge-hub-rococo-signer: //Bob
-    #  bridge-hub-rococo-transactions-mortality: 4
-    #  wococo-host: localhost
-    #  wococo-port: 9945
-    #  bridge-hub-wococo-host: localhost
-    #  bridge-hub-wococo-port: 8945
-    #  bridge-hub-wococo-signer-file: /secrets/bridge-hub-wococo-signer-file
-    #  rococo-headers-to-bridge-hub-wococo-signer: //Bob
-    #  rococo-parachains-to-bridge-hub-wococo-signer: //Bob
-    #  bridge-hub-wococo-transactions-mortality: 4
-    #  lane: ["00000001", "00000002"]
 
 # -- Secrets will be mounted to pod /secrets/{key}
 secrets: {}

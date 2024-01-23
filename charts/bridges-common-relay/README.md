@@ -18,7 +18,7 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 
 # Parity Bridges Common helm chart
 
-![Version: 0.2.5](https://img.shields.io/badge/Version-0.2.5-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 This helm chart installs [Parity Bridges Common](https://github.com/paritytech/parity-bridges-common) relayer.
 
@@ -51,20 +51,12 @@ helm install bridges-common-relay parity/bridges-common-relay
 | imagePullSecrets | list | `[]` | Reference to one or more secrets to be used when pulling images. ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/ |
 | nameOverride | string | `""` | Provide a name in place of node for `app:` labels |
 | nodeSelector | object | `{}` | Define which Nodes the Pods are scheduled on |
+| params | list | `[]` |  |
 | podAnnotations | object | `{}` | Annotations to add to the Pod |
 | podSecurityContext | object | `{}` | SecurityContext holds pod-level security attributes and common container settings. ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
 | prometheus | object | `{"enabled":false,"port":9615}` | Expose metrics via Prometheus format in /metrics endpoint. |
 | prometheus.enabled | bool | `false` | Expose Prometheus metrics |
 | prometheus.port | int | `9615` | The port for exposed Prometheus metrics |
-| relayHeaders.enabled | bool | `false` |  |
-| relayHeaders.name | string | `"kusama-to-bridge-hub-polkadot"` |  |
-| relayHeaders.params.source-host | string | `"ws://rpc.example"` |  |
-| relayHeaders.params.source-port | int | `9955` |  |
-| relayHeaders.params.target-host | string | `"ws://rpc.example"` |  |
-| relayHeaders.params.target-port | int | `9944` |  |
-| relayHeadersAndMessages.enabled | bool | `false` |  |
-| relayHeadersAndMessages.name | string | `"bridge-hub-rococo-bridge-hub-wococo"` |  |
-| relayHeadersAndMessages.params | object | `{}` |  |
 | replicaCount | int | `1` |  |
 | resources | object | `{}` | Resource limits & requests |
 | secrets | object | `{}` | Secrets will be mounted to pod /secrets/{key} |
