@@ -33,25 +33,8 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
-            {{- if .Values.relayHeaders.enabled }}
-            - "relay-headers"
-            - "{{ .Values.relayHeaders.name }}"
-            {{- range $key, $value := .Values.relayHeaders.params }}
-            - "--{{ $key }} {{ $value }}"
-            {{- end }}
-            {{- end }}
-            {{- if .Values.relayHeadersAndMessages.enabled }}
-            - "relay-headers-and-messages"
-            - "{{ .Values.relayHeadersAndMessages.name }}"
-            {{- range $key, $value := .Values.relayHeadersAndMessages.params }}
-            {{- if kindIs "slice" $value }}
-            {{- range $param := $value }}
-            - "--{{ $key }} {{ $param  }}"
-            {{- end }}
-            {{- else }}
-            - "--{{ $key }} {{ $value }}"
-            {{- end }}
-            {{- end }}
+            {{- range $param := .Values.params }}
+            - {{ $param | quote }}
             {{- end }}
             {{- if .Values.prometheus.enabled }}
             - "--prometheus-host 0.0.0.0"
