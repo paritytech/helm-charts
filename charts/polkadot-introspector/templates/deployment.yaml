@@ -52,6 +52,9 @@ spec:
               {{- end }}
               {{- end }}
               --ws {{ join "," .Values.introspector.rpcNodes }} \
+              {{- if .Values.introspector.lightClient }}
+              --client light \
+              {{- end }}
               {{- if .Values.introspector.verboseLogging }}
               -v \
               {{- end }}
