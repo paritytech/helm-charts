@@ -20,7 +20,7 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 
 The helm chart installs the [Polkadot introspector](https://github.com/paritytech/polkadot-introspector).
 
-![Version: 0.5.1](https://img.shields.io/badge/Version-0.5.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.0](https://img.shields.io/badge/AppVersion-1.0.0-informational?style=flat-square)
+![Version: 0.5.2](https://img.shields.io/badge/Version-0.5.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.0](https://img.shields.io/badge/AppVersion-1.0.0-informational?style=flat-square)
 
 ## Maintainers
 
@@ -76,11 +76,12 @@ helm install polkadot-introspector parity/polkadot-introspector
 | serviceAccount | object | `{"annotations":{},"create":true}` | Service account for the node to use. ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/ |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the Service Account |
 | serviceAccount.create | bool | `true` | Enable creation of a Service Account for the main container |
-| serviceMonitor | object | `{"enabled":false,"interval":"1m","metricRelabelings":[],"namespace":null,"relabelings":[],"scrapeTimeout":"30s","targetLabels":[]}` | Service Monitor of Prometheus-Operator ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors |
+| serviceMonitor | object | `{"enabled":false,"interval":"1m","metricRelabelings":[],"namespace":null,"portName":"prometheus","relabelings":[],"scrapeTimeout":"30s","targetLabels":[]}` | Service Monitor of Prometheus-Operator ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors |
 | serviceMonitor.enabled | bool | `false` | Enables Service Monitor |
 | serviceMonitor.interval | string | `"1m"` | Scrape interval |
 | serviceMonitor.metricRelabelings | list | `[]` | Metric relabelings config |
 | serviceMonitor.namespace | string | `nil` | Namespace to deploy Service Monitor. If not set deploys in the same namespace with the chart |
+| serviceMonitor.portName | string | `"prometheus"` | PortName |
 | serviceMonitor.relabelings | list | `[]` | Relabelings config |
 | serviceMonitor.scrapeTimeout | string | `"30s"` | Scrape timeout |
 | serviceMonitor.targetLabels | list | `[]` | Labels to scrape |

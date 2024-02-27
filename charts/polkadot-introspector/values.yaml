@@ -93,6 +93,8 @@ serviceMonitor:
   relabelings: []
   # -- Metric relabelings config
   metricRelabelings: []
+  # -- PortName
+  portName: "prometheus"
 
 # -- Creates an ingress resource
 ingress:
