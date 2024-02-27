@@ -8,7 +8,7 @@ metadata:
     {{- include "polkadot-introspector.labels" . | nindent 4 }}
 spec:
   endpoints:
-  - port: {{ .Values.service.portName }}
+  - port: {{ .Values.service.port }}
     {{- with .Values.serviceMonitor.interval }}
     interval: {{ . }}
     {{- end }}
