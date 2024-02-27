@@ -31,35 +31,6 @@ helm install polkadot-node parity/node
 
 This will deploy a single Polkadot node with the default configuration.
 
-### Public snapshots
-You can use the following public URLs to download chain snapshots:
-- https://snapshots.polkadot.io/polkadot-paritydb-prune
-- https://snapshots.polkadot.io/polkadot-rocksdb-prune
-- https://snapshots.polkadot.io/polkadot-rocksdb-archive
-- https://snapshots.polkadot.io/kusama-paritydb-prune
-- https://snapshots.polkadot.io/kusama-rocksdb-prune
-- https://snapshots.polkadot.io/kusama-rocksdb-archive
-- https://snapshots.polkadot.io/westend-paritydb-archive
-- https://snapshots.polkadot.io/westend-paritydb-prune
-- https://snapshots.polkadot.io/westend-rocksdb-prune
-- https://snapshots.polkadot.io/westend-rocksdb-archive
-- https://snapshots.polkadot.io/westend-collectives-rocksdb-archive
-
-For example, to restore Polkadot pruned snapshot running ParityDB, configure chart values like the following:
-```yaml
-node:
-  chain: polkadot
-  role: full
-  chainData:
-    chainSnapshot:
-      enabled: true
-      method: http-filelist
-      url: https://snapshots.polkadot.io/polkadot-paritydb-prune
-    pruning: 256
-```
-
-Polkadot and Kusama backups are pruned at 256 blocks. Westend backups are pruned at 1000 blocks.
-
 ### Resizing the node disk
 
 To resize the node persistent volume, perform the following steps:

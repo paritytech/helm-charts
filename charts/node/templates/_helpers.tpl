@@ -37,7 +37,7 @@ Common labels
 helm.sh/chart: {{ include "node.chart" . }}
 {{ include "node.selectorLabels" . }}
 {{ include "node.serviceLabels" . }}
-app.kubernetes.io/version: {{ .Values.image.tag | quote }}
+app.kubernetes.io/version: {{ .Chart.Version | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- if or .Values.node.chainData.pruning ( not ( kindIs "invalid" .Values.node.chainData.pruning ) ) }}
 {{- if ge ( int .Values.node.chainData.pruning ) 1 }}
@@ -93,6 +93,36 @@ Create the database path depending on the database backend in use (rocksdb or pa
 {{- "db" }}
 {{- end }}
 {{- end }}
+
+{{/*
+Set directory path for known chains
+*/}}
+{{- define "node.chainPath" -}}
+{{- if eq .Values.node.chain "kusama" -}}
+ksmcc3
+{{- else if eq .Values.node.chain "rococo" -}}
+rococo_v2_2
+{{- else if eq .Values.node.chain "westend" -}}
+westend2
+{{- else -}}
+{{- .Values.node.chain -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Set directory path for known relaychains
+*/}}
+{{- define "node.collatorRelayChainPath" -}}
+{{- if eq .Values.node.collatorRelayChain.chain "kusama" -}}
+ksmcc3
+{{- else if eq .Values.node.collatorRelayChain.chain "rococo" -}}
+rococo_v2_2
+{{- else if eq .Values.node.collatorRelayChain.chain "westend" -}}
+westend2
+{{- else -}}
+{{- .Values.node.collatorRelayChain.chain -}}
+{{- end -}}
+{{- end -}}
 
 {{/*
 Define a regex matcher to check if the passed node flags are managed by the chart already

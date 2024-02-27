@@ -35,35 +35,6 @@ helm install polkadot-node parity/node
 
 This will deploy a single Polkadot node with the default configuration.
 
-### Public snapshots
-You can use the following public URLs to download chain snapshots:
-- https://snapshots.polkadot.io/polkadot-paritydb-prune
-- https://snapshots.polkadot.io/polkadot-rocksdb-prune
-- https://snapshots.polkadot.io/polkadot-rocksdb-archive
-- https://snapshots.polkadot.io/kusama-paritydb-prune
-- https://snapshots.polkadot.io/kusama-rocksdb-prune
-- https://snapshots.polkadot.io/kusama-rocksdb-archive
-- https://snapshots.polkadot.io/westend-paritydb-archive
-- https://snapshots.polkadot.io/westend-paritydb-prune
-- https://snapshots.polkadot.io/westend-rocksdb-prune
-- https://snapshots.polkadot.io/westend-rocksdb-archive
-- https://snapshots.polkadot.io/westend-collectives-rocksdb-archive
-
-For example, to restore Polkadot pruned snapshot running ParityDB, configure chart values like the following:
-```yaml
-node:
-  chain: polkadot
-  role: full
-  chainData:
-    chainSnapshot:
-      enabled: true
-      method: http-filelist
-      url: https://snapshots.polkadot.io/polkadot-paritydb-prune
-    pruning: 256
-```
-
-Polkadot and Kusama backups are pruned at 256 blocks. Westend backups are pruned at 1000 blocks.
-
 ### Resizing the node disk
 
 To resize the node persistent volume, perform the following steps:
@@ -252,11 +223,11 @@ If you're running a collator node:
 | extraInitContainers | list | `[]` | Additional init containers to run in the pod |
 | extraLabels | object | `{}` | Additional common labels on pods and services |
 | fullnameOverride | string | `""` | Provide a name to substitute for the full names of resources |
-| image | object | `{"debug":false,"pullPolicy":"Always","repository":"parity/polkadot","tag":"latest"}` | Image of Polkadot Node. |
+| image | object | `{"debug":false,"pullPolicy":"Always","repository":null,"tag":null}` | Image of Polkadot Node. |
 | image.debug | bool | `false` | Adds `-x` shell option to container. Note: passwords and keys used in container may appear in logs |
 | image.pullPolicy | string | `"Always"` | Image pull policy |
-| image.repository | string | `"parity/polkadot"` | Image repository |
-| image.tag | string | `"latest"` | Image tag |
+| image.repository | string | `nil` | Image repository |
+| image.tag | string | `nil` | Image tag |
 | imagePullSecrets | list | `[]` | Reference to one or more secrets to be used when pulling images. ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/ |
 | ingress | object | `{"annotations":{},"enabled":false,"rules":[],"tls":[]}` | Creates an ingress resource |
 | ingress.annotations | object | `{}` | Annotations to add to the Ingress |
@@ -298,22 +269,22 @@ If you're running a collator node:
 | jaegerAgent.ports.samplingPort | HTTP | `5778` | serve configs, sampling strategies |
 | jaegerAgent.resources | object | `{}` | Resource limits & requests |
 | nameOverride | string | `""` | Provide a name in place of node for `app:` labels |
-| node | object | `{"allowUnsafeRpcMethods":false,"chain":"polkadot","chainData":{"annotations":{},"chainPath":null,"chainSnapshot":{"enabled":false,"filelistName":"files.txt","method":"gcs","url":""},"database":"rocksdb","kubernetesVolumeSnapshot":null,"kubernetesVolumeToClone":null,"pruning":1000,"storageClass":"","volumeSize":"100Gi"},"chainKeystore":{"accessModes":["ReadWriteOnce"],"annotations":{},"kubernetesVolumeSnapshot":null,"kubernetesVolumeToClone":null,"mountInMemory":{"enabled":false,"sizeLimit":null},"storageClass":"","volumeSize":"10Mi"},"collatorExternalRelayChain":{"enabled":false,"relayChainRpcUrls":[]},"collatorLightClient":{"enabled":false,"relayChain":"","relayChainCustomChainspecPath":"/chain-data/relay_chain_chainspec.json","relayChainCustomChainspecUrl":null},"collatorRelayChain":{"chain":"polkadot","chainData":{"annotations":{},"chainPath":"","chainSnapshot":{"enabled":false,"filelistName":"files.txt","method":"gcs","url":""},"database":"rocksdb","kubernetesVolumeSnapshot":null,"kubernetesVolumeToClone":null,"pruning":1000,"storageClass":"","volumeSize":"100Gi"},"chainKeystore":{"accessModes":["ReadWriteOnce"],"annotations":{},"kubernetesVolumeSnapshot":null,"kubernetesVolumeToClone":null,"mountInMemory":{"enabled":false,"sizeLimit":null},"storageClass":"","volumeSize":"10Mi"},"customChainspecPath":"/relaychain-data/relay_chain_chainspec.json","customChainspecUrl":null,"flags":[],"prometheus":{"enabled":false,"port":9625}},"command":"polkadot","customChainspecPath":"/chain-data/chainspec.json","customChainspecUrl":null,"customNodeKey":null,"enableOffchainIndexing":false,"enableSidecarLivenessProbe":false,"enableSidecarReadinessProbe":false,"enableStartupProbe":true,"existingSecrets":{"keys":[],"nodeKey":{}},"extraConfigmapMounts":[],"extraEnvVars":[],"extraSecretMounts":[],"flags":[],"forceDownloadChainspec":false,"isParachain":false,"keys":{},"legacyRpcFlags":false,"logLevels":[],"perNodeServices":{"apiService":{"annotations":{},"enabled":true,"externalDns":{"customPrefix":"","enabled":false,"hostname":"example.com","ttl":300},"externalTrafficPolicy":"Cluster","extraPorts":[],"httpPort":9933,"prometheusPort":9615,"relayChainPrometheusPort":9625,"rpcPort":9944,"type":"ClusterIP","wsPort":9955},"paraP2pService":{"annotations":{},"enabled":false,"externalDns":{"customPrefix":"","enabled":false,"hostname":"example.com","ttl":300},"externalTrafficPolicy":"Cluster","extraPorts":[],"port":30334,"type":"NodePort","ws":{"enabled":false,"port":30335}},"relayP2pService":{"annotations":{},"enabled":false,"externalDns":{"customPrefix":"","enabled":false,"hostname":"example.com","ttl":300},"externalTrafficPolicy":"Cluster","extraPorts":[],"port":30333,"type":"NodePort","ws":{"enabled":false,"port":30334}},"setPublicAddressToExternalIp":{"enabled":false,"ipRetrievalServiceUrl":"https://ifconfig.io"}},"persistGeneratedNodeKey":false,"persistentVolumeClaimRetentionPolicy":null,"podManagementPolicy":null,"prometheus":{"enabled":true,"port":9615},"replicas":1,"resources":{},"role":"full","serviceAnnotations":{},"serviceMonitor":{"enabled":false,"interval":"30s","metricRelabelings":[],"namespace":null,"relabelings":[],"scrapeTimeout":"10s","targetLabels":["node"]},"startupProbeFailureThreshold":30,"substrateApiSidecar":{"enabled":false},"telemetryUrls":[],"tracing":{"enabled":false},"updateStrategy":{"enabled":false,"maxUnavailable":1,"type":"RollingUpdate"},"vault":{"authConfigServiceAccount":null,"authConfigType":null,"authPath":null,"authRole":null,"authType":null,"keys":{},"nodeKey":{}},"wasmRuntimeOverridesPath":"/chain-data/runtimes","wasmRuntimeUrl":""}` | Deploy a substrate node. ref: https://docs.substrate.io/tutorials/v3/private-network/ |
+| node | object | `{"allowUnsafeRpcMethods":false,"chain":"polkadot","chainData":{"annotations":{},"chainPath":null,"chainSnapshot":{"enabled":false,"filelistName":"files.txt","method":"http-filelist","url":""},"database":"rocksdb","kubernetesVolumeSnapshot":null,"kubernetesVolumeToClone":null,"pruning":1000,"storageClass":"","volumeSize":"100Gi"},"chainKeystore":{"accessModes":["ReadWriteOnce"],"annotations":{},"kubernetesVolumeSnapshot":null,"kubernetesVolumeToClone":null,"mountInMemory":{"enabled":false,"sizeLimit":null},"storageClass":"","volumeSize":"10Mi"},"collatorExternalRelayChain":{"enabled":false,"relayChainRpcUrls":[]},"collatorLightClient":{"enabled":false,"relayChain":"","relayChainCustomChainspecPath":"/chain-data/relay_chain_chainspec.json","relayChainCustomChainspecUrl":null},"collatorRelayChain":{"chain":"polkadot","chainData":{"annotations":{},"chainPath":"","chainSnapshot":{"enabled":false,"filelistName":"files.txt","method":"gcs","url":""},"database":"rocksdb","kubernetesVolumeSnapshot":null,"kubernetesVolumeToClone":null,"pruning":1000,"storageClass":"","volumeSize":"100Gi"},"chainKeystore":{"accessModes":["ReadWriteOnce"],"annotations":{},"kubernetesVolumeSnapshot":null,"kubernetesVolumeToClone":null,"mountInMemory":{"enabled":false,"sizeLimit":null},"storageClass":"","volumeSize":"10Mi"},"customChainspecPath":"/relaychain-data/relay_chain_chainspec.json","customChainspecUrl":null,"flags":[],"prometheus":{"enabled":false,"port":9625}},"command":"polkadot","customChainspecPath":"/chain-data/chainspec.json","customChainspecUrl":null,"customNodeKey":null,"enableOffchainIndexing":false,"enableSidecarLivenessProbe":false,"enableSidecarReadinessProbe":false,"enableStartupProbe":true,"existingSecrets":{"keys":[],"nodeKey":{}},"extraConfigmapMounts":[],"extraEnvVars":[],"extraSecretMounts":[],"flags":[],"forceDownloadChainspec":false,"isParachain":false,"keys":{},"legacyRpcFlags":false,"logLevels":[],"perNodeServices":{"apiService":{"annotations":{},"enabled":true,"externalDns":{"customPrefix":"","enabled":false,"hostname":"example.com","ttl":300},"externalTrafficPolicy":"Cluster","extraPorts":[],"httpPort":9933,"prometheusPort":9615,"relayChainPrometheusPort":9625,"rpcPort":9944,"type":"ClusterIP","wsPort":9955},"paraP2pService":{"annotations":{},"enabled":false,"externalDns":{"customPrefix":"","enabled":false,"hostname":"example.com","ttl":300},"externalTrafficPolicy":"Cluster","extraPorts":[],"port":30334,"type":"NodePort","ws":{"enabled":false,"port":30335}},"relayP2pService":{"annotations":{},"enabled":false,"externalDns":{"customPrefix":"","enabled":false,"hostname":"example.com","ttl":300},"externalTrafficPolicy":"Cluster","extraPorts":[],"port":30333,"type":"NodePort","ws":{"enabled":false,"port":30334}},"setPublicAddressToExternalIp":{"enabled":false,"ipRetrievalServiceUrl":"https://ifconfig.io"}},"persistGeneratedNodeKey":false,"persistentVolumeClaimRetentionPolicy":null,"podManagementPolicy":null,"prometheus":{"enabled":true,"port":9615},"replicas":1,"resources":{},"role":"full","serviceAnnotations":{},"serviceMonitor":{"enabled":false,"interval":"30s","metricRelabelings":[],"namespace":null,"relabelings":[],"scrapeTimeout":"10s","targetLabels":["node"]},"startupProbeFailureThreshold":30,"substrateApiSidecar":{"enabled":false},"telemetryUrls":[],"tracing":{"enabled":false},"updateStrategy":{"enabled":false,"maxUnavailable":1,"type":"RollingUpdate"},"vault":{"authConfigServiceAccount":null,"authConfigType":null,"authPath":null,"authRole":null,"authType":null,"keys":{},"nodeKey":{}},"wasmRuntimeOverridesPath":"/chain-data/runtimes","wasmRuntimeUrl":""}` | Deploy a substrate node. ref: https://docs.substrate.io/tutorials/v3/private-network/ |
 | node.allowUnsafeRpcMethods | bool | `false` | Allow executing unsafe RPC methods |
 | node.chain | string | `"polkadot"` | Name of the chain |
 | node.chainData.annotations | object | `{}` | Annotations to add to the volumeClaimTemplates |
 | node.chainData.chainPath | string | `nil` | Path on the volume to store chain data |
-| node.chainData.chainSnapshot | object | `{"enabled":false,"filelistName":"files.txt","method":"gcs","url":""}` | Configure parameters for restoring chain snapshot. Uses [rclone](https://rclone.org/) |
+| node.chainData.chainSnapshot | object | `{"enabled":false,"filelistName":"files.txt","method":"http-filelist","url":""}` | Configure parameters for restoring chain snapshot. Uses [rclone](https://rclone.org/) |
 | node.chainData.chainSnapshot.enabled | bool | `false` | Enable chain snapshot restoration |
 | node.chainData.chainSnapshot.filelistName | string | `"files.txt"` | A remote file name containing names of DB file chunks. Appended to `url` |
-| node.chainData.chainSnapshot.method | string | `"gcs"` | Restoration method. One of: gcs, s3, http-single-tar, http-single-tar-lz4, http-filelist |
+| node.chainData.chainSnapshot.method | string | `"http-filelist"` | Restoration method. One of: gcs, s3, http-single-tar, http-single-tar-lz4, http-filelist |
 | node.chainData.chainSnapshot.url | string | `""` | A URL to download chain backup |
 | node.chainData.database | string | `"rocksdb"` | Database backend engine to use |
 | node.chainData.kubernetesVolumeSnapshot | string | `nil` | If set, create a clone of the volume (using volumeClaimTemplates.dataSource.VolumeSnapshot) and use it to store chain data |
 | node.chainData.kubernetesVolumeToClone | string | `nil` | If set, create a clone of the volume (using volumeClaimTemplates.dataSource.PersistentVolumeClaim) and use it to store chain data |
 | node.chainData.pruning | int | `1000` | Set the amount of blocks to retain. If set to 0 archive node will be run. If deprecated `--pruning` flags is used in `node.flags`, set this to `false`. |
 | node.chainData.storageClass | string | `""` | Storage class to use for persistent volume |
-| node.chainData.volumeSize | string | `"100Gi"` | Size of the volume for chain data |
+| node.chainData.volumeSize | string | `"100Gi"` | Size of the chain data volume |
 | node.chainKeystore | object | `{"accessModes":["ReadWriteOnce"],"annotations":{},"kubernetesVolumeSnapshot":null,"kubernetesVolumeToClone":null,"mountInMemory":{"enabled":false,"sizeLimit":null},"storageClass":"","volumeSize":"10Mi"}` | Configure chain keystore parameters |
 | node.chainKeystore.accessModes | list | `["ReadWriteOnce"]` | Access mode of the volume |
 | node.chainKeystore.annotations | object | `{}` | Annotations to add to the volumeClaimTemplates |
@@ -364,7 +335,7 @@ If you're running a collator node:
 | node.command | string | `"polkadot"` | Command to run within the container |
 | node.customChainspecPath | string | `"/chain-data/chainspec.json"` | Node may require custom name for chainspec file. ref:  moonbeam https://github.com/PureStake/moonbeam/issues/1104#issuecomment-996787548 Note: path should start with /chain-data/ since this folder mount in init container download-chainspec. |
 | node.customChainspecUrl | string | `nil` | URL to retrive custom chain spec |
-| node.customNodeKey | string | `nil` | Name of the secret containig the key |
+| node.customNodeKey | string | `nil` | Node key secret string (this option should be limited to development and testing as it will leak the node key secret in the helm config) |
 | node.enableOffchainIndexing | bool | `false` | Enable Offchain Indexing. https://docs.substrate.io/fundamentals/offchain-operations/ |
 | node.enableSidecarLivenessProbe | bool | `false` | Enable Node liveness probe through `paritytech/ws-health-exporter` running as a sidecar container |
 | node.enableSidecarReadinessProbe | bool | `false` | Enable Node readiness probe through `paritytech/ws-health-exporter` running as a sidecar container |
@@ -426,7 +397,7 @@ If you're running a collator node:
 | node.perNodeServices.relayP2pService.ws.port | int | `30334` | WS port |
 | node.perNodeServices.setPublicAddressToExternalIp.enabled | bool | `false` | If enabled, set `--public-addr` flag to be the NodePort p2p services external address |
 | node.perNodeServices.setPublicAddressToExternalIp.ipRetrievalServiceUrl | string | `"https://ifconfig.io"` | Web service to use for public IP retrieval |
-| node.persistGeneratedNodeKey | bool | `false` | If enabled, generate a persistent volume to use for the keys |
+| node.persistGeneratedNodeKey | bool | `false` | If enabled, generate and persist a node-key in the keystore volume |
 | node.persistentVolumeClaimRetentionPolicy | string | `nil` | Persistent volume claim retention policy of stateful set (ie. whether to retain or delete the attached PVCs when scaling down or deleting the stateful set). ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention |
 | node.podManagementPolicy | string | `nil` | Pod management policy of stateful set. ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies |
 | node.prometheus | object | `{"enabled":true,"port":9615}` | Expose metrics via Prometheus format in /metrics endpoint. Passes the following args to the Polkadot binary:   - "--prometheus-external" \   - "--prometheus-port {{ .Values.node.prometheus.port }}" |
@@ -452,7 +423,7 @@ If you're running a collator node:
 | node.updateStrategy.enabled | bool | `false` | Enable custom updateStrategy |
 | node.updateStrategy.maxUnavailable | int | `1` | Can be an int or a % |
 | node.updateStrategy.type | string | `"RollingUpdate"` | Type supports RollingUpdate or OnDelete |
-| node.vault | object | `{"authConfigServiceAccount":null,"authConfigType":null,"authPath":null,"authRole":null,"authType":null,"keys":{},"nodeKey":{}}` | Component to inject secrets via annotation of Hashicorp Vault ref: https://www.vaultproject.io/docs/platform/k8s/injector/annotations |
+| node.vault | object | `{"authConfigServiceAccount":null,"authConfigType":null,"authPath":null,"authRole":null,"authType":null,"keys":{},"nodeKey":{}}` | Inject secrets via Hashicorp Vault annotations ref: https://www.vaultproject.io/docs/platform/k8s/injector/annotations |
 | node.vault.authConfigServiceAccount | string | `nil` | Configures auth-config-service-account annotation |
 | node.vault.authConfigType | string | `nil` | Configures auth-config-type annotations |
 | node.vault.authPath | string | `nil` | Configures the authentication path for the Kubernetes auth method |
