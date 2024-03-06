@@ -18,7 +18,7 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 
 # Substrate/Polkadot node Helm chart
 
-![Version: 5.6.1](https://img.shields.io/badge/Version-5.6.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 5.6.2](https://img.shields.io/badge/Version-5.6.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 ## Maintainers
 
@@ -485,10 +485,10 @@ If you're running a collator node:
 | substrateApiSidecar.resources | object | `{}` | Resource limits & requests |
 | terminationGracePeriodSeconds | int | `60` | Grace termination period of the Pod |
 | tolerations | list | `[]` | Tolerations for use with node taints |
-| wsHealthExporter | object | `{"env":{},"image":{"repository":"paritytech/ws-health-exporter","tag":"0a2e6e9b-20230412"},"resources":{}}` | Configuration of the WS Health exporter. ref: https://github.com/paritytech/scripts/tree/master/dockerfiles/ws-health-exporter |
+| wsHealthExporter | object | `{"env":{},"image":{"repository":"paritytech/ws-health-exporter","tag":"99611363-20240306"},"resources":{}}` | Configuration of the WS Health exporter. ref: https://github.com/paritytech/scripts/tree/master/dockerfiles/ws-health-exporter |
 | wsHealthExporter.env | object | `{}` | Environment variables to set on the API sidecar |
 | wsHealthExporter.image.repository | string | `"paritytech/ws-health-exporter"` | Image repository |
-| wsHealthExporter.image.tag | string | `"0a2e6e9b-20230412"` | Image tag |
+| wsHealthExporter.image.tag | string | `"99611363-20240306"` | Image tag |
 | wsHealthExporter.resources | object | `{}` | Resource limits & requests |
 
 ----------------------------------------------
