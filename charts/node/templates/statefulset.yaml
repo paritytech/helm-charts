@@ -468,7 +468,7 @@ spec:
               name: chain-data
         {{- end }}
         {{- with .Values.extraInitContainers }}
-        {{- toYaml . | nindent 8 }}
+        {{- (tpl (toYaml .) $) | nindent 8 }}
         {{- end }}
       containers:
         - name: {{ .Values.node.chain | replace "_" "-" }}
@@ -849,7 +849,7 @@ spec:
           {{- end }}
         {{- end }}
         {{- with .Values.extraContainers }}
-        {{- toYaml . | nindent 8 }}
+        {{- (tpl (toYaml .) $) | nindent 8 }}
         {{- end}}
       serviceAccountName: {{ $serviceAccountName }}
       securityContext:
