@@ -57,6 +57,9 @@ spec:
       name: http-ws-he
       targetPort: http-ws-he
     {{- end }}
+    {{- with .Values.node.serviceExtraPorts }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 ---
 {{range $i := until (max .Values.autoscaling.maxReplicas .Values.node.replicas | int) }}
 {{- if $.Values.node.perNodeServices.apiService.enabled }}
