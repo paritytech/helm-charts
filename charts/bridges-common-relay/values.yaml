@@ -114,3 +114,13 @@ serviceMonitor:
   relabelings: []
   # -- Metric relabelings config
   metricRelabelings: []
+
+# -- CronJobs to automatically claim relayer rewards
+rewards: {}
+  # rococoToWestendRelayer:
+  #   schedule: "00 01 * * *"
+  #   address: "5Fxxx"
+  #   rpc_url: "wss://example.com"
+  #   lane_id: "0x00000002"
+  #   bridged_chain_id: "0x62687764"
+  #   seed_phrase_secret_name: "bridge-hub-rococo-signer-file"
