@@ -117,10 +117,16 @@ serviceMonitor:
 
 # -- CronJobs to automatically claim relayer rewards
 rewards: {}
-  # rococoToWestendRelayer:
+  # - name: rococoToWestendRelayer
+  #   # -- cron schedule
   #   schedule: "00 01 * * *"
+  #   # -- Public address of the relayer
   #   address: "5Fxxx"
+  #   # -- Bridge Hub RPC URL to use
   #   rpc_url: "wss://example.com"
+  #   # -- Bridge line ID
   #   lane_id: "0x00000002"
+  #   # -- Bridged Chain ID, for example [rococo](https://github.com/paritytech/polkadot-sdk/blob/7241a8db7b3496816503c6058dae67f66c666b00/bridges/testing/environments/rococo-westend/bridges_rococo_westend.sh#L349).
   #   bridged_chain_id: "0x62687764"
+  #   # -- Secret name of the seed phrase of the relayer
   #   seed_phrase_secret_name: "bridge-hub-rococo-signer-file"
