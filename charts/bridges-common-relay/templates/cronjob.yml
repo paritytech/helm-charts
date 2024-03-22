@@ -24,11 +24,13 @@ spec:
         spec:
           restartPolicy: Never
           serviceAccountName: {{ include "bridges-common-relay.serviceAccountName" $ }}
+          {{- if or .Values.secrets .Values.existingSecretName }}
           volumes:
             - name: secrets
               secret:
                 secretName: {{ include "bridges-common-relay.secretName" $ }}
                 optional: false
+          {{- end}}
           containers:
             - name: bridges-common-relay-{{ $val.name | lower }}-{{ $reward_owner | lower }}
               image: node:20.11
@@ -73,10 +75,12 @@ spec:
                     tx.bridgeRelayers.claimRewards "$rewards_account_params"
               resources:
                 {{- toYaml $.Values.resources | nindent 16 }}
+             {{- if or .Values.secrets .Values.existingSecretName }}
               volumeMounts:
                 - name: secrets
                   mountPath: "/secrets"
                   readOnly: true
+             {{- end}}
 ---
 {{- end }}
 {{- end }}
