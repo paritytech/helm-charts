@@ -33,7 +33,7 @@ spec:
           {{- end}}
           containers:
             - name: bridges-common-relay-{{ $val.name | lower }}-{{ $reward_owner | lower }}
-              image: node:20.11
+              image: paritytech/polkadotjs-cli:latest
               imagePullPolicy: IfNotPresent
               env:
                 - name: RPC_URL
@@ -43,7 +43,6 @@ spec:
                 - -c
                 - |
                   set -euo pipefail
-                  apt-get update && apt-get install -y jq
 
                   rewards_account_params=$(
                     jq --null-input \
@@ -58,7 +57,7 @@ spec:
                   )
 
                   reward=$(
-                    npx @polkadot/api-cli@0.56.5 --ws "$RPC_URL" query.bridgeRelayers.relayerRewards \
+                    polkadot-js-api --ws "$RPC_URL" query.bridgeRelayers.relayerRewards \
                       {{ $val.address | quote }} \
                       "$rewards_account_params" \
                       | jq -r '.relayerRewards'
@@ -70,7 +69,7 @@ spec:
                   fi
                   echo "{{ $val.name }} on {{ $reward_owner }} has a reward of ${reward}."
 
-                  npx @polkadot/api-cli@0.56.5 --ws "$RPC_URL" \
+                  polkadot-js-api --ws "$RPC_URL" \
                       --seed "$(cat /secrets/{{ $val.seed_phrase_secret_name }})" \
                     tx.bridgeRelayers.claimRewards "$rewards_account_params"
               resources:
