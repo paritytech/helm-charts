@@ -71,6 +71,9 @@ spec:
                   fi
                   echo "{{ $val.name }} on {{ $reward_owner }} has a reward of ${reward}."
 
+                  # Avoid nonce collision with "ThisChain".
+                  {{ if eq $reward_owner "BridgedChain" }}sleep 10{{ end }}
+
                   polkadot-js-api --ws "$RPC_URL" \
                       --seed "$(cat /secrets/{{ $val.seed_phrase_secret_name }})" \
                     tx.bridgeRelayers.claimRewards "$rewards_account_params"
