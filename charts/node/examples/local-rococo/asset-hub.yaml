@@ -1,0 +1,76 @@
+image:
+  repository: parity/polkadot-parachain
+  tag: latest
+  pullPolicy: Always
+
+node:
+  chain: asset-hub-rococo-local
+  command: polkadot-parachain
+  role: collator
+  replicas: 2
+  chainData:
+    pruning: 1000
+    storageClass: ""
+  chainKeystore:
+    storageClass: ""
+  keys:
+    # This is Alice seed
+    - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
+      type: aura
+      scheme: sr25519
+      # ${HOSTNAME##*-} will be evaluated as the pod index, pod-0: //Alice, pod-1: //Bob
+      extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
+  isParachain: true
+  collatorRelayChain:
+    chain: rococo-local
+    customChainspecUrl: http://bootnode:8080/chainspec.json
+    forceDownloadChainspec: true
+    chainData:
+      storageClass: ""
+    flags:
+      - "--allow-private-ipv4"
+      - "--discover-local"
+ingress:
+  enabled: false
+  annotations:
+    kubernetes.io/ingress.class: TODO
+    external-dns.alpha.kubernetes.io/target: TODO
+    cert-manager.io/cluster-issuer: TODO
+  rules:
+    - host: parachain.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: parachain-node
+                port:
+                  number: 9944
+  tls:
+    - secretName: parachain.example.com
+      hosts:
+        - parachain.example.com
+
+extraInitContainers:
+  - name: dump-state-and-wasm
+    image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+    imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+    command: [ "/bin/bash" ]
+    args:
+      - -c
+      - |
+        if [ "${HOSTNAME##*-}" = "0" ]; then
+          echo "Parachain Id:"
+          {{ .Values.node.command }} build-spec --chain {{ .Values.node.chain }} | grep -E 'para_id|parachainId' 
+          echo "Genesis head:"
+          {{ .Values.node.command }} export-genesis-state --chain {{ .Values.node.chain }}
+          echo ""
+          echo "Genesis wasm (validationCode) stored in /chain-data/genesis-wasm"
+          {{ .Values.node.command }} export-genesis-wasm  --chain {{ .Values.node.chain }} > /chain-data/genesis-wasm
+        else
+         echo "Genesis head and wasm are in pod ${HOSTNAME%-*}-0"
+        fi
+    volumeMounts:
+      - mountPath: /chain-data
+        name: chain-data

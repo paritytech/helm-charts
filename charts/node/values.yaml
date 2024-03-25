@@ -168,7 +168,8 @@ node:
     # -- Can be an int or a %
     maxUnavailable: 1
 
-
+  # -- Use the file defined in `node.customChainspecPath` as the chainspec. Ensure that the file is either mounted or generated with an init container.
+  customChainspec: false
   # -- Node may require custom name for chainspec file.
   # ref:  moonbeam https://github.com/PureStake/moonbeam/issues/1104#issuecomment-996787548
   # Note: path should start with /chain-data/ since this folder mount in init container download-chainspec.
@@ -258,6 +259,8 @@ node:
     enabled: false
     # -- Name of the Relay Chain to connect
     relayChain: ""
+    # -- Use the file defined in `collatorLightClient.relayChainCustomChainspecPath` as the chainspec. Ensure that the file is either mounted or generated with an init container.
+    relayChainCustomChainspec: false
     # -- Path to the file containing the chainspec of the collator relay-chain
     relayChainCustomChainspecPath: "/chain-data/relay_chain_chainspec.json"
     # -- (string) URL to retrive custom chain spec
@@ -267,6 +270,8 @@ node:
     # -- Name of the Relay Chain to connect
     chain: polkadot
 
+    # -- Use the file defined in `collatorRelayChain.customChainspecPath` as the chainspec. Ensure that the file is either mounted or generated with an init container.
+    customChainspec: false
     # -- Path to the file containing the chainspec of the collator relay-chain
     # Set to /relaychain-data to use additional volume
     customChainspecPath: "/relaychain-data/relay_chain_chainspec.json"
@@ -440,7 +445,8 @@ node:
 
   # -- Annotations to add to the Service
   serviceAnnotations: {}
-
+  # -- Additional ports on main Service
+  serviceExtraPorts: []
   # -- Use deprecated ws/rpc flags.
   # ref: https://github.com/paritytech/substrate/pull/13384
   legacyRpcFlags: false
