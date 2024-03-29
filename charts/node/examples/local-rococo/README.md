@@ -1,8 +1,8 @@
 ## Example Rococo Local Chain
-This is a simple example of deploying a rococo-local and parachain test chains in Kubernetes. 
-One bootnode, two validators and two parachain nodes will be deployed via the helm chart. 
+This example demonstrates deploying a Rococo-local (relaychain) test chain and parachain test chains in Kubernetes. 
+The setup includes deploying one bootnode, two validators, and two parachain nodes via the Helm chart. 
 Once both validators are running you will see block production. 
-A custom node key is used on the Alice validator which all other hosts use as a bootnode.
+A custom chainspec is generated in the initcontainer on the bootnode, which is used to connect all relaychain nodes together.
 
 ### Relaychain Setup:
 1. **Install the Relaychain:**
@@ -19,6 +19,8 @@ A custom node key is used on the Alice validator which all other hosts use as a 
    kubectl port-forward bootnode-0 9944:9944
    ```
    Open Polkadot.js apps at https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A9944#/explorer to explore the relaychain.
+   ![image](https://github.com/paritytech/helm-charts/assets/24387396/c6183545-b423-46f5-b376-f30bf3f2e5f6)
+
 
 ### Parachain Setup:
 1. **Install the Parachain:**
@@ -56,6 +58,8 @@ Port-forward to access the parachain RPC for interacting with the parachain node
 kubectl port-forward parachain-node-0 9945:9944
 ```
 Open Polkadot.js apps at https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A9945#/explorer to explore the parachain.
+![image](https://github.com/paritytech/helm-charts/assets/24387396/cbf12f54-18b5-443c-892d-7632fe790b88)
+
 
 ### Cleanup:
 Delete the Helm releases for bootnode, validators, and parachain. Optionally, clean up PVCs if necessary.
