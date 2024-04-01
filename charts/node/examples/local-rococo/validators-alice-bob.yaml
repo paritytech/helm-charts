@@ -1,0 +1,51 @@
+image:
+  repository: parity/polkadot
+  tag: latest
+  pullPolicy: Always
+
+node:
+  chain: rococo-local
+  customChainspecUrl: http://bootnode:8080/chainspec.json
+  forceDownloadChainspec: true
+  role: authority
+  replicas: 2
+  chainData:
+    pruning: 1000
+    storageClass: ""
+  chainKeystore:
+    storageClass: ""
+  keys:
+      # This is Alice seed
+    - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
+      type: gran
+      scheme: ed25519
+      # ${HOSTNAME##*-} will be evaluated as the pod index, pod-0: //Alice, pod-1: //Bob
+      extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
+    - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
+      type: babe
+      scheme: sr25519
+      extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
+    - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
+      type: imon
+      scheme: sr25519
+      extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
+    - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
+      type: para
+      scheme: sr25519
+      extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
+    - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
+      type: asgn
+      scheme: sr25519
+      extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
+    - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
+      type: audi
+      scheme: sr25519
+      extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
+    - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
+      type: beef
+      scheme: ecdsa
+      extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
+  flags:
+    - "--allow-private-ipv4"
+    - "--discover-local"
+

@@ -18,7 +18,7 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 
 # Parity Bridges Common helm chart
 
-![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 1.1.1](https://img.shields.io/badge/Version-1.1.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 This helm chart installs [Parity Bridges Common](https://github.com/paritytech/parity-bridges-common) relayer.
 
@@ -59,6 +59,7 @@ helm install bridges-common-relay parity/bridges-common-relay
 | prometheus.port | int | `9615` | The port for exposed Prometheus metrics |
 | replicaCount | int | `1` |  |
 | resources | object | `{}` | Resource limits & requests |
+| rewards | object | `{}` | CronJobs to automatically claim relayer rewards |
 | secrets | object | `{}` | Secrets will be mounted to pod /secrets/{key} |
 | securityContext | object | `{}` | SecurityContext holds pod-level security attributes and common container settings. |
 | service | object | `{"port":80,"type":"ClusterIP"}` | Service |

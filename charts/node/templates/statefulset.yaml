@@ -468,7 +468,7 @@ spec:
               name: chain-data
         {{- end }}
         {{- with .Values.extraInitContainers }}
-        {{- toYaml . | nindent 8 }}
+        {{- (tpl (toYaml .) $) | nindent 8 }}
         {{- end }}
       containers:
         - name: {{ .Values.node.chain | replace "_" "-" }}
@@ -526,7 +526,7 @@ spec:
                 --name=${POD_NAME} \
                 --base-path=/chain-data \
                 --keystore-path=/keystore \
-                --chain={{ if .Values.node.customChainspecUrl }}{{ .Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
+                --chain={{ if or .Values.node.customChainspecUrl .Values.node.customChainspec }}{{ .Values.node.customChainspecPath }}{{ else }}${CHAIN}{{ end }} \
                 {{- if or (eq .Values.node.role "authority") (eq .Values.node.role "validator") }}
                 --validator \
                 {{- end }}
@@ -623,8 +623,8 @@ spec:
                 {{- if and .Values.node.isParachain (not .Values.node.collatorExternalRelayChain.enabled ) }}
                 -- \
                 {{- if  .Values.node.collatorLightClient.enabled }}
-                --chain={{ if .Values.node.collatorLightClient.relayChainCustomChainspecUrl }}{{ .Values.node.collatorLightClient.relayChainCustomChainspecPath }}{{ else }}{{.Values.node.collatorLightClient.relayChain}}{{ end }}
-                {{- else if .Values.node.collatorRelayChain.customChainspecUrl }}
+                --chain={{ if or .Values.node.collatorLightClient.relayChainCustomChainspecUrl .Values.node.collatorLightClient.relayChainCustomChainspec }}{{ .Values.node.collatorLightClient.relayChainCustomChainspecPath }}{{ else }}{{.Values.node.collatorLightClient.relayChain}}{{ end }}
+                {{- else if or .Values.node.collatorRelayChain.customChainspecUrl .Values.node.collatorRelayChain.customChainspec }}
                 --chain={{ .Values.node.collatorRelayChain.customChainspecPath }} \
                 {{- end }}
                 {{- if  not .Values.node.collatorLightClient.enabled }}
@@ -853,7 +853,7 @@ spec:
           {{- end }}
         {{- end }}
         {{- with .Values.extraContainers }}
-        {{- toYaml . | nindent 8 }}
+        {{- (tpl (toYaml .) $) | nindent 8 }}
         {{- end}}
       serviceAccountName: {{ $serviceAccountName }}
       securityContext:
