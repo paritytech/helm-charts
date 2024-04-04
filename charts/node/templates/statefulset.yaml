@@ -581,10 +581,14 @@ spec:
                 {{- end }}
                 {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
                 --public-addr=/ip4/${EXTERNAL_IP}/tcp/${PARA_CHAIN_P2P_PORT} \
+                {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.autodiscoveryFix }}
                 --listen-addr=/ip4/0.0.0.0/tcp/${PARA_CHAIN_P2P_PORT} \
+                {{- end }}
                 {{- if .Values.node.perNodeServices.paraP2pService.ws.enabled }}
                 --public-addr=/ip4/${EXTERNAL_IP}/tcp/${PARA_CHAIN_P2P_PORT_WS}/ws \
+                {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.autodiscoveryFix }}
                 --listen-addr=/ip4/0.0.0.0/tcp/${PARA_CHAIN_P2P_PORT_WS}/ws \
+                {{- end }}
                 {{- end }}
                 {{- end }}
                 {{- end }}
@@ -658,10 +662,14 @@ spec:
                 {{- if and .Values.node.perNodeServices.relayP2pService.enabled (include "node.hasRelaychain" .) }}
                 {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
                 --public-addr=/ip4/${EXTERNAL_IP}/tcp/${RELAY_CHAIN_P2P_PORT} \
+                {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.autodiscoveryFix }}
                 --listen-addr=/ip4/0.0.0.0/tcp/${RELAY_CHAIN_P2P_PORT} \
+                {{- end }}
                 {{- if .Values.node.perNodeServices.relayP2pService.ws.enabled }}
                 --public-addr=/ip4/${EXTERNAL_IP}/tcp/${RELAY_CHAIN_P2P_PORT_WS}/ws \
+                {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.autodiscoveryFix }}
                 --listen-addr=/ip4/0.0.0.0/tcp/${RELAY_CHAIN_P2P_PORT_WS}/ws \
+                {{- end }}
                 {{- end }}
                 {{- end }}
                 {{- if and (not .Values.node.isParachain) .Values.node.perNodeServices.relayP2pService.ws.enabled }}

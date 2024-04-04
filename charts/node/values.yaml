@@ -549,6 +549,11 @@ node:
       enabled: false
       # -- Web service to use for public IP retrieval
       ipRetrievalServiceUrl: https://ifconfig.io
+      # -- EXPERIMENTAL!!!
+      # libp2p autodiscovery uses the external IP and port from --listen-addr instead of --public-addr.
+      # This flag will set the service port as an additional --listen-addr.
+      autodiscoveryFix: false
+
 
   # -- Pod management policy of stateful set.
   # ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies
