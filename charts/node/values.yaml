@@ -411,8 +411,8 @@ node:
 
   # -- If enabled, generate a persistent volume to use for the keys
   persistGeneratedNodeKey: false
-  # -- Name of the secret containig the key
-  customNodeKey:
+  # -- List of the custom node key(s) for all pods in statefulset.
+  customNodeKey: []
 
   # -- Expose metrics via Prometheus format in /metrics endpoint.
   # Passes the following args to the Polkadot binary:
