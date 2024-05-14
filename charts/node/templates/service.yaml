@@ -165,7 +165,7 @@ spec:
   externalTrafficPolicy: {{ $.Values.node.perNodeServices.relayP2pService.externalTrafficPolicy }}
   type: LoadBalancer
   {{- end }}
-  publishNotReadyAddresses: {{ $.Values.node.perNodeServices.relayP2pService.publishNotReadyAddresses }}
+  publishNotReadyAddresses: {{ $.Values.node.perNodeServices.relayP2pService.publishUnreadyAddresses }}
   selector:
     {{- $selectorLabels | nindent 4 }}
     statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
@@ -212,7 +212,7 @@ spec:
   externalTrafficPolicy: {{ $.Values.node.perNodeServices.paraP2pService.externalTrafficPolicy }}
   type: LoadBalancer
   {{- end }}
-  publishNotReadyAddresses: {{ $.Values.node.perNodeServices.paraP2pService.publishNotReadyAddresses }}
+  publishNotReadyAddresses: {{ $.Values.node.perNodeServices.paraP2pService.publishUnreadyAddresses }}
   selector:
     {{- $selectorLabels | nindent 4 }}
     statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}

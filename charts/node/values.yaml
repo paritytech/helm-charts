@@ -493,7 +493,7 @@ node:
       # -- Service type
       type: NodePort # or ClusterIP or LoadBalancer
       # -- Publish the P2P port even if the pod is not ready (e.g., node is syncing). It's recommended to keep this to true.
-      publishNotReadyAddresses: true
+      publishUnreadyAddresses: true
       # -- Port of the P2P endpoint (relay chain)
       port: 30333
       # -- Annotations to add to the Service
@@ -525,7 +525,7 @@ node:
       # -- Service type
       type: NodePort # or ClusterIP, LoadBalancer
       # -- Publish the P2P port even if the pod is not ready (e.g., node is syncing). It's recommended to keep this to true.
-      publishNotReadyAddresses: true
+      publishUnreadyAddresses: true
       # -- Port of the P2P endpoint (parachain)
       port: 30334
       # -- Annotations to add to the Service
