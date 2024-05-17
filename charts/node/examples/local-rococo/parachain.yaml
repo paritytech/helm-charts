@@ -14,13 +14,14 @@ node:
   chainKeystore:
     storageClass: ""
   keys:
-    # This is Alice seed
+    # This is Alice seed. To generate new seed run: docker run --rm parity/polkadot:latest key generate
     - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
       type: aura
       scheme: sr25519
       # ${HOSTNAME##*-} will be evaluated as the pod index, pod-0: //Alice, pod-1: //Bob
       extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
   customNodeKey:
+   # To generate new key run: docker run --rm -t parity/polkadot:latest key generate-node-key
    # 12D3KooWL5Av1ZZSKkaittmxXBmZpzP7zgiB1AAnWHEw7MxzqnFp
    - bdf71a910354e231095366230621eaefb5f99465045f1501478fd3d9b5deef98
    # 12D3KooWAxFonTS177T81CTDeH6mfvJQWYEJeVQ1gPrnULjNY8Cn

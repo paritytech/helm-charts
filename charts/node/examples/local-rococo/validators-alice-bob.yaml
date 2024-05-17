@@ -15,7 +15,7 @@ node:
   chainKeystore:
     storageClass: ""
   keys:
-      # This is Alice seed
+      # This is Alice seed. To generate new seed run: docker run --rm parity/polkadot:latest key generate
     - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
       type: gran
       scheme: ed25519
@@ -45,6 +45,12 @@ node:
       type: beef
       scheme: ecdsa
       extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
+  customNodeKey:
+   # To generate new key run: docker run --rm -t parity/polkadot:latest key generate-node-key
+   # 12D3KooWJ8ZqNMsxW9JHf8ZfXLW9a5LmJwaro83fB3tBzeq137XJ
+   - 2f355a92b3f2823975e8d59a022bd4927aca4b016359b7fc358cbea08b5293fc
+   # 12D3KooWCNqZFCPPtUGHhsUKzKWi1zTPwFFiobfCKdVYD4urrZEv
+   - 8b70f3e85bd5d80ebef8cffa8564f52e7d418b07b3cfb222712f30414dc67728
   flags:
     - "--allow-private-ipv4"
     - "--discover-local"
