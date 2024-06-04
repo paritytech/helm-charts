@@ -135,7 +135,9 @@ ingress:
   annotations: {}
   #  kubernetes.io/ingress.class: nginx
   #  kubernetes.io/tls-acme: "true"
-  # -- Ingress rules configuration
+  # -- hostname used for default rpc ingress rule, if .Values.ingress.rules is set host is not used.
+  host: chart-example.local
+  # -- Ingress rules configuration, empty = default rpc rule (send all requests to rps port)
   rules: []
   #  - host: chart-example.local
   #    paths:
