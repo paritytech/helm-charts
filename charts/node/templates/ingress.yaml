@@ -24,7 +24,7 @@ spec:
     {{- (tpl (toYaml .) $)  | nindent 6 }}
     {{- end }}
   {{- else }}
-    - host: "{{ .Values.ingress.host }}"
+    - host: "{{ tpl .Values.ingress.host . }}"
       http:
         paths:
           - path: /
