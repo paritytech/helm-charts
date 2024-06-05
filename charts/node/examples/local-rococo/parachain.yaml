@@ -38,23 +38,15 @@ node:
     flags:
       - "--allow-private-ipv4"
       - "--discover-local"
+
+# RPC endpoint
 ingress:
   enabled: false
   annotations:
     kubernetes.io/ingress.class: TODO
     external-dns.alpha.kubernetes.io/target: TODO
     cert-manager.io/cluster-issuer: TODO
-  rules:
-    - host: parachain.example.com
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: parachain-node
-                port:
-                  number: 9944
+  host: parachain.example.com
   tls:
     - secretName: parachain.example.com
       hosts:
