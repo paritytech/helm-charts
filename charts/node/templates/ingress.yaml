@@ -19,8 +19,21 @@ metadata:
 spec:
   ingressClassName: {{ .Values.ingress.ingressClassName | quote }}
   rules:
-  {{- with .Values.ingress.rules }}
-  {{- toYaml . | nindent 6 }}
+  {{- if .Values.ingress.rules  }}
+    {{- with .Values.ingress.rules }}
+    {{- (tpl (toYaml .) $)  | nindent 6 }}
+    {{- end }}
+  {{- else }}
+    - host: "{{ tpl .Values.ingress.host . }}"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ .Values.node.perNodeServices.apiService.rpcPort }}
   {{- end }}
   tls:
   {{- with .Values.ingress.tls }}

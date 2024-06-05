@@ -26,23 +26,14 @@ node:
     - "--allow-private-ipv4"
     - "--discover-local"
 
+# RPC endpoint
 ingress:
   enabled: false
   annotations:
     kubernetes.io/ingress.class: TODO
     external-dns.alpha.kubernetes.io/target: TODO
     cert-manager.io/cluster-issuer: TODO
-  rules:
-    - host: local-rococo.example.com
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: bootnode
-                port:
-                  number: 9944
+  host: local-rococo.example.com
   tls:
     - secretName: local-rococo.example.com
       hosts:

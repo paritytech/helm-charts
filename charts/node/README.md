@@ -18,7 +18,7 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 
 # Substrate/Polkadot node Helm chart
 
-![Version: 5.8.0](https://img.shields.io/badge/Version-5.8.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 5.9.0](https://img.shields.io/badge/Version-5.9.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 ## Maintainers
 
@@ -302,10 +302,11 @@ If you're running a collator node:
 | image.repository | string | `"parity/polkadot"` | Image repository |
 | image.tag | string | `"latest"` | Image tag |
 | imagePullSecrets | list | `[]` | Reference to one or more secrets to be used when pulling images. ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/ |
-| ingress | object | `{"annotations":{},"enabled":false,"rules":[],"tls":[]}` | Creates an ingress resource |
+| ingress | object | `{"annotations":{},"enabled":false,"host":"chart-example.local","rules":[],"tls":[]}` | Creates an ingress resource |
 | ingress.annotations | object | `{}` | Annotations to add to the Ingress |
 | ingress.enabled | bool | `false` | Enable creation of Ingress |
-| ingress.rules | list | `[]` | Ingress rules configuration |
+| ingress.host | string | `"chart-example.local"` | hostname used for default rpc ingress rule, if .Values.ingress.rules is set host is not used. |
+| ingress.rules | list | `[]` | Ingress rules configuration, empty = default rpc rule (send all requests to rps port) |
 | ingress.tls | list | `[]` | Ingress TLS configuration |
 | initContainers | object | `{"downloadChainSnapshot":{"cmdArgs":"","debug":false,"extraEnvVars":[],"image":{"repository":"docker.io/rclone/rclone","tag":"latest"},"resources":{}},"downloadChainspec":{"debug":false,"image":{"repository":"docker.io/alpine","tag":"latest"},"resources":{}},"downloadRuntime":{"debug":false,"image":{"repository":"paritytech/kubetools-kubectl","tag":"latest"},"resources":{}},"injectKeys":{"debug":false,"resources":{}},"persistGeneratedNodeKey":{"debug":false,"resources":{}},"retrieveServiceInfo":{"debug":false,"image":{"repository":"paritytech/kubetools-kubectl","tag":"latest"},"resources":{}}}` | Additional init containers |
 | initContainers.downloadChainSnapshot.cmdArgs | string | `""` | Flags to add to the CLI command. We rely on rclone for downloading snapshots so make sure the flags are compatible. |
