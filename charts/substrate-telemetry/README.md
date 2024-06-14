@@ -20,7 +20,7 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 
 The helm chart installs Telemetry-Core, Telemetry-Shard and Telemetry-Frontend services.
 
-![Version: 2.3.2](https://img.shields.io/badge/Version-2.3.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.16.0](https://img.shields.io/badge/AppVersion-1.16.0-informational?style=flat-square)
+![Version: 2.3.3](https://img.shields.io/badge/Version-2.3.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.16.0](https://img.shields.io/badge/AppVersion-1.16.0-informational?style=flat-square)
 
 ## Maintainers
 
@@ -67,10 +67,9 @@ By default, the type of Kubernetes service used for Telemetry-Core, Telemetry-Sh
 | autoscaling.shard.maxReplicas | int | `6` | Maximum number of replicas |
 | autoscaling.shard.minReplicas | int | `2` | Minimum number of replicas |
 | autoscaling.shard.targetCPUUtilizationPercentage | int | `80` | Target CPU utilization percentage |
-| envVars | object | `{"core":{},"frontend":{"SUBSTRATE_TELEMETRY_URL":"wss://core-service-domain.com"},"shard":{}}` | Environment variables to set on the main containers |
+| envVars | object | `{"core":{},"frontend":{},"shard":{}}` | Environment variables to set on the main containers |
 | envVars.core | object | `{}` | Environment variables to set on the core service |
-| envVars.frontend | object | `{"SUBSTRATE_TELEMETRY_URL":"wss://core-service-domain.com"}` | Environment variables to set on the frontend service |
-| envVars.frontend.SUBSTRATE_TELEMETRY_URL | string | `"wss://core-service-domain.com"` | The frontend docker container makes this available to the UI, so that it knows where to look for feed information: |
+| envVars.frontend | object | `{}` | Environment variables to set on the frontend service |
 | envVars.shard | object | `{}` | Environment variables to set on the shard service |
 | extraArgs | object | `{"core":{},"shard":{}}` | Extra arguments to pass to the services |
 | extraArgs.core | object | `{}` | Extra arguments to pass to the core service |
