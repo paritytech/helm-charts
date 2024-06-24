@@ -919,19 +919,75 @@ spec:
             secretName: {{ $keys }}
             defaultMode: 0400
       {{- end }}
-      {{- if .Values.node.chainData.emptyDir.enabled }}
+      {{- if .Values.node.chainData.ephemeral.enabled }}
         - name: chain-data
+          {{- if eq .Values.node.chainData.ephemeral.type "emptyDir" }}
           emptyDir:
             {{- if and (.Values.node.chainData.volumeSize) (semverCompare ">=1.22-0" .Capabilities.KubeVersion.GitVersion) }}
             sizeLimit: {{ .Values.node.chainData.volumeSize }}
             {{- end }}
+          {{- end }}
+          {{- if eq .Values.node.chainData.ephemeral.type "generic" }}
+          ephemeral:
+            volumeClaimTemplate:
+              metadata:
+                name: chain-data
+                {{- with .Values.node.chainData.annotations }}
+                annotations: {{ toYaml . | nindent 10 }}
+                {{- end }}
+              spec:
+                accessModes: [ "ReadWriteOnce" ]
+                {{- if or .Values.node.chainData.kubernetesVolumeSnapshot .Values.node.chainData.kubernetesVolumeToClone }}
+                dataSource:
+                  {{- if .Values.node.chainData.kubernetesVolumeSnapshot }}
+                  name: {{ .Values.node.chainData.kubernetesVolumeSnapshot }}
+                  kind: VolumeSnapshot
+                  apiGroup: snapshot.storage.k8s.io
+                  {{- else }}
+                  name: {{ .Values.node.chainData.kubernetesVolumeToClone }}
+                  kind: PersistentVolumeClaim
+                  {{- end }}
+                {{- end }}
+                storageClassName: {{ .Values.node.chainData.storageClass }}
+                resources:
+                  requests:
+                    storage: {{ .Values.node.chainData.volumeSize }}
+          {{- end }}
       {{- end }}
-      {{- if and (include "node.hasCollatorRelaychain" .) .Values.node.collatorRelayChain.chainData.emptyDir.enabled  }}
+      {{- if and (include "node.hasCollatorRelaychain" .) .Values.node.collatorRelayChain.chainData.ephemeral.enabled  }}
         - name: relaychain-data
+          {{- if eq .Values.node.chainData.ephemeral.type "emptyDir" }}
           emptyDir:
             {{- if and (.Values.node.collatorRelayChain.chainData.volumeSize) (semverCompare ">=1.22-0" .Capabilities.KubeVersion.GitVersion) }}
             sizeLimit: {{ .Values.node.collatorRelayChain.chainData.volumeSize  }}
             {{- end }}
+          {{- end }}
+          {{- if eq .Values.node.chainData.ephemeral.type "generic" }}
+          ephemeral:
+            volumeClaimTemplate:
+              metadata:
+                name: relaychain-data
+                {{- with .Values.node.collatorRelayChain.chainData.annotations }}
+                annotations: {{ toYaml . | nindent 10 }}
+                {{- end }}
+              spec:
+                accessModes: [ "ReadWriteOnce" ]
+                {{- if or .Values.node.collatorRelayChain.chainData.kubernetesVolumeSnapshot .Values.node.collatorRelayChain.chainData.kubernetesVolumeToClone }}
+                dataSource:
+                  {{- if .Values.node.collatorRelayChain.chainData.kubernetesVolumeSnapshot }}
+                  name: {{ .Values.node.collatorRelayChain.chainData.kubernetesVolumeSnapshot }}
+                  kind: VolumeSnapshot
+                  apiGroup: snapshot.storage.k8s.io
+                  {{- else }}
+                  name: {{ .Values.node.collatorRelayChain.chainData.kubernetesVolumeToClone }}
+                  kind: PersistentVolumeClaim
+                  {{- end }}
+                {{- end }}
+                storageClassName: {{ .Values.node.collatorRelayChain.chainData.storageClass }}
+                resources:
+                  requests:
+                    storage: {{ .Values.node.collatorRelayChain.chainData.volumeSize }}
+          {{- end }}
       {{- end }}
       {{- if .Values.node.chainKeystore.mountInMemory.enabled }}
         - name: chain-keystore
@@ -950,7 +1006,7 @@ spec:
             {{- end }}
       {{- end }}
   volumeClaimTemplates:
-    {{- if not .Values.node.chainData.emptyDir.enabled }}
+    {{- if not .Values.node.chainData.ephemeral.enabled }}
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
@@ -1002,7 +1058,7 @@ spec:
           requests:
             storage: {{ .Values.node.chainKeystore.volumeSize }}
     {{- end }}
-    {{- if and (include "node.hasCollatorRelaychain" .) ( not .Values.node.collatorRelayChain.chainData.emptyDir.enabled ) }}
+    {{- if and (include "node.hasCollatorRelaychain" .) ( not .Values.node.collatorRelayChain.chainData.ephemeral.enabled ) }}
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
