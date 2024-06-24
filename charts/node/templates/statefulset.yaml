@@ -930,11 +930,10 @@ spec:
           {{- if eq .Values.node.chainData.ephemeral.type "generic" }}
           ephemeral:
             volumeClaimTemplate:
+              {{- with .Values.node.chainData.annotations }}
               metadata:
-                name: chain-data
-                {{- with .Values.node.chainData.annotations }}
                 annotations: {{ toYaml . | nindent 18 }}
-                {{- end }}
+              {{- end }}
               spec:
                 accessModes: [ "ReadWriteOnce" ]
                 {{- if or .Values.node.chainData.kubernetesVolumeSnapshot .Values.node.chainData.kubernetesVolumeToClone }}
@@ -965,11 +964,10 @@ spec:
           {{- if eq .Values.node.chainData.ephemeral.type "generic" }}
           ephemeral:
             volumeClaimTemplate:
+              {{- with .Values.node.collatorRelayChain.chainData.annotations }}
               metadata:
-                name: relaychain-data
-                {{- with .Values.node.collatorRelayChain.chainData.annotations }}
                 annotations: {{ toYaml . | nindent 18 }}
-                {{- end }}
+              {{- end }}
               spec:
                 accessModes: [ "ReadWriteOnce" ]
                 {{- if or .Values.node.collatorRelayChain.chainData.kubernetesVolumeSnapshot .Values.node.collatorRelayChain.chainData.kubernetesVolumeToClone }}
