@@ -933,7 +933,7 @@ spec:
               metadata:
                 name: chain-data
                 {{- with .Values.node.chainData.annotations }}
-                annotations: {{ toYaml . | nindent 10 }}
+                annotations: {{ toYaml . | nindent 18 }}
                 {{- end }}
               spec:
                 accessModes: [ "ReadWriteOnce" ]
@@ -968,7 +968,7 @@ spec:
               metadata:
                 name: relaychain-data
                 {{- with .Values.node.collatorRelayChain.chainData.annotations }}
-                annotations: {{ toYaml . | nindent 10 }}
+                annotations: {{ toYaml . | nindent 18 }}
                 {{- end }}
               spec:
                 accessModes: [ "ReadWriteOnce" ]
