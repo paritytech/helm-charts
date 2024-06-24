@@ -195,6 +195,9 @@ node:
     chainPath:
     # -- Storage class to use for persistent volume
     storageClass: ""
+    # -- Mount chain-data volume using an emptyDir volume
+    emptyDir:
+      enabled: false
     # -- Size of the volume for chain data
     volumeSize: 100Gi
     # -- Annotations to add to the volumeClaimTemplates
@@ -293,6 +296,9 @@ node:
       chainPath: ""
       # -- Storage class to use for persistent volume
       storageClass: ""
+      # -- Mount relaychain-data volume using an emptyDir volume
+      emptyDir:
+        enabled: false
       # -- Size of the volume
       volumeSize: 100Gi
       # -- Annotations to add to the volumeClaimTemplates

@@ -920,6 +920,20 @@ spec:
             defaultMode: 0400
       {{- end }}
       {{- if .Values.node.chainKeystore.mountInMemory.enabled }}
+        - name: chain-data
+          emptyDir:
+            {{- if and (.Values.node.chainData.volumeSize) (semverCompare ">=1.22-0" .Capabilities.KubeVersion.GitVersion) }}
+            sizeLimit: {{ .Values.node.chainData.volumeSize }}
+            {{- end }}
+      {{- end }}
+      {{- if and (include "node.hasCollatorRelaychain" .) .Values.node.collatorRelayChain.chainData.emptyDir.enabled  }}
+        - name: relaychain-data
+          emptyDir:
+            {{- if and (.Values.node.collatorRelayChain.chainData.volumeSize) (semverCompare ">=1.22-0" .Capabilities.KubeVersion.GitVersion) }}
+            sizeLimit: {{ .Values.node.collatorRelayChain.chainData.volumeSize  }}
+            {{- end }}
+      {{- end }}
+      {{- if .Values.node.chainKeystore.mountInMemory.enabled }}
         - name: chain-keystore
           emptyDir:
             medium: "Memory"
@@ -936,6 +950,7 @@ spec:
             {{- end }}
       {{- end }}
   volumeClaimTemplates:
+    {{- if not .Values.node.chainData.emptyDir.enabled }}
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
@@ -960,6 +975,7 @@ spec:
         resources:
           requests:
             storage: {{ .Values.node.chainData.volumeSize }}
+    {{- end }}
     {{- if not .Values.node.chainKeystore.mountInMemory.enabled }}
     - apiVersion: v1
       kind: PersistentVolumeClaim
@@ -986,7 +1002,7 @@ spec:
           requests:
             storage: {{ .Values.node.chainKeystore.volumeSize }}
     {{- end }}
-    {{- if (include "node.hasCollatorRelaychain" .) }}
+    {{- if and (include "node.hasCollatorRelaychain" .) ( not .Values.node.collatorRelayChain.chainData.emptyDir.enabled ) }}
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
