@@ -195,6 +195,12 @@ node:
     chainPath:
     # -- Storage class to use for persistent volume
     storageClass: ""
+    # -- Mount chain-data volume using an ephemeral volume
+    # ref: https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#types-of-ephemeral-volumes
+    ephemeral:
+      enabled: false
+      # -- Type supports emptyDir, generic
+      type: emptyDir
     # -- Size of the volume for chain data
     volumeSize: 100Gi
     # -- Annotations to add to the volumeClaimTemplates
@@ -293,6 +299,12 @@ node:
       chainPath: ""
       # -- Storage class to use for persistent volume
       storageClass: ""
+      # -- Mount relaychain-data volume using an ephemeral volume
+      # ref: https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#types-of-ephemeral-volumes
+      ephemeral:
+        enabled: false
+        # -- Type supports emptyDir, generic
+        type: emptyDir
       # -- Size of the volume
       volumeSize: 100Gi
       # -- Annotations to add to the volumeClaimTemplates
