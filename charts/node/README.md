@@ -20,6 +20,18 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 
 ![Version: 5.10.0](https://img.shields.io/badge/Version-5.10.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
+## Overview
+The Polkadot Helm Chart provides a convenient way to deploy and manage a Polkadot blockchain node in a Kubernetes cluster.
+This chart is designed to be highly configurable, supporting various configurations and features of the Polkadot node,
+including persistent storage, resource management, and custom networking.
+
+**Features:**
+- Compatible with all Substrate-based relaychains, including Polkadot, Kusama, Paseo, Westend, Rococo, and more.
+- Compatible with all Substrate-based parachains, including Asset-hub, Bridge-hub, Coretime, People, Acala, Astar, Moonbase, and others.
+- Deploy RPC, collators, validators, or full nodes in a Kubernetes cluster.
+- Use snapshots to speed up the deployment process.
+- Supports session key and node-key (ID) injection.
+
 ## Maintainers
 
 | Name | Email | Url |
