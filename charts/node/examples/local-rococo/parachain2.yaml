@@ -7,7 +7,7 @@ node:
   chain: bridge-hub-rococo-local
   command: polkadot-parachain
   role: collator
-  replicas: 1
+  replicas: 2
   chainData:
     pruning: 1000
     storageClass: ""
@@ -16,11 +16,13 @@ node:
   existingSecrets:
     keys:
       - my-key-aura
+    extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
     nodeKey:
      secretName: my-node-key
      secretKey: custom-node-key
+     appendPodIndex: true
   flags:
-    - "--bootnodes /dns/parachain2-node-0/tcp/30334/p2p/12D3KooWATzyLWx71T1Qxgunj9XtrLuMdiqmX2ZHMBDjUayJqxDi"
+    - "--bootnodes /dns/parachain2-node-0/tcp/30334/p2p/12D3KooWF4B55vTeXa7g88nUdSHVk6DiRXTrsfQyJcg7TrXcCK8U"
   isParachain: true
   collatorRelayChain:
     chain: rococo-local
@@ -66,5 +68,5 @@ extraInitContainers:
     image: docker.io/paritytech/substrate-session-keys-grabber:a5dd354f-20240716
     args: ["/keystore"]
     volumeMounts:
-    - mountPath: /keystore
-      name: chain-keystore
+      - mountPath: /keystore
+        name: chain-keystore

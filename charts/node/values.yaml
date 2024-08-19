@@ -377,14 +377,21 @@ node:
   existingSecrets:
     # -- List of kubernetes secret names to be added to the keystore.
     # Each secret should contain 3 keys: type, scheme and seed
+    # Secret example: templates/keys.yaml
     # Supercedes node.vault.keys
     keys: []
+    # Add a derivation suffix for the private key.
+    extraDerivation: ""
 
     # -- K8s secret with node key
+    # Secret example: templates/customNodeKeySecret.yaml
     # Supercedes node.vault.nodeKey
     nodeKey: {}
       # secretName: existing-node-secret
       # secretKey: my-node-key
+      # # Append pod index to secret key (e.g., my-node-key -> my-node-key-0)
+      # # Set `appendPodIndex` to true if you want to enable appending the pod index
+      # appendPodIndex: false
 
   # -- Component to inject secrets via annotation of Hashicorp Vault
   # ref: https://www.vaultproject.io/docs/platform/k8s/injector/annotations

@@ -367,7 +367,11 @@ spec:
               --keystore-path /keystore \
               --key-type $(cat /var/run/secrets/{{ $keys }}/type) \
               --scheme $(cat /var/run/secrets/{{ $keys }}/scheme) \
+              {{- if $.Values.node.existingSecrets.extraDerivation }}
+              --suri "$(cat /var/run/secrets/{{ $keys }}/seed){{ $.Values.node.existingSecrets.extraDerivation }}" \
+              {{- else }}
               --suri /var/run/secrets/{{ $keys }}/seed \
+              {{- end }}
               && echo "Inserted key {{ $keys }} into Keystore" \
               || echo "Failed to insert key {{ $keys }} into Keystore."
               {{- end }}
@@ -602,7 +606,7 @@ spec:
                 --node-key $(cat /custom-node-key/custom-node-key-${POD_INDEX}) \
                 {{- end }}
                 {{- else if .Values.node.existingSecrets.nodeKey }}
-                --node-key $(cat /custom-node-key/{{ .Values.node.existingSecrets.nodeKey.secretKey }}) \
+                --node-key $(cat /custom-node-key/{{ .Values.node.existingSecrets.nodeKey.secretKey }}{{ if .Values.node.existingSecrets.nodeKey.appendPodIndex }}-${POD_INDEX}{{ end }}) \
                 {{- else if .Values.node.vault.nodeKey }}
                 --node-key $(cat /vault/secrets/{{ .Values.node.vault.nodeKey.name }}{{ if .Values.node.vault.nodeKey.vaultKeyAppendPodIndex }}-${POD_INDEX}{{ end }}) \
                 {{- end }}
