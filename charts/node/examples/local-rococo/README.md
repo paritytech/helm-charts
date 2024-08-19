@@ -85,3 +85,11 @@ helm delete bootnode validators parachain
 # Clean PVCs if needed
 # kubectl delete pvc --all
 ```
+
+### Advance
+Use `existingSecrets` option. 
+
+```shell
+kubectl apply -f ./examples/local-rococo/secret.yaml
+helm upgrade --install parachain2  . -f examples/local-rococo/parachain2.yaml
+```
