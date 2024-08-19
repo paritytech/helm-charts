@@ -85,3 +85,15 @@ helm delete bootnode validators parachain
 # Clean PVCs if needed
 # kubectl delete pvc --all
 ```
+
+### Advanced
+Deploy parachain by using  `existingSecrets` option. 
+1. Create secrets with node key(ID) and session keys. 
+```shell
+kubectl apply -f ./examples/local-rococo/secret.yaml
+```
+2. Deploy second parachain.
+```
+helm upgrade --install parachain2  . -f examples/local-rococo/parachain2.yaml
+```
+3. Onboard the parachain by following the previous steps.

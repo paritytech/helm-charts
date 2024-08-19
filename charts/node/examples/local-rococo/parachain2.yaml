@@ -1,0 +1,72 @@
+image:
+  repository: parity/polkadot-parachain
+  tag: latest
+  pullPolicy: Always
+
+node:
+  chain: bridge-hub-rococo-local
+  command: polkadot-parachain
+  role: collator
+  replicas: 2
+  chainData:
+    pruning: 1000
+    storageClass: ""
+  chainKeystore:
+    storageClass: ""
+  existingSecrets:
+    keys:
+      - my-key-aura
+    extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
+    nodeKey:
+     secretName: my-node-key
+     secretKey: custom-node-key
+     appendPodIndex: true
+  flags:
+    - "--bootnodes /dns/parachain2-node-0/tcp/30334/p2p/12D3KooWF4B55vTeXa7g88nUdSHVk6DiRXTrsfQyJcg7TrXcCK8U"
+  isParachain: true
+  collatorRelayChain:
+    chain: rococo-local
+    customChainspecUrl: http://bootnode:8080/chainspec.json
+    forceDownloadChainspec: true
+    chainData:
+      storageClass: ""
+    flags:
+      - "--allow-private-ipv4"
+      - "--discover-local"
+
+extraInitContainers:
+  - name: dump-state-and-wasm
+    image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+    imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+    securityContext:
+      runAsUser: 0
+    command: [ "/bin/bash" ]
+    args:
+      - -c
+      - |
+        if [ "${HOSTNAME##*-}" = "0" ]; then
+          echo "Parachain Id:"
+          {{ .Values.node.command }} build-spec --chain {{ .Values.node.chain }} | grep -E 'para_id|parachainId' 
+          echo "Genesis head:"
+          {{ .Values.node.command }} export-genesis-state --chain {{ .Values.node.chain }}
+          echo ""
+          echo "Genesis wasm (validationCode) stored in /chain-data/genesis-wasm"
+          {{ .Values.node.command }} export-genesis-wasm  --chain {{ .Values.node.chain }} > /chain-data/genesis-wasm
+        else
+         echo "Genesis head and wasm are in pod ${HOSTNAME%-*}-0"
+        fi
+    volumeMounts:
+      - mountPath: /chain-data
+        name: chain-data
+  - name: dump-session-keys
+    resources:
+      requests:
+        memory: 8Mi
+        cpu: 0.01
+      limits:
+        memory: 32Mi
+    image: docker.io/paritytech/substrate-session-keys-grabber:a5dd354f-20240716
+    args: ["/keystore"]
+    volumeMounts:
+      - mountPath: /keystore
+        name: chain-keystore
