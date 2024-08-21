@@ -18,7 +18,7 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 
 # Substrate/Polkadot node Helm chart
 
-![Version: 5.11.1](https://img.shields.io/badge/Version-5.11.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 5.12.0](https://img.shields.io/badge/Version-5.12.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 ## Overview
 The Polkadot Helm Chart provides a convenient way to deploy and manage a Polkadot blockchain node in a Kubernetes cluster.

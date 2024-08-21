@@ -121,3 +121,44 @@ Return true if we have a Relaychain, a single Relaychain, or if it's part of a c
 {{- else -}}
 {{- end -}}
 {{- end -}}
+
+
+{{/*
+Function to validate that exclusive keys are defined only once
+Parameters:
+- $params: list of parameters to validate
+*/}}
+{{- define "validateExclusiveKeys" -}}
+{{- $params := .params -}}
+{{- $global := .global -}}
+
+{{- $countSet := 0 -}}
+{{- $setKeys := "" -}}
+{{- range $param := $params -}}
+  {{- $isSet := tpl (printf "{{ if %s }}true{{ end }}" $param) $global -}}
+  {{- if $isSet -}}
+    {{- $countSet = add1 $countSet -}}
+    {{- $setKeys = printf "%s %s" $setKeys $param -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if gt $countSet 1 -}}
+  {{- fail (printf "Error: Only one of [%s] can be set." $setKeys) -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+validate node keys params
+*/}}
+{{- define "validateNodeKeys" -}}
+{{- $nodeKeysParams := list ".Values.node.persistGeneratedNodeKey" ".Values.node.vault.nodeKey" ".Values.node.existingSecrets.nodeKey" ".Values.node.customNodeKey" -}}
+{{- include "validateExclusiveKeys" (dict "params" $nodeKeysParams "global" . ) -}}
+{{- end -}}
+
+{{/*
+validate keys params
+*/}}
+{{- define "validateKeys" -}}
+{{- $keysParams := list ".Values.node.vault.keys" ".Values.node.existingSecrets.keys" ".Values.node.keys" -}}
+{{- include "validateExclusiveKeys" (dict "params" $keysParams "global" . ) -}}
+{{- end -}}
