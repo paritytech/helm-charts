@@ -4,6 +4,8 @@
 {{ $serviceAccountName :=  include "node.serviceAccountName" . }}
 {{ $databasePath := include "node.databasePath" . }}
 {{ $chartManagedFlagsRegex := include "node.chartManagedFlagsRegex" . }}
+{{ include "validateNodeKeys" . }}
+{{ include "validateKeys" . }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
