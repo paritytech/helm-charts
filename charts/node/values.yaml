@@ -364,7 +364,7 @@ node:
 
   # -- Keys to use by the node.
   # ref: https://wiki.polkadot.network/docs/learn-keys
-  keys: {}
+  keys: []
   # - type: "gran"
   #   scheme: "ed25519"
   #   seed: "//Alice//gran"
