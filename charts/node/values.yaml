@@ -154,7 +154,7 @@ ingress:
 # ref: https://docs.substrate.io/tutorials/v3/private-network/
 node:
   # -- Name of the chain
-  chain: "polkadot"
+  chain: ""
   # -- Command to run within the container
   command: "polkadot"
   # -- Number of replicas to deploy
