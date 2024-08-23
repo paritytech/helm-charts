@@ -64,7 +64,7 @@ app.kubernetes.io/component: substrate-node
 Service labels
 */}}
 {{- define "node.serviceLabels" -}}
-chain: {{ .Values.node.chain }}
+chain: {{ .Values.node.chain | required ".Values.node.chain is required!" }}
 release: {{ .Release.Name }}
 role: {{ .Values.node.role }}
 {{- with .Values.extraLabels }}
