@@ -118,14 +118,14 @@ spec:
                   if [ -z "$LATEST" ]; then
                     echo "Failed to retrieve latest_version.meta.txt file. Will download everything from ${SNAPSHOT_URL} instead"
                   fi
-                  rclone sync {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --fast-list --transfers $PARALLEL_TRANFERS --progress --retries 6 --retries-sleep 10 --error-on-no-transfer --inplace --no-gzip-encoding :gcs:${SNAPSHOT_URL}/${LATEST} /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
+                  rclone sync {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --fast-list --transfers $PARALLEL_TRANFERS --progress --retries 6 --retries-sleep 10s --error-on-no-transfer --inplace --no-gzip-encoding :gcs:${SNAPSHOT_URL}/${LATEST} /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
 
                 elif [ "${METHOD}" == "s3" ]; then
                   LATEST=$(rclone cat {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --quiet :s3:${SNAPSHOT_URL}/latest_version.meta.txt )
                   if [ -z "$LATEST" ]; then
                     echo "Failed to retrieve latest_version.meta.txt file. Will download everything from ${SNAPSHOT_URL} instead"
                   fi
-                  rclone sync {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --fast-list --transfers $PARALLEL_TRANFERS --progress --retries 6 --retries-sleep 10 --error-on-no-transfer --inplace --no-gzip-encoding :s3:${SNAPSHOT_URL}/${LATEST} /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
+                  rclone sync {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --fast-list --transfers $PARALLEL_TRANFERS --progress --retries 6 --retries-sleep 10s --error-on-no-transfer --inplace --no-gzip-encoding :s3:${SNAPSHOT_URL}/${LATEST} /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
 
                 elif [ "${METHOD}" == "http-filelist" ]; then
                   LATEST=$(rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --stdout ${SNAPSHOT_URL}/latest_version.meta.txt )
@@ -134,8 +134,8 @@ spec:
                   else
                     SNAPSHOT_URL="${SNAPSHOT_URL}/${LATEST}"
                   fi
-                  rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --retries 6 --retries-sleep 10 --error-on-no-transfer --inplace --no-gzip-encoding ${SNAPSHOT_URL}/{{ .Values.node.chainData.chainSnapshot.filelistName }} /tmp/filelist.txt
-                  rclone copy {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --transfers $PARALLEL_TRANFERS --progress --retries 6 --retries-sleep 10 --error-on-no-transfer --inplace --no-gzip-encoding --http-url ${SNAPSHOT_URL} --no-traverse --http-no-head --disable-http2 --size-only --files-from /tmp/filelist.txt :http: /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
+                  rclone copyurl {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --retries 6 --retries-sleep 10s --error-on-no-transfer --inplace --no-gzip-encoding ${SNAPSHOT_URL}/{{ .Values.node.chainData.chainSnapshot.filelistName }} /tmp/filelist.txt
+                  rclone copy {{ .Values.initContainers.downloadChainSnapshot.cmdArgs }} --transfers $PARALLEL_TRANFERS --progress --retries 6 --retries-sleep 10s --error-on-no-transfer --inplace --no-gzip-encoding --http-url ${SNAPSHOT_URL} --no-traverse --http-no-head --disable-http2 --size-only --files-from /tmp/filelist.txt :http: /chain-data/chains/${CHAIN_PATH}/{{ $databasePath }}/
                 fi
               fi
           env:
