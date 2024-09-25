@@ -248,6 +248,8 @@ autoscaling:
   # -- Target CPU utilization percentage
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
+  # -- Custom HPA metrics
+  customMetrics: []
 
 # -- If enabled, create service monitor of Prometheus-Operator
 # ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md#include-servicemonitors

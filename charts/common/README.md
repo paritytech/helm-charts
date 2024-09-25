@@ -25,7 +25,8 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 | additionalPodSpec | object | `{}` | Additional Pod Spec |
 | affinity | object | `{}` | Assign custom affinity rules |
 | args | list | `[]` | Override default container args |
-| autoscaling | object | `{"enabled":false,"maxReplicas":100,"minReplicas":1,"targetCPUUtilizationPercentage":80}` | Autoscaling should be enabled for statefulsets ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ |
+| autoscaling | object | `{"customMetrics":[],"enabled":false,"maxReplicas":100,"minReplicas":1,"targetCPUUtilizationPercentage":80}` | Autoscaling should be enabled for statefulsets ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ |
+| autoscaling.customMetrics | list | `[]` | Custom HPA metrics |
 | autoscaling.enabled | bool | `false` | Enable autoscaling |
 | autoscaling.maxReplicas | int | `100` | Maximum number of pods |
 | autoscaling.minReplicas | int | `1` | Minimum number of pods |
