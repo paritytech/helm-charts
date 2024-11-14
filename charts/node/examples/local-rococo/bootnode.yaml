@@ -49,7 +49,8 @@ extraInitContainers:
     args:
       - -c
       - |
-        apt update && apt install -y jq
+        apt update || true
+        apt install -y jq
         {{ .Values.node.command }} build-spec --chain {{ .Values.node.chain }} > base.json
         echo '{"bootNodes":["/dns/bootnode-0/tcp/30333/p2p/12D3KooWRpzRTivvJ5ySvgbFnPeEE6rDhitQKL1fFJvvBGhnenSk"]}' > override1.json
         jq  -s '.[0] * .[1]' base.json override1.json | sed 's/1e+18/1000000000000000000/' > plain.json
