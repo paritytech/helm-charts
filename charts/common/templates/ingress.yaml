@@ -14,7 +14,7 @@ metadata:
 spec:
   rules:
   {{- with .Values.ingress.rules }}
-  {{- toYaml . | nindent 4 }}
+  {{- (tpl (toYaml .) $) | nindent 4 }}
   {{- end }}
   tls:
   {{- with .Values.ingress.tls }}

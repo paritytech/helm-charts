@@ -135,25 +135,27 @@ ingress:
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  # -- A list of hosts for the Ingress
+  # -- Hostname used for the default ingress rule. If .Values.ingress.rules is set, this host is not used.
+  host: chart-example.local
+  # -- Ingress rules configuration. The default rule sends all requests to the HTTP port of the default service.
   rules:
-    - host: chart-example.local
+    - host: "{{ .Values.ingress.host }}"
       http:
         paths:
           - path: /
             pathType: ImplementationSpecific
-            # backend:
-            #   service:
-            #     name: signet-frontend
-            #     port:
-            #       name: http
-  # -- Ingress TLS configuration
-  tls:
-  # -- Secrets to use for TLS configuration
-  - secretName: chart-example-tls
-    # -- A list of hosts for the Ingress with TLS enabled
-    hosts:
-      - chart-example.local
+            backend:
+              service:
+                name: {{ include "common.fullname" . }}
+                port:
+                  name: http
+  # -- Ingress TLS configuration. Leave empty for no TLS.
+  tls: []
+  # -- Secrets to use for TLS configuration.
+  # - secretName: chart-example-tls
+  #   # -- A list of hosts for the Ingress with TLS enabled.
+  #   hosts:
+  #     - chart-example.local
 
 # -- Resource limits & requests
 resources: {}
