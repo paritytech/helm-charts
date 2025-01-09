@@ -46,14 +46,13 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 | image.repository | string | `"nginx"` | Image repository |
 | image.tag | string | `"latest"` | Image tag |
 | imagePullSecrets | list | `[]` | Reference to one or more secrets to be used when pulling images ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/ |
-| ingress | object | `{"annotations":{},"className":"","enabled":false,"rules":[{"host":"chart-example.local","http":{"paths":[{"path":"/","pathType":"ImplementationSpecific"}]}}],"tls":[{"hosts":["chart-example.local"],"secretName":"chart-example-tls"}]}` | Creates an ingress resource |
+| ingress | object | `{"annotations":{},"className":"","enabled":false,"host":"chart-example.local","rules":[{"host":"{{ .Values.ingress.host }}","http":{"paths":[{"backend":{"service":{"name":"{{ include \"common.fullname\" . }}","port":{"name":"http"}}},"path":"/","pathType":"ImplementationSpecific"}]}}],"tls":[]}` | Creates an ingress resource |
 | ingress.annotations | object | `{}` | Annotations to add to the Ingress |
 | ingress.className | string | `""` | Ingress class name |
 | ingress.enabled | bool | `false` | Enable creation of Ingress |
-| ingress.rules | list | `[{"host":"chart-example.local","http":{"paths":[{"path":"/","pathType":"ImplementationSpecific"}]}}]` | A list of hosts for the Ingress |
-| ingress.tls | list | `[{"hosts":["chart-example.local"],"secretName":"chart-example-tls"}]` | Ingress TLS configuration |
-| ingress.tls[0] | object | `{"hosts":["chart-example.local"],"secretName":"chart-example-tls"}` | Secrets to use for TLS configuration |
-| ingress.tls[0].hosts | list | `["chart-example.local"]` | A list of hosts for the Ingress with TLS enabled |
+| ingress.host | string | `"chart-example.local"` | Hostname used for the default ingress rule. If .Values.ingress.rules is set, this host is not used. |
+| ingress.rules | list | `[{"host":"{{ .Values.ingress.host }}","http":{"paths":[{"backend":{"service":{"name":"{{ include \"common.fullname\" . }}","port":{"name":"http"}}},"path":"/","pathType":"ImplementationSpecific"}]}}]` | Ingress rules configuration. The default rule sends all requests to the HTTP port of the default service. |
+| ingress.tls | list | `[]` | Ingress TLS configuration. Leave empty for no TLS. |
 | livenessProbe | object | `{}` | Controller Container liveness probe configuration ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | nameOverride | string | `""` | Provide a name in place of node for `app:` labels |
 | namespaceOverride | string | `""` | Provide a name to substitute for the full names of resources |

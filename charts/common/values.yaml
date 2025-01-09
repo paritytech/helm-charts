@@ -146,7 +146,7 @@ ingress:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: {{ include "common.fullname" . }}
+                name: '{{ include "common.fullname" . }}'
                 port:
                   name: http
   # -- Ingress TLS configuration. Leave empty for no TLS.
