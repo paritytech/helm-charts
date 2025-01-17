@@ -889,6 +889,15 @@ spec:
       tolerations:
       {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName | quote }}
+      {{- end }}
+      {{- if .Values.schedulerName }}
+      schedulerName: {{ .Values.schedulerName | quote }}
+      {{- end }}
+      {{- if .Values.topologySpreadConstraints }}
+      topologySpreadConstraints: {{ toYaml .Values.topologySpreadConstraints | nindent 8 }}
+      {{- end }}
       volumes:
       {{- range .Values.node.extraConfigmapMounts }}
         - name: {{ .name }}

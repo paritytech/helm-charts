@@ -18,7 +18,7 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 
 # Substrate/Polkadot node Helm chart
 
-![Version: 5.13.3](https://img.shields.io/badge/Version-5.13.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 5.14.0](https://img.shields.io/badge/Version-5.14.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 ## Overview
 The Polkadot Helm Chart provides a convenient way to deploy and manage a Polkadot blockchain node in a Kubernetes cluster.
@@ -540,6 +540,8 @@ If you're running a collator node:
 | podSecurityContext.fsGroup | int | `1000` | Set container's Security Context fsGroup |
 | podSecurityContext.runAsGroup | int | `1000` | Set container's Security Context runAsGroup |
 | podSecurityContext.runAsUser | int | `1000` | Set container's Security Context runAsUser |
+| priorityClassName | string | `""` | pods' priorityClassName |
+| schedulerName | string | `""` | Name of the k8s scheduler (other than default) ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/ |
 | serviceAccount | object | `{"annotations":{},"create":true,"createRoleBinding":true,"name":""}` | Service account for the node to use. ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/ |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the Service Account |
 | serviceAccount.create | bool | `true` | Enable creation of a Service Account for the main container |
@@ -553,6 +555,7 @@ If you're running a collator node:
 | substrateApiSidecar.resources | object | `{}` | Resource limits & requests |
 | terminationGracePeriodSeconds | int | `60` | Grace termination period of the Pod |
 | tolerations | list | `[]` | Tolerations for use with node taints |
+| topologySpreadConstraints | object | `{}` | Topology Spread Constraints for pod assignment spread across your cluster among failure-domains. Evaluated as a template Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/#spread-constraints-for-pods |
 | wsHealthExporter | object | `{"env":{},"image":{"repository":"paritytech/ws-health-exporter","tag":"99611363-20240306"},"resources":{}}` | Configuration of the WS Health exporter. ref: https://github.com/paritytech/scripts/tree/master/dockerfiles/ws-health-exporter |
 | wsHealthExporter.env | object | `{}` | Environment variables to set on the API sidecar |
 | wsHealthExporter.image.repository | string | `"paritytech/ws-health-exporter"` | Image repository |
