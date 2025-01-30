@@ -432,8 +432,22 @@ node:
 
   # -- If enabled, generate a persistent volume to use for the keys
   persistGeneratedNodeKey: false
-  # -- List of the custom node key(s) for all pods in statefulset.
+  # -- List of custom node key(s) for all pods in the StatefulSet
+  # Alternatively, use `.seed` to derive node key(s).
   customNodeKey: []
+  #
+  # Example configurations:
+  # customNodeKey:
+  #   - aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  #   - bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  #
+  # OR
+  #
+  # customNodeKey:
+  #   seed: "Any secure, long, random string of at least 64 characters"
+  #   extraDerivation: ""  # Optional. The `extraDerivation` value (default: release name)
+  #                         # and pod index will be appended to the seed to derive a new node key.
+
 
   # -- Expose metrics via Prometheus format in /metrics endpoint.
   # Passes the following args to the Polkadot binary:

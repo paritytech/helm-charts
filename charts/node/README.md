@@ -18,7 +18,7 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 
 # Substrate/Polkadot node Helm chart
 
-![Version: 5.14.0](https://img.shields.io/badge/Version-5.14.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 5.15.0](https://img.shields.io/badge/Version-5.15.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 ## Overview
 The Polkadot Helm Chart provides a convenient way to deploy and manage a Polkadot blockchain node in a Kubernetes cluster.
@@ -428,7 +428,7 @@ If you're running a collator node:
 | node.customChainspec | bool | `false` | Use the file defined in `node.customChainspecPath` as the chainspec. Ensure that the file is either mounted or generated with an init container. |
 | node.customChainspecPath | string | `"/chain-data/chainspec.json"` | Node may require custom name for chainspec file. ref:  moonbeam https://github.com/PureStake/moonbeam/issues/1104#issuecomment-996787548 Note: path should start with /chain-data/ since this folder mount in init container download-chainspec. |
 | node.customChainspecUrl | string | `nil` | URL to retrive custom chain spec |
-| node.customNodeKey | list | `[]` | List of the custom node key(s) for all pods in statefulset. |
+| node.customNodeKey | list | `[]` | List of custom node key(s) for all pods in the StatefulSet Alternatively, use `.seed` to derive node key(s). |
 | node.enableOffchainIndexing | bool | `false` | Enable Offchain Indexing. https://docs.substrate.io/fundamentals/offchain-operations/ |
 | node.enableSidecarLivenessProbe | bool | `false` | Enable Node liveness probe through `paritytech/ws-health-exporter` running as a sidecar container |
 | node.enableSidecarReadinessProbe | bool | `false` | Enable Node readiness probe through `paritytech/ws-health-exporter` running as a sidecar container |
