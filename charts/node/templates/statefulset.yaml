@@ -603,9 +603,9 @@ spec:
                 --node-key-file /keystore/node-key \
                 {{- else if .Values.node.customNodeKey }}
                 {{- if  eq ( typeOf .Values.node.customNodeKey ) "string" }}
-                --node-key $(cat /custom-node-key/custom-node-key) \
+                --node-key-file /custom-node-key/custom-node-key \
                 {{- else }}
-                --node-key $(cat /custom-node-key/custom-node-key-${POD_INDEX}) \
+                --node-key-file /custom-node-key/custom-node-key-${POD_INDEX} \
                 {{- end }}
                 {{- else if .Values.node.existingSecrets.nodeKey }}
                 --node-key $(cat /custom-node-key/{{ .Values.node.existingSecrets.nodeKey.secretKey }}{{ if .Values.node.existingSecrets.nodeKey.appendPodIndex }}-${POD_INDEX}{{ end }}) \

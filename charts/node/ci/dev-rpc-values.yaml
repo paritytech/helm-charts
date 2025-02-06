@@ -54,5 +54,8 @@ wsHealthExporter:
 terminationGracePeriodSeconds: 10
 
 substrateApiSidecar:
+  image:
+    repository: parity/substrate-api-sidecar
+    tag: v19.1.0
   metrics:
     enabled: true
