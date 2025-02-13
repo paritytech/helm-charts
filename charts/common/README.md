@@ -57,7 +57,7 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 | nameOverride | string | `""` | Provide a name in place of node for `app:` labels |
 | namespaceOverride | string | `""` | Provide a name to substitute for the full names of resources |
 | nodeSelector | object | `{}` | Define which Nodes the Pods are scheduled on. |
-| persistence | object | `{"accessModes":["ReadWriteOnce"],"annotations":{},"enabled":false,"size":"50Gi"}` | If enabled, creates a PVC and deploy the pod as statefulset |
+| persistence | object | `{"accessModes":["ReadWriteOnce"],"annotations":{},"enabled":false,"size":"50Gi"}` | If enabled, creates a PVC and mounts it on /data and deploys the pod as statefulset |
 | persistence.accessModes | list | `["ReadWriteOnce"]` | PVC access mode |
 | persistence.annotations | object | `{}` | Annotations to add to the PVC |
 | persistence.enabled | bool | `false` | Enable PVC creation |

@@ -214,7 +214,7 @@ startupProbe: {}
 stateful:
   annotations: {}
 
-# -- If enabled, creates a PVC and deploy the pod as statefulset
+# -- If enabled, creates a PVC and mounts it on /data and deploys the pod as statefulset
 persistence:
   # -- Enable PVC creation
   enabled: false
