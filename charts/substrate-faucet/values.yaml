@@ -89,6 +89,11 @@ ingress:
 
 # -- PostgreSQL configuration
 postgresql:
+  image:
+    repository: bitnamilegacy/postgresql
+  metrics:
+    image:
+      repository: bitnamilegacy/postgresql
   global:
     postgresql:
       # -- Auth configuration
