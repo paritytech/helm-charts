@@ -115,7 +115,7 @@ service:
   # -- Session Affinitiy type
   sessionAffinity: ""
   # -- Ports to expose on the service
-  ports:
+  ports: []
     # - name: http
     #   port: 80
     #   targetPort: 8080
