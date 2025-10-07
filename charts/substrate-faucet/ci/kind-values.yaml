@@ -5,6 +5,7 @@ faucet:
   secret:
     # your bot access token here is how to find it https://t2bot.io/docs/access_tokens/
     SMF_CONFIG_MATRIX_ACCESS_TOKEN: "__GITHUB_SECRET_SMF_CONFIG_MATRIX_ACCESS_TOKEN"
+    # just generate a random seed with "docker run -it parity/subkey generate"
     SMF_CONFIG_FAUCET_ACCOUNT_MNEMONIC: "__GITHUB_SECRET_SMF_CONFIG_FAUCET_ACCOUNT_MNEMONIC"
   config:
     SMF_CONFIG_NETWORK: "westend"
