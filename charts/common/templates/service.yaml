@@ -17,6 +17,7 @@ spec:
   {{- if .Values.service.ports }}
   ports:
 {{ toYaml .Values.service.ports | indent 4 }}
+  {{- end }}
   selector:
     {{- include "common.selectorLabels" . | nindent 4 }}
-  {{- end }}
+
