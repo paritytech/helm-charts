@@ -69,9 +69,9 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 | replicaCount | int | `1` | Number of replicas for the pod |
 | resources | object | `{}` | Resource limits & requests |
 | secrets | object | `{}` | Creates a secret resource The value must be base64 encoded |
-| service | object | `{"annotations":{},"ports":null,"sessionAffinity":"","type":"ClusterIP"}` | Creates a service resource |
+| service | object | `{"annotations":{},"ports":[],"sessionAffinity":"","type":"ClusterIP"}` | Creates a service resource |
 | service.annotations | object | `{}` | Annotations to add to the Service resource |
-| service.ports | string | `nil` | Ports to expose on the service |
+| service.ports | list | `[]` | Ports to expose on the service |
 | service.sessionAffinity | string | `""` | Session Affinitiy type |
 | service.type | string | `"ClusterIP"` | Service type |
 | serviceAccount | object | `{"annotations":{},"create":true,"name":""}` | Service account for the pod to use ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/ |

@@ -18,3 +18,4 @@ spec:
 {{ toYaml .Values.service.ports | indent 4 }}
   selector:
     {{- include "common.selectorLabels" . | nindent 4 }}
+
