@@ -14,7 +14,9 @@ spec:
   {{- if .Values.service.sessionAffinity }}
   sessionAffinity: {{ .Values.service.sessionAffinity }}
   {{- end }}
+  {{- if .Values.service.ports }}
   ports:
 {{ toYaml .Values.service.ports | indent 4 }}
   selector:
     {{- include "common.selectorLabels" . | nindent 4 }}
+  {{- end }}
