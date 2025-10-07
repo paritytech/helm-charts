@@ -117,6 +117,18 @@ entries:
     version: 0.1.1
   common:
   - apiVersion: v2
+    created: "2025-10-07T14:44:53.367893501Z"
+    description: A generic helm chart for Kubernetes
+    digest: 58283e0a2ca50a998e5766a9d58e21c8eb5606997b80d125befd8724c181d7ea
+    maintainers:
+    - name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: common
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/common-0.11.0/common-0.11.0.tgz
+    version: 0.11.0
+  - apiVersion: v2
     created: "2025-02-13T08:23:04.746001111Z"
     description: A generic helm chart for Kubernetes
     digest: 0b2898baa6b168ab95d2d531a73730c1f410abf6918e1816cd44ee965899a491
@@ -3427,4 +3439,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/testnet-manager-1.0.0/testnet-manager-1.0.0.tgz
     version: 1.0.0
-generated: "2025-02-13T08:23:04.746792112Z"
+generated: "2025-10-07T14:44:53.368789197Z"
