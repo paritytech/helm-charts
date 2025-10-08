@@ -14,3 +14,4 @@ Parity's [Kubernetes Helm](https://helm.sh/) charts collection.
 - [Substrate faucet](charts/substrate-faucet/README.md): deploy Substrate Faucet service
 - [Substrate telemetry](charts/substrate-telemetry/README.md): deploy the Substrate Telemetry service
 - [Testnet Manager](charts/testnet-manager/README.md): deploy a management tool for operating testnets
+
