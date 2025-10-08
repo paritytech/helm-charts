@@ -112,6 +112,8 @@ service:
   annotations: {}
   # -- Service type
   type: ClusterIP
+  # -- Headless service
+  clusterIP: ""
   # -- Session Affinitiy type
   sessionAffinity: ""
   # -- Ports to expose on the service
