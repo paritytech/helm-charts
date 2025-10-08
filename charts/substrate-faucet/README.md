@@ -18,7 +18,7 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 
 # Substrate faucet Helm chart
 
-![Version: 3.0.3](https://img.shields.io/badge/Version-3.0.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 3.0.4](https://img.shields.io/badge/Version-3.0.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 ## Maintainers
 
@@ -206,7 +206,7 @@ Adding default global override for .org.matrix.msc3786.rule.room.server_acl
 | nameOverride | string | `""` | String to partially override common.names.name |
 | nodeSelector | object | `{}` | Node labels for pods assignment ref: https://kubernetes.io/docs/user-guide/node-selection/ |
 | podSecurityContext | object | `{}` | Pods Security Context ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod |
-| postgresql | object | `{"global":{"postgresql":{"auth":{"database":"faucet","postgresPassword":"Secret!"}}},"primary":{"persistence":{"size":"4Gi"},"resources":{"limits":{"memory":"1024Mi"},"requests":{"cpu":"250m","memory":"512Mi"}}}}` | PostgreSQL configuration |
+| postgresql | object | `{"global":{"postgresql":{"auth":{"database":"faucet","postgresPassword":"Secret!"}}},"image":{"repository":"bitnamilegacy/postgresql"},"metrics":{"image":{"repository":"bitnamilegacy/postgresql"}},"primary":{"persistence":{"size":"4Gi"},"resources":{"limits":{"memory":"1024Mi"},"requests":{"cpu":"250m","memory":"512Mi"}}}}` | PostgreSQL configuration |
 | postgresql.global.postgresql.auth | object | `{"database":"faucet","postgresPassword":"Secret!"}` | Auth configuration |
 | postgresql.global.postgresql.auth.database | string | `"faucet"` | Database name |
 | postgresql.global.postgresql.auth.postgresPassword | string | `"Secret!"` | Database password |
