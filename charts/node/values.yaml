@@ -169,6 +169,11 @@ node:
     type: "RollingUpdate"
     # -- Can be an int or a %
     maxUnavailable: 1
+    # -- Partitions/Instances to rollout the changes to
+    # -- 0 means all pods
+    # -- 1 means first pod onwards (i.e. if 4 replicas run, issue an update
+    # -- to pods 1, 2 and 3)
+    partition: 0
 
   # -- Use the file defined in `node.customChainspecPath` as the chainspec. Ensure that the file is either mounted or generated with an init container.
   customChainspec: false
