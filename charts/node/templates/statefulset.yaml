@@ -332,6 +332,9 @@ spec:
               --keystore-path /keystore \
               --key-type $(cat /var/run/secrets/{{ .type }}/type) \
               --scheme $(cat /var/run/secrets/{{ .type }}/scheme) \
+              {{- if $.Values.node.customChainSpecChainOverride }}
+              --chain {{ $.Values.node.customChainspecPath }} \
+              {{- end }}
               {{- if .extraDerivation }}
               --suri "$(cat /var/run/secrets/{{ .type }}/seed){{ .extraDerivation }}" \
               {{- else }}
@@ -348,6 +351,10 @@ spec:
           volumeMounts:
             - mountPath: /keystore
               name: chain-keystore
+          {{- if .Values.node.customChainSpecChainOverride }}
+            - mountPath: /chain-data
+              name: chain-data
+          {{- end }}
           {{- range $keys := .Values.node.keys }}
             - mountPath: /var/run/secrets/{{ .type }}
               name: {{ .type }}
@@ -369,6 +376,9 @@ spec:
               --keystore-path /keystore \
               --key-type $(cat /var/run/secrets/{{ $keys }}/type) \
               --scheme $(cat /var/run/secrets/{{ $keys }}/scheme) \
+              {{- if $.Values.node.customChainSpecChainOverride }}
+              --chain {{ $.Values.node.customChainspecPath }} \
+              {{- end }}
               {{- if $.Values.node.existingSecrets.extraDerivation }}
               --suri "$(cat /var/run/secrets/{{ $keys }}/seed){{ $.Values.node.existingSecrets.extraDerivation }}" \
               {{- else }}
@@ -385,6 +395,10 @@ spec:
           volumeMounts:
             - mountPath: /keystore
               name: chain-keystore
+          {{- if .Values.node.customChainSpecChainOverride }}
+            - mountPath: /chain-data
+              name: chain-data
+          {{- end }}
           {{- range $keys := .Values.node.existingSecrets.keys }}
             - mountPath: /var/run/secrets/{{ $keys }}
               name: {{ $keys }}
@@ -415,6 +429,9 @@ spec:
               --keystore-path /keystore \
               --key-type {{ .type }} \
               --scheme {{ .scheme }} \
+              {{- if $.Values.node.customChainSpecChainOverride }}
+              --chain {{ $.Values.node.customChainspecPath }} \
+              {{- end }}
               {{- if .extraDerivation }}
               --suri "$(cat /vault/secrets/{{ .name }}){{ .extraDerivation }}" \
               {{- else }}
@@ -431,6 +448,10 @@ spec:
           volumeMounts:
             - mountPath: /keystore
               name: chain-keystore
+          {{- if .Values.node.customChainSpecChainOverride }}
+            - mountPath: /chain-data
+              name: chain-data
+          {{- end }}
         {{- end }}
         {{- if or (has .Values.node.perNodeServices.relayP2pService.type (list "NodePort" "LoadBalancer")) (has .Values.node.perNodeServices.paraP2pService.type (list "NodePort" "LoadBalancer")) .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
         - name: retrieve-service-info
