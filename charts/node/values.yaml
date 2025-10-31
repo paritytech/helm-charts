@@ -180,6 +180,11 @@ node:
   customChainspecUrl:
   # -- Replace chain spec if it already exists
   forceDownloadChainspec: false
+  # -- Sets the --chain flag for the key generation, and key injection.
+  # This is a common scenario when running a "custom" node which requires a
+  # separate chainspec file to be present at the location specified by
+  # customChainspecPath.
+  customChainSpecChainOverride: false
 
   chainData:
     # -- Database backend engine to use
