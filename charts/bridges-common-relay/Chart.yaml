@@ -2,7 +2,7 @@ apiVersion: v2
 name: bridges-common-relay
 description: A Helm chart for bridges-common-relay
 type: application
-version: 1.2.0
+version: 1.2.1
 maintainers:
   - name: Parity
     url: https://github.com/paritytech/helm-charts

@@ -6,6 +6,8 @@
 {{- if $val.types_override }}
 {{- $typesArgs = printf " --types /types/%s" $typesFile }}
 {{- end }}
+{{- $hasSecrets := or $.Values.secrets $.Values.existingSecretName }}
+{{- $hasTypesOverride := (not (empty $val.types_override)) }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -32,13 +34,15 @@ spec:
         spec:
           restartPolicy: Never
           serviceAccountName: {{ include "bridges-common-relay.serviceAccountName" $ }}
-          {{- if or $.Values.secrets $.Values.existingSecretName }}
+          {{- if or $hasSecrets $hasTypesOverride }}
           volumes:
+          {{- if $hasSecrets }}
             - name: secrets
               secret:
                 secretName: {{ include "bridges-common-relay.secretName" $ }}
                 optional: false
-          {{- if $val.types_override }}
+          {{- end }}
+          {{- if $hasTypesOverride }}
             - name: {{ $typesVolumeName }}
               configMap:
                 name: {{ include "bridges-common-relay.fullname" $ }}-{{ $val.name | lower }}-types
@@ -94,12 +98,14 @@ spec:
                     tx.bridgeRelayers.claimRewards "$rewards_account_params"
               resources:
                 {{- toYaml $.Values.resources | nindent 16 }}
-             {{- if or $.Values.secrets $.Values.existingSecretName }}
+             {{- if or $hasSecrets $hasTypesOverride }}
               volumeMounts:
+              {{- if $hasSecrets }}
                 - name: secrets
                   mountPath: "/secrets"
                   readOnly: true
-              {{- if $val.types_override }}
+              {{- end }}
+              {{- if $hasTypesOverride }}
                 - name: {{ $typesVolumeName }}
                   mountPath: "/types"
                   readOnly: true
