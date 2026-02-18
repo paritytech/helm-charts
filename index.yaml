@@ -2,6 +2,19 @@ apiVersion: v1
 entries:
   bridges-common-relay:
   - apiVersion: v2
+    created: "2026-02-18T14:35:39.733601842Z"
+    description: A Helm chart for bridges-common-relay
+    digest: 0ed77c125c60fbebfa98158cfb90d38f3bd8ac3cae0c544abc694e9d1bd13485
+    maintainers:
+    - email: devops+helm@parity.io
+      name: Parity
+      url: https://github.com/paritytech/helm-charts
+    name: bridges-common-relay
+    type: application
+    urls:
+    - https://github.com/paritytech/helm-charts/releases/download/bridges-common-relay-1.2.1/bridges-common-relay-1.2.1.tgz
+    version: 1.2.1
+  - apiVersion: v2
     created: "2026-02-18T11:46:06.105955476Z"
     description: A Helm chart for bridges-common-relay
     digest: b3a46dd902f99b1d6e2c5d46b86d980725048bba98da561c5eae47f53d5e84bb
@@ -3506,4 +3519,4 @@ entries:
     urls:
     - https://github.com/paritytech/helm-charts/releases/download/testnet-manager-1.0.0/testnet-manager-1.0.0.tgz
     version: 1.0.0
-generated: "2026-02-18T11:46:08.265259084Z"
+generated: "2026-02-18T14:35:39.734142083Z"
