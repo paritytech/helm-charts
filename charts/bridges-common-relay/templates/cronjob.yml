@@ -1,5 +1,11 @@
 {{ range $val := .Values.rewards }}
 {{ range $reward_owner := tuple "ThisChain" "BridgedChain" }}
+{{- $typesVolumeName := printf "types-override-%s" ($val.name | lower | trunc 40 | trimSuffix "-") }}
+{{- $typesFile := default "bridge-reward-types-override.json" $val.types_override_filename }}
+{{- $typesArgs := "" }}
+{{- if $val.types_override }}
+{{- $typesArgs = printf " --types /types/%s" $typesFile }}
+{{- end }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -32,6 +38,11 @@ spec:
               secret:
                 secretName: {{ include "bridges-common-relay.secretName" $ }}
                 optional: false
+          {{- if $val.types_override }}
+            - name: {{ $typesVolumeName }}
+              configMap:
+                name: {{ include "bridges-common-relay.fullname" $ }}-{{ $val.name | lower }}-types
+          {{- end }}
           {{- end}}
           containers:
             - name: bridges-common-relay-{{ $val.name | lower }}-{{ $reward_owner | lower }}
@@ -57,9 +68,13 @@ spec:
                           "owner": $owner
                         }'
                   )
+                  {{- if $val.params_wrapper }}
+
+                  rewards_account_params=$(jq -n --arg key {{ $val.params_wrapper | quote }} --argjson params "$rewards_account_params" '{($key): $params}')
+                  {{- end }}
 
                   reward=$(
-                    polkadot-js-api --ws "$RPC_URL" query.bridgeRelayers.relayerRewards \
+                    polkadot-js-api --ws "$RPC_URL"{{ $typesArgs }} query.bridgeRelayers.relayerRewards \
                       {{ $val.address | quote }} \
                       "$rewards_account_params" \
                       | jq -r '.relayerRewards'
@@ -74,7 +89,7 @@ spec:
                   # Avoid nonce collision with "ThisChain".
                   {{ if eq $reward_owner "BridgedChain" }}sleep 10{{ end }}
 
-                  polkadot-js-api --ws "$RPC_URL" \
+                  polkadot-js-api --ws "$RPC_URL"{{ $typesArgs }} \
                       --seed "$(cat /secrets/{{ $val.seed_phrase_secret_name }})" \
                     tx.bridgeRelayers.claimRewards "$rewards_account_params"
               resources:
@@ -84,6 +99,11 @@ spec:
                 - name: secrets
                   mountPath: "/secrets"
                   readOnly: true
+              {{- if $val.types_override }}
+                - name: {{ $typesVolumeName }}
+                  mountPath: "/types"
+                  readOnly: true
+              {{- end}}
              {{- end}}
 ---
 {{- end }}

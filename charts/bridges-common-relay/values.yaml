@@ -130,3 +130,10 @@ rewards: {}
   #   bridged_chain_id: "0x62687764"
   #   # -- Secret name of the seed phrase of the relayer
   #   seed_phrase_secret_name: "bridge-hub-rococo-signer-file"
+  #   # -- Optional: wrap rewards params in a top-level enum variant
+  #   params_wrapper: "PolkadotKusamaBridge"
+  #   # -- Optional: JSON types override for polkadot-js-api
+  #   types_override: |
+  #     {"MyType": "u32"}
+  #   # -- Optional: override types file name (default: bridge-reward-types-override.json)
+  #   types_override_filename: "bridge-reward-types-override.json"
