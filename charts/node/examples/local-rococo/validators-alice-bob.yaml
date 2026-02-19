@@ -1,57 +1,46 @@
-image:
-  repository: parity/polkadot
-  tag: latest
-  pullPolicy: Always
-
 node:
-  chain: rococo-local
-  customChainspecUrl: http://bootnode:8080/chainspec.json
-  forceDownloadChainspec: true
-  role: authority
-  replicas: 2
-  chainData:
-    pruning: 1000
-    storageClass: ""
-  chainKeystore:
-    storageClass: ""
-  keys:
-      # This is Alice seed. To generate new seed run: docker run --rm parity/polkadot:latest key generate
-    - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
-      type: gran
-      scheme: ed25519
-      # ${HOSTNAME##*-} will be evaluated as the pod index, pod-0: //Alice, pod-1: //Bob
-      extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
-    - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
-      type: babe
-      scheme: sr25519
-      extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
-    - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
-      type: imon
-      scheme: sr25519
-      extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
-    - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
-      type: para
-      scheme: sr25519
-      extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
-    - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
-      type: asgn
-      scheme: sr25519
-      extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
-    - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
-      type: audi
-      scheme: sr25519
-      extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
-    - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
-      type: beef
-      scheme: ecdsa
-      extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
-  customNodeKey:
-   # To generate new key run: docker run --rm -t parity/polkadot:latest key generate-node-key
-   # 12D3KooWJ8ZqNMsxW9JHf8ZfXLW9a5LmJwaro83fB3tBzeq137XJ
-   - 2f355a92b3f2823975e8d59a022bd4927aca4b016359b7fc358cbea08b5293fc
-   # 12D3KooWCNqZFCPPtUGHhsUKzKWi1zTPwFFiobfCKdVYD4urrZEv
-   - 8b70f3e85bd5d80ebef8cffa8564f52e7d418b07b3cfb222712f30414dc67728
-  flags:
-    - "--allow-private-ipv4"
-    - "--discover-local"
+  node:
+    chain: rococo-local
+    customChainspecUrl: http://bootnode:8080/chainspec.json
+    forceDownloadChainspec: true
+    role: authority
+    replicas: 2
+    keys:
+        # This is Alice seed. To generate new seed run: docker run --rm parity/polkadot:latest key generate
+      - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
+        type: gran
+        scheme: ed25519
+        # ${HOSTNAME##*-} will be evaluated as the pod index, pod-0: //Alice, pod-1: //Bob
+        extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
+      - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
+        type: babe
+        scheme: sr25519
+        extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
+      - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
+        type: imon
+        scheme: sr25519
+        extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
+      - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
+        type: para
+        scheme: sr25519
+        extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
+      - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
+        type: asgn
+        scheme: sr25519
+        extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
+      - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
+        type: audi
+        scheme: sr25519
+        extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
+      - seed: "bottom drive obey lake curtain smoke basket hold race lonely fit walk"
+        type: beef
+        scheme: ecdsa
+        extraDerivation: '$([ "${HOSTNAME##*-}" = "0" ] && echo "//Alice" || echo "//Bob")'
+    customNodeKey:
+     # To generate new key run: docker run --rm -t parity/polkadot:latest key generate-node-key
+     - "0000000000000000000000000000000000000000000000000000000000000002"
+     - "0000000000000000000000000000000000000000000000000000000000000003"
+    flags:
+      - "--allow-private-ipv4"
+      - "--discover-local"
 
