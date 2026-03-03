@@ -1,0 +1,15 @@
+{{- range $val := .Values.rewards }}
+{{- if $val.types_override }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "bridges-common-relay.fullname" $ }}-{{ $val.name | lower }}-types
+  labels:
+    {{- include "bridges-common-relay.labels" $ | nindent 4 }}
+data:
+  {{- $typesFile := default "bridge-reward-types-override.json" $val.types_override_filename }}
+  {{ $typesFile }}: |
+{{ $val.types_override | nindent 4 }}
+---
+{{- end }}
+{{- end }}
