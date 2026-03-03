@@ -421,11 +421,13 @@ node:
       #   vaultPath: kv/secret/grankey
       #   vaultKey: gran
       #   extraDerivation: //
+      #   vaultKeyAppendPodIndex: false
       # - name: babekey
       #   type: type
       #   scheme: scheme
       #   vaultPath: kv/secrets/babeKey
       #   vaultKey: babe
+      #   vaultKeyAppendPodIndex: false
 
     # -- Node key to use via vault
     nodeKey: {}

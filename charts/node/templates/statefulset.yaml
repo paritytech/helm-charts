@@ -37,14 +37,22 @@ spec:
     metadata:
     {{- if or .Values.podAnnotations .Values.node.vault.keys .Values.node.vault.nodeKey }}
       annotations:
-      {{- with .Values.podAnnotations }}
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- range $keys := .Values.node.vault.keys }}
+        {{- with .Values.podAnnotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- range $keys := .Values.node.vault.keys }}
+          {{- if .vaultKeyAppendPodIndex }}
+            {{- range $index := until ($.Values.node.replicas | int) }}
+        vault.hashicorp.com/agent-inject-secret-{{ $keys.name }}-{{ $index }}: {{ $keys.vaultPath | squote }}
+        vault.hashicorp.com/agent-inject-template-{{ $keys.name }}-{{ $index }}: |
+            {{`{{ with secret "`}}{{ $keys.vaultPath }}{{`" }}{{ .Data.data.`}}{{ printf "%s_%s" $keys.vaultKey ($index | toString) }}{{` }}{{ end }}`}}
+            {{- end }}
+          {{- else }}
         vault.hashicorp.com/agent-inject-secret-{{ .name }}: {{ .vaultPath | squote }}
         vault.hashicorp.com/agent-inject-template-{{ .name }}: |
           {{`{{ with secret "`}}{{ .vaultPath }}{{`" }}{{ .Data.data.`}}{{ .vaultKey }}{{` }}{{ end }}`}}
-      {{- end }}
+          {{- end }}
+        {{- end }}
       {{- if .Values.node.vault.nodeKey }}
         {{- if .Values.node.vault.nodeKey.vaultKeyAppendPodIndex }}
           {{- range $index := until (.Values.node.replicas | int) }}
@@ -421,8 +429,9 @@ spec:
               echo "Inserted node key at ${NODE_KEY_PATH} with peer-id: ${NODE_PEER_ID}"
               {{- end }}
               {{- range $keys := .Values.node.vault.keys }}
-              if [ ! -f /vault/secrets/{{ .name }} ]; then
-                 echo "Error: File /vault/secrets/{{ .name }} does not exist"
+              KEY_PATH="/vault/secrets/{{ .name }}{{ if .vaultKeyAppendPodIndex }}-${HOSTNAME##*-}{{ end }}"
+              if [ ! -f ${KEY_PATH} ]; then
+                 echo "Error: File ${KEY_PATH} does not exist"
                  exit 1
               fi
               {{ $.Values.node.command }} key insert \
@@ -433,11 +442,11 @@ spec:
               --chain {{ $.Values.node.customChainspecPath }} \
               {{- end }}
               {{- if .extraDerivation }}
-              --suri "$(cat /vault/secrets/{{ .name }}){{ .extraDerivation }}" \
+              --suri "$(cat ${KEY_PATH}){{ .extraDerivation }}" \
               {{- else }}
-              --suri "/vault/secrets/{{ .name }}" \
+              --suri "$(cat ${KEY_PATH})" \
               {{- end }}
-              && echo "Inserted key {{ .name }} (type={{ .type }}, scheme={{ .scheme }}) into Keystore" \
+              && echo "Inserted key {{ .name }} (type={{ .type }}, scheme={{ .scheme }}) from ${KEY_PATH} into Keystore" \
               || echo "Failed to insert key {{ .name }} (type={{ .type }}, scheme={{ .scheme }}) into Keystore."
               {{- end }}
           resources:
