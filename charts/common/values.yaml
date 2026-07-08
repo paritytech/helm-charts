@@ -288,3 +288,13 @@ cloudsql:
     targetPort: 5432
   commandline:
     args: "-instances=gcp-project-id:zone:instance-name=tcp:0.0.0.0:5432"
+
+# -- Expose the Service over NetBird via the netbird kubernetes-operator
+# (requires a netbird.io/v1alpha1 NetworkRouter in the cluster)
+netbird: {}
+#  expose: true
+#  groups:               # NetBird destination groups (must exist / Group CRs)
+#    - my-group
+#  serviceName: ""       # defaults to common.fullname
+#  routerName: "router"
+#  routerNamespace: "netbird-operator"

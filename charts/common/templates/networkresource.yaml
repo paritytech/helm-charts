@@ -1,0 +1,26 @@
+{{- with .Values.netbird }}
+{{- if .expose }}
+{{- /* Exposes the app Service over NetBird via the netbird kubernetes-operator
+       (netbird.io/v1alpha1 flow): the operator creates a NetBird network
+       resource for the Service ClusterIP plus an A record <svc>.<ns>.<zone>
+       in the NetworkRouter's DNS zone. Requires a NetworkRouter deployed in
+       the cluster and the destination groups to exist (Group CRs). */}}
+apiVersion: netbird.io/v1alpha1
+kind: NetworkResource
+metadata:
+  name: {{ .serviceName | default (include "common.fullname" $) }}
+  namespace: {{ template "common.namespace" $ }}
+  labels:
+    {{- include "common.labels" $ | nindent 4 }}
+spec:
+  networkRouterRef:
+    name: {{ .routerName | default "router" }}
+    namespace: {{ .routerNamespace | default "netbird-operator" }}
+  serviceRef:
+    name: {{ .serviceName | default (include "common.fullname" $) }}
+  groups:
+    {{- range .groups }}
+    - name: {{ . }}
+    {{- end }}
+{{- end }}
+{{- end }}
