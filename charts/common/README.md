@@ -56,6 +56,7 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 | livenessProbe | object | `{}` | Controller Container liveness probe configuration ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ |
 | nameOverride | string | `""` | Provide a name in place of node for `app:` labels |
 | namespaceOverride | string | `""` | Provide a name to substitute for the full names of resources |
+| netbird | object | `{}` | Expose the Service over NetBird via the netbird kubernetes-operator (requires a netbird.io/v1alpha1 NetworkRouter in the cluster) |
 | nodeSelector | object | `{}` | Define which Nodes the Pods are scheduled on. |
 | persistence | object | `{"accessModes":["ReadWriteOnce"],"annotations":{},"enabled":false,"size":"50Gi"}` | If enabled, creates a PVC and mounts it on /data and deploys the pod as statefulset |
 | persistence.accessModes | list | `["ReadWriteOnce"]` | PVC access mode |
