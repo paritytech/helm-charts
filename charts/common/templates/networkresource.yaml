@@ -14,7 +14,7 @@ metadata:
     {{- include "common.labels" $ | nindent 4 }}
 spec:
   networkRouterRef:
-    name: {{ .routerName | default "router" }}
+    name: {{ required "netbird.routerName is required (NetworkRouters are named after their cluster)" .routerName }}
     namespace: {{ .routerNamespace | default "netbird-operator" }}
   serviceRef:
     name: {{ .serviceName | default (include "common.fullname" $) }}

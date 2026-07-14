@@ -296,5 +296,5 @@ netbird: {}
 #  groups:               # NetBird destination groups (must exist / Group CRs)
 #    - my-group
 #  serviceName: ""       # defaults to common.fullname
-#  routerName: "router"
+#  routerName: "my-cluster"  # mandatory, NetworkRouters are named after their cluster
 #  routerNamespace: "netbird-operator"
