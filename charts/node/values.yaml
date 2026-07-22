@@ -412,6 +412,21 @@ node:
     authConfigType:
     # -- Configures auth-config-service-account annotation
     authConfigServiceAccount:
+    # -- Configures the auth-config-path annotation (file the Vault Agent reads the
+    # JWT from). Used by the `jwt` auth method. When left empty and
+    # `projectedToken.enabled` is true, it defaults to `<projectedToken.mountPath>/token`.
+    authConfigPath:
+    # -- Project a ServiceAccount token with a custom audience into the Vault Agent.
+    # Required for `authType: jwt` (e.g. authenticating to a Vault in another cluster
+    projectedToken:
+      # -- Enable the projected ServiceAccount token volume and wire it into the Vault Agent.
+      enabled: false
+      # -- Audience the token is scoped to. Must match the Vault JWT role's `bound_audiences`.
+      audience: vault
+      # -- Token lifetime in seconds (the kubelet rotates it before expiry).
+      expirationSeconds: 600
+      # -- Directory the token is mounted at; the JWT is at `<mountPath>/token`.
+      mountPath: /var/run/secrets/vault
 
     # -- Keys to fetch from Hashicorp Vault and set on the node
     keys: {}
