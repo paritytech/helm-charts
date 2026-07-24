@@ -234,7 +234,7 @@ spec:
             runAsUser: 0
           {{- end }}
         {{- end }}
-        {{- if or .Values.node.customChainspecUrl (or .Values.node.collatorRelayChain.customChainspecUrl .Values.node.collatorLightClient.relayChainCustomChainspecUrl) }}
+        {{- if or .Values.node.customChainspecUrl (or (and .Values.node.collatorRelayChain.customChainspecUrl (include "node.hasCollatorRelaychain" .)) .Values.node.collatorLightClient.relayChainCustomChainspecUrl) }}
         - name: download-chainspec
           image: {{ .Values.initContainers.downloadChainspec.image.repository }}:{{ .Values.initContainers.downloadChainspec.image.tag }}
           command: [ "/bin/sh" ]
@@ -251,7 +251,7 @@ spec:
               fi
               {{- end }}
               {{- end }}
-              {{- if .Values.node.collatorRelayChain.customChainspecUrl }}
+              {{- if and .Values.node.collatorRelayChain.customChainspecUrl (include "node.hasCollatorRelaychain" .) }}
               {{- if not .Values.node.forceDownloadChainspec }}
               if [ ! -f {{ .Values.node.collatorRelayChain.customChainspecPath}} ]; then
               {{- end }}
