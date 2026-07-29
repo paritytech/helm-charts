@@ -84,6 +84,14 @@ spec:
       {{- if .Values.node.vault.authConfigServiceAccount }}
         vault.hashicorp.com/auth-config-service-account: {{ .Values.node.vault.authConfigServiceAccount | squote }}
       {{- end }}
+      {{- if .Values.node.vault.authConfigPath }}
+        vault.hashicorp.com/auth-config-path: {{ .Values.node.vault.authConfigPath | squote }}
+      {{- else if .Values.node.vault.projectedToken.enabled }}
+        vault.hashicorp.com/auth-config-path: {{ printf "%s/token" .Values.node.vault.projectedToken.mountPath | squote }}
+      {{- end }}
+      {{- if .Values.node.vault.projectedToken.enabled }}
+        vault.hashicorp.com/agent-copy-volume-mounts: {{ .Values.node.chain | replace "_" "-" | squote }}
+      {{- end }}
     {{- end }}
       labels:
       {{- include "node.labels" . | nindent 8 }}
@@ -808,6 +816,11 @@ spec:
               name: node-key
               readOnly: true
           {{- end }}
+          {{- if .Values.node.vault.projectedToken.enabled }}
+            - name: vault-jwt-token
+              mountPath: {{ .Values.node.vault.projectedToken.mountPath }}
+              readOnly: true
+          {{- end }}
         {{- if .Values.node.substrateApiSidecar.enabled }}
         - name: substrate-api-sidecar
           image: {{ .Values.substrateApiSidecar.image.repository }}:{{ .Values.substrateApiSidecar.image.tag }}
@@ -941,6 +954,15 @@ spec:
             secretName: {{ .secretName }}
             optional: {{ .optional }}
             defaultMode: {{ .defaultMode }}
+      {{- end }}
+      {{- if .Values.node.vault.projectedToken.enabled }}
+        - name: vault-jwt-token
+          projected:
+            sources:
+              - serviceAccountToken:
+                  path: token
+                  audience: {{ .Values.node.vault.projectedToken.audience | quote }}
+                  expirationSeconds: {{ .Values.node.vault.projectedToken.expirationSeconds }}
       {{- end }}
       {{- if .Values.node.persistGeneratedNodeKey }}
       {{- else if .Values.node.customNodeKey }}
