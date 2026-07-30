@@ -571,6 +571,20 @@ node:
         enabled: false
         # -- WS port
         port: 30334
+      webrtc:
+        # -- If enabled, additionally expose the experimental webrtc-direct listener over UDP.
+        # Requires a node image supporting `--experimental-webrtc` and the litep2p backend.
+        # Exposed through a dedicated Service because most cloud load balancers cannot mix
+        # TCP and UDP ports, and some (e.g. Scaleway) cannot forward UDP at all.
+        enabled: false
+        # -- UDP port of the webrtc-direct listener (relay chain)
+        port: 30333
+        # -- Service type
+        type: NodePort # or ClusterIP, LoadBalancer
+        # -- Traffic policy
+        externalTrafficPolicy: Cluster
+        # -- Annotations to add to the Service
+        annotations: {}
       # -- Additional ports on per node Services
       extraPorts: []
     # -- If enabled, create service to expose parachain P2P
@@ -603,6 +617,20 @@ node:
         enabled: false
         # -- WS port
         port: 30335
+      webrtc:
+        # -- If enabled, additionally expose the experimental webrtc-direct listener over UDP.
+        # Requires a node image supporting `--experimental-webrtc` and the litep2p backend.
+        # Exposed through a dedicated Service because most cloud load balancers cannot mix
+        # TCP and UDP ports, and some (e.g. Scaleway) cannot forward UDP at all.
+        enabled: false
+        # -- UDP port of the webrtc-direct listener (parachain)
+        port: 30334
+        # -- Service type
+        type: NodePort # or ClusterIP, LoadBalancer
+        # -- Traffic policy
+        externalTrafficPolicy: Cluster
+        # -- Annotations to add to the Service
+        annotations: {}
       # -- Additional ports on per node Services
       extraPorts: []
     setPublicAddressToExternalIp:

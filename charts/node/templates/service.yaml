@@ -182,6 +182,43 @@ spec:
     {{- toYaml . | nindent 4 }}
     {{- end }}
 {{- end }}
+{{- /*
+Dedicated UDP Service for the experimental webrtc-direct listener. Kept separate from the
+TCP p2p Service above so the two can have different Service types: most cloud load balancers
+cannot mix TCP and UDP ports on one Service, and some cannot forward UDP at all.
+*/}}
+{{- if and $.Values.node.perNodeServices.relayP2pService.enabled (include "node.hasRelaychain" $) $.Values.node.perNodeServices.relayP2pService.webrtc.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullname }}-{{ $i }}-relay-chain-webrtc
+  labels:
+    {{- $serviceLabels | nindent 4 }}
+{{- with $.Values.node.perNodeServices.relayP2pService.webrtc.annotations }}
+  annotations:
+{{ toYaml . | indent 4}}
+{{- end }}
+spec:
+  {{- if eq $.Values.node.perNodeServices.relayP2pService.webrtc.type "ClusterIP" }}
+  type: ClusterIP
+  {{- else if eq $.Values.node.perNodeServices.relayP2pService.webrtc.type "NodePort" }}
+  externalTrafficPolicy: {{ $.Values.node.perNodeServices.relayP2pService.webrtc.externalTrafficPolicy }}
+  type: NodePort
+  {{- else if eq $.Values.node.perNodeServices.relayP2pService.webrtc.type "LoadBalancer" }}
+  externalTrafficPolicy: {{ $.Values.node.perNodeServices.relayP2pService.webrtc.externalTrafficPolicy }}
+  type: LoadBalancer
+  {{- end }}
+  publishNotReadyAddresses: {{ $.Values.node.perNodeServices.relayP2pService.publishUnreadyAddresses }}
+  selector:
+    {{- $selectorLabels | nindent 4 }}
+    statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
+  ports:
+    - name: webrtc
+      port: {{ $.Values.node.perNodeServices.relayP2pService.webrtc.port | int }}
+      targetPort: relay-webrtc
+      protocol: UDP
+{{- end }}
 ---
 {{- if and $.Values.node.isParachain $.Values.node.perNodeServices.paraP2pService.enabled }}
 apiVersion: v1
@@ -228,6 +265,39 @@ spec:
     {{- with $.Values.node.perNodeServices.paraP2pService.extraPorts }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
+{{- end }}
+{{- /* See the note on the relay chain webrtc Service above. */}}
+{{- if and $.Values.node.isParachain $.Values.node.perNodeServices.paraP2pService.enabled $.Values.node.perNodeServices.paraP2pService.webrtc.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullname }}-{{ $i }}-para-chain-webrtc
+  labels:
+    {{- $serviceLabels | nindent 4 }}
+{{- with $.Values.node.perNodeServices.paraP2pService.webrtc.annotations }}
+  annotations:
+{{ toYaml . | indent 4}}
+{{- end }}
+spec:
+  {{- if eq $.Values.node.perNodeServices.paraP2pService.webrtc.type "ClusterIP" }}
+  type: ClusterIP
+  {{- else if eq $.Values.node.perNodeServices.paraP2pService.webrtc.type "NodePort" }}
+  externalTrafficPolicy: {{ $.Values.node.perNodeServices.paraP2pService.webrtc.externalTrafficPolicy }}
+  type: NodePort
+  {{- else if eq $.Values.node.perNodeServices.paraP2pService.webrtc.type "LoadBalancer" }}
+  externalTrafficPolicy: {{ $.Values.node.perNodeServices.paraP2pService.webrtc.externalTrafficPolicy }}
+  type: LoadBalancer
+  {{- end }}
+  publishNotReadyAddresses: {{ $.Values.node.perNodeServices.paraP2pService.publishUnreadyAddresses }}
+  selector:
+    {{- $selectorLabels | nindent 4 }}
+    statefulset.kubernetes.io/pod-name: {{ $fullname }}-{{ $i }}
+  ports:
+    - name: webrtc
+      port: {{ $.Values.node.perNodeServices.paraP2pService.webrtc.port | int }}
+      targetPort: para-webrtc
+      protocol: UDP
 {{- end }}
 ---
 {{ end }}
