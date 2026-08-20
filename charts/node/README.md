@@ -475,7 +475,7 @@ If you're running a collator node:
 | node.perNodeServices.paraP2pService.publishUnreadyAddresses | bool | `true` | Publish the P2P port even if the pod is not ready (e.g., node is syncing). It's recommended to keep this to true. |
 | node.perNodeServices.paraP2pService.type | string | `"NodePort"` | Service type |
 | node.perNodeServices.paraP2pService.webrtc.annotations | object | `{}` | Annotations to add to the Service |
-| node.perNodeServices.paraP2pService.webrtc.enabled | bool | `false` | If enabled, additionally expose the experimental webrtc-direct listener over UDP. Requires a node image supporting `--experimental-webrtc` and the litep2p backend. Exposed through a dedicated Service because most cloud load balancers cannot mix TCP and UDP ports, and some (e.g. Scaleway) cannot forward UDP at all. |
+| node.perNodeServices.paraP2pService.webrtc.enabled | bool | `false` | If enabled, additionally expose the webrtc-direct listener over UDP. Requires the litep2p network backend and a node image with paritytech/polkadot-sdk#12870 (earlier images gate webrtc addresses behind the since-removed `--experimental-webrtc` flag). The node completes the advertised public address with its own `/certhash`. Exposed through a dedicated Service because most cloud load balancers cannot mix TCP and UDP ports, and some (e.g. Scaleway) cannot forward UDP at all. |
 | node.perNodeServices.paraP2pService.webrtc.externalTrafficPolicy | string | `"Cluster"` | Traffic policy |
 | node.perNodeServices.paraP2pService.webrtc.port | int | `30334` | UDP port of the webrtc-direct listener (parachain) |
 | node.perNodeServices.paraP2pService.webrtc.type | string | `"NodePort"` | Service type |
@@ -494,7 +494,7 @@ If you're running a collator node:
 | node.perNodeServices.relayP2pService.publishUnreadyAddresses | bool | `true` | Publish the P2P port even if the pod is not ready (e.g., node is syncing). It's recommended to keep this to true. |
 | node.perNodeServices.relayP2pService.type | string | `"NodePort"` | Service type |
 | node.perNodeServices.relayP2pService.webrtc.annotations | object | `{}` | Annotations to add to the Service |
-| node.perNodeServices.relayP2pService.webrtc.enabled | bool | `false` | If enabled, additionally expose the experimental webrtc-direct listener over UDP. Requires a node image supporting `--experimental-webrtc` and the litep2p backend. Exposed through a dedicated Service because most cloud load balancers cannot mix TCP and UDP ports, and some (e.g. Scaleway) cannot forward UDP at all. |
+| node.perNodeServices.relayP2pService.webrtc.enabled | bool | `false` | If enabled, additionally expose the webrtc-direct listener over UDP. Requires the litep2p network backend and a node image with paritytech/polkadot-sdk#12870 (earlier images gate webrtc addresses behind the since-removed `--experimental-webrtc` flag). The node completes the advertised public address with its own `/certhash`. Exposed through a dedicated Service because most cloud load balancers cannot mix TCP and UDP ports, and some (e.g. Scaleway) cannot forward UDP at all. |
 | node.perNodeServices.relayP2pService.webrtc.externalTrafficPolicy | string | `"Cluster"` | Traffic policy |
 | node.perNodeServices.relayP2pService.webrtc.port | int | `30333` | UDP port of the webrtc-direct listener (relay chain) |
 | node.perNodeServices.relayP2pService.webrtc.type | string | `"NodePort"` | Service type |

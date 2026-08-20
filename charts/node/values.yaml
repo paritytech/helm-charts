@@ -572,8 +572,11 @@ node:
         # -- WS port
         port: 30334
       webrtc:
-        # -- If enabled, additionally expose the experimental webrtc-direct listener over UDP.
-        # Requires a node image supporting `--experimental-webrtc` and the litep2p backend.
+        # -- If enabled, additionally expose the webrtc-direct listener over UDP.
+        # Requires the litep2p network backend and a node image with
+        # paritytech/polkadot-sdk#12870 (earlier images gate webrtc addresses behind the
+        # since-removed `--experimental-webrtc` flag). The node completes the advertised
+        # public address with its own `/certhash`.
         # Exposed through a dedicated Service because most cloud load balancers cannot mix
         # TCP and UDP ports, and some (e.g. Scaleway) cannot forward UDP at all.
         enabled: false
@@ -618,8 +621,11 @@ node:
         # -- WS port
         port: 30335
       webrtc:
-        # -- If enabled, additionally expose the experimental webrtc-direct listener over UDP.
-        # Requires a node image supporting `--experimental-webrtc` and the litep2p backend.
+        # -- If enabled, additionally expose the webrtc-direct listener over UDP.
+        # Requires the litep2p network backend and a node image with
+        # paritytech/polkadot-sdk#12870 (earlier images gate webrtc addresses behind the
+        # since-removed `--experimental-webrtc` flag). The node completes the advertised
+        # public address with its own `/certhash`.
         # Exposed through a dedicated Service because most cloud load balancers cannot mix
         # TCP and UDP ports, and some (e.g. Scaleway) cannot forward UDP at all.
         enabled: false

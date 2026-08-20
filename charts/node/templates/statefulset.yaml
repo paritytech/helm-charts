@@ -662,13 +662,7 @@ spec:
                 {{- end }}
                 {{- end }}
                 {{- if .Values.node.perNodeServices.paraP2pService.webrtc.enabled }}
-                --experimental-webrtc \
-                {{- /*
-                Unlike TCP, the webrtc listener must bind a concrete IP: litep2p rejects
-                unspecified addresses because WebRTC ICE candidates have to carry a routable
-                address, and it does not enumerate interfaces the way the TCP transport does.
-                */}}
-                --listen-addr=/ip4/${POD_IP}/udp/{{ .Values.node.perNodeServices.paraP2pService.webrtc.port | int }}/webrtc-direct \
+                --listen-addr=/ip4/0.0.0.0/udp/{{ .Values.node.perNodeServices.paraP2pService.webrtc.port | int }}/webrtc-direct \
                 {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
                 --public-addr=/ip4/${EXTERNAL_IP}/udp/${PARA_CHAIN_WEBRTC_PORT}/webrtc-direct \
                 {{- end }}
@@ -762,9 +756,7 @@ spec:
                 --listen-addr=/ip4/0.0.0.0/tcp/30334/ws \
                 {{- end }}
                 {{- if .Values.node.perNodeServices.relayP2pService.webrtc.enabled }}
-                --experimental-webrtc \
-                {{- /* See the note on the parachain webrtc listen address above. */}}
-                --listen-addr=/ip4/${POD_IP}/udp/{{ .Values.node.perNodeServices.relayP2pService.webrtc.port | int }}/webrtc-direct \
+                --listen-addr=/ip4/0.0.0.0/udp/{{ .Values.node.perNodeServices.relayP2pService.webrtc.port | int }}/webrtc-direct \
                 {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
                 --public-addr=/ip4/${EXTERNAL_IP}/udp/${RELAY_CHAIN_WEBRTC_PORT}/webrtc-direct \
                 {{- end }}
@@ -783,14 +775,6 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.name
-            {{- if or (and .Values.node.isParachain .Values.node.perNodeServices.paraP2pService.enabled .Values.node.perNodeServices.paraP2pService.webrtc.enabled) (and (include "node.hasRelaychain" .) .Values.node.perNodeServices.relayP2pService.enabled .Values.node.perNodeServices.relayP2pService.webrtc.enabled) }}
-            {{- /* The webrtc listener has to bind a concrete IP, so it needs the Pod IP at runtime */}}
-            - name: POD_IP
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: status.podIP
-            {{- end }}
             {{- with .Values.node.extraEnvVars }}
             {{- toYaml . | nindent 12 }}
             {{- end}}
