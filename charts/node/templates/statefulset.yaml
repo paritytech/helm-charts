@@ -470,7 +470,7 @@ spec:
               name: chain-data
           {{- end }}
         {{- end }}
-        {{- if or (has .Values.node.perNodeServices.relayP2pService.type (list "NodePort" "LoadBalancer")) (has .Values.node.perNodeServices.paraP2pService.type (list "NodePort" "LoadBalancer")) .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
+        {{- if or (has .Values.node.perNodeServices.relayP2pService.type (list "NodePort" "LoadBalancer")) (has .Values.node.perNodeServices.paraP2pService.type (list "NodePort" "LoadBalancer")) (and .Values.node.perNodeServices.relayP2pService.enabled .Values.node.perNodeServices.relayP2pService.webrtc.enabled (has .Values.node.perNodeServices.relayP2pService.webrtc.type (list "NodePort" "LoadBalancer"))) (and .Values.node.perNodeServices.paraP2pService.enabled .Values.node.perNodeServices.paraP2pService.webrtc.enabled (has .Values.node.perNodeServices.paraP2pService.webrtc.type (list "NodePort" "LoadBalancer"))) .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
         - name: retrieve-service-info
           image: {{ .Values.initContainers.retrieveServiceInfo.image.repository }}:{{ .Values.initContainers.retrieveServiceInfo.image.tag }}
           command: [ "/bin/sh" ]
@@ -490,6 +490,11 @@ spec:
               echo "Retrieved Kubernetes service node port from {{ $fullname }}-${POD_INDEX}-relay-chain-p2p"
               echo "Saved ${RELAY_CHAIN_P2P_PORT} to /chain-data/relay_chain_p2p_port"
               {{- end }}
+              {{- if and .Values.node.perNodeServices.relayP2pService.enabled (include "node.hasRelaychain" .) .Values.node.perNodeServices.relayP2pService.webrtc.enabled (has .Values.node.perNodeServices.relayP2pService.webrtc.type (list "NodePort" "LoadBalancer")) }}
+              RELAY_CHAIN_WEBRTC_PORT="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-relay-chain-webrtc -o jsonpath='{.spec.ports[0].nodePort}')"
+              echo "${RELAY_CHAIN_WEBRTC_PORT}" > /chain-data/relay_chain_webrtc_port
+              echo "Retrieved Kubernetes service node port from {{ $fullname }}-${POD_INDEX}-relay-chain-webrtc, saved ${RELAY_CHAIN_WEBRTC_PORT} to /chain-data/relay_chain_webrtc_port"
+              {{- end }}
               {{- if and .Values.node.isParachain .Values.node.perNodeServices.paraP2pService.enabled  (has .Values.node.perNodeServices.paraP2pService.type (list "NodePort" "LoadBalancer")) }}
               PARA_CHAIN_P2P_PORT="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-para-chain-p2p -o jsonpath='{.spec.ports[0].nodePort}')"
               echo "${PARA_CHAIN_P2P_PORT}" > /chain-data/para_chain_p2p_port
@@ -499,6 +504,11 @@ spec:
               echo "${PARA_CHAIN_P2P_PORT_WS}" > /chain-data/para_chain_p2p_port_ws
               echo "Saved ${PARA_CHAIN_P2P_PORT_WS} to /chain-data/para_chain_p2p_port_ws"
               {{- end }}
+              {{- end }}
+              {{- if and .Values.node.isParachain .Values.node.perNodeServices.paraP2pService.enabled .Values.node.perNodeServices.paraP2pService.webrtc.enabled (has .Values.node.perNodeServices.paraP2pService.webrtc.type (list "NodePort" "LoadBalancer")) }}
+              PARA_CHAIN_WEBRTC_PORT="$(kubectl --namespace {{ .Release.Namespace }} get service {{ $fullname }}-${POD_INDEX}-para-chain-webrtc -o jsonpath='{.spec.ports[0].nodePort}')"
+              echo "${PARA_CHAIN_WEBRTC_PORT}" > /chain-data/para_chain_webrtc_port
+              echo "Retrieved Kubernetes service node port from {{ $fullname }}-${POD_INDEX}-para-chain-webrtc, saved ${PARA_CHAIN_WEBRTC_PORT} to /chain-data/para_chain_webrtc_port"
               {{- end }}
               {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
               EXTERNAL_IP=$(curl {{ .Values.node.perNodeServices.setPublicAddressToExternalIp.ipRetrievalServiceUrl }})
@@ -546,6 +556,14 @@ spec:
               echo "RELAY_CHAIN_P2P_PORT_WS=${RELAY_CHAIN_P2P_PORT_WS}"
               {{- end }}
               {{- end }}
+              {{- if and .Values.node.perNodeServices.relayP2pService.enabled .Values.node.perNodeServices.relayP2pService.webrtc.enabled }}
+              {{- if has .Values.node.perNodeServices.relayP2pService.webrtc.type (list "NodePort" "LoadBalancer") }}
+              RELAY_CHAIN_WEBRTC_PORT="$(cat /chain-data/relay_chain_webrtc_port)"
+              {{- else }}
+              RELAY_CHAIN_WEBRTC_PORT={{ $.Values.node.perNodeServices.relayP2pService.webrtc.port | quote }}
+              {{- end }}
+              echo "RELAY_CHAIN_WEBRTC_PORT=${RELAY_CHAIN_WEBRTC_PORT}"
+              {{- end }}
               {{- end }}
               {{- if .Values.node.isParachain }}
               {{- if and .Values.node.perNodeServices.paraP2pService.enabled  (has .Values.node.perNodeServices.paraP2pService.type (list "NodePort" "LoadBalancer")) }}
@@ -564,6 +582,14 @@ spec:
               PARA_CHAIN_P2P_PORT_WS={{ $.Values.node.perNodeServices.paraP2pService.ws.port | quote }}
               echo "PARA_CHAIN_P2P_PORT_WS=${PARA_CHAIN_P2P_PORT_WS}"
               {{- end }}
+              {{- end }}
+              {{- if and .Values.node.perNodeServices.paraP2pService.enabled .Values.node.perNodeServices.paraP2pService.webrtc.enabled }}
+              {{- if has .Values.node.perNodeServices.paraP2pService.webrtc.type (list "NodePort" "LoadBalancer") }}
+              PARA_CHAIN_WEBRTC_PORT="$(cat /chain-data/para_chain_webrtc_port)"
+              {{- else }}
+              PARA_CHAIN_WEBRTC_PORT={{ $.Values.node.perNodeServices.paraP2pService.webrtc.port | quote }}
+              {{- end }}
+              echo "PARA_CHAIN_WEBRTC_PORT=${PARA_CHAIN_WEBRTC_PORT}"
               {{- end }}
               {{- end }}
               exec {{ .Values.node.command }} \
@@ -633,6 +659,12 @@ spec:
                 {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.autodiscoveryFix }}
                 --listen-addr=/ip4/0.0.0.0/tcp/${PARA_CHAIN_P2P_PORT_WS}/ws \
                 {{- end }}
+                {{- end }}
+                {{- end }}
+                {{- if .Values.node.perNodeServices.paraP2pService.webrtc.enabled }}
+                --listen-addr=/ip4/0.0.0.0/udp/{{ .Values.node.perNodeServices.paraP2pService.webrtc.port | int }}/webrtc-direct \
+                {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
+                --public-addr=/ip4/${EXTERNAL_IP}/udp/${PARA_CHAIN_WEBRTC_PORT}/webrtc-direct \
                 {{- end }}
                 {{- end }}
                 {{- end }}
@@ -723,6 +755,12 @@ spec:
                 {{- if and (not .Values.node.isParachain) .Values.node.perNodeServices.relayP2pService.ws.enabled }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30334/ws \
                 {{- end }}
+                {{- if .Values.node.perNodeServices.relayP2pService.webrtc.enabled }}
+                --listen-addr=/ip4/0.0.0.0/udp/{{ .Values.node.perNodeServices.relayP2pService.webrtc.port | int }}/webrtc-direct \
+                {{- if .Values.node.perNodeServices.setPublicAddressToExternalIp.enabled }}
+                --public-addr=/ip4/${EXTERNAL_IP}/udp/${RELAY_CHAIN_WEBRTC_PORT}/webrtc-direct \
+                {{- end }}
+                {{- end }}
                 {{- end }}
                 {{- if (include "node.hasRelaychain" .) }}
                 --listen-addr=/ip4/0.0.0.0/tcp/30333 \
@@ -762,12 +800,22 @@ spec:
             - containerPort: 30334
               name: p2p-ws
             {{- end }}
+            {{- if and (include "node.hasRelaychain" .) .Values.node.perNodeServices.relayP2pService.enabled .Values.node.perNodeServices.relayP2pService.webrtc.enabled }}
+            - containerPort: {{ .Values.node.perNodeServices.relayP2pService.webrtc.port | int }}
+              name: relay-webrtc
+              protocol: UDP
+            {{- end }}
             {{- if and .Values.node.isParachain .Values.node.perNodeServices.paraP2pService.enabled }}
             - containerPort: 30334
               name: para-p2p
             {{- if .Values.node.perNodeServices.paraP2pService.ws.enabled  }}
             - containerPort: 30335
               name: para-p2p-ws
+            {{- end }}
+            {{- if .Values.node.perNodeServices.paraP2pService.webrtc.enabled }}
+            - containerPort: {{ .Values.node.perNodeServices.paraP2pService.webrtc.port | int }}
+              name: para-webrtc
+              protocol: UDP
             {{- end }}
             {{- end }}
           {{- if .Values.node.enableStartupProbe }}
