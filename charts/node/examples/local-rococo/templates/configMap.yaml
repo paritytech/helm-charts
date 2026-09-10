@@ -1,0 +1,78 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: xcm-init-script
+data:
+  submit.js: |
+    import { ApiPromise, WsProvider } from '@polkadot/api';
+
+    function toHexString(byteArray) {
+      return Array.from(byteArray, function(byte) {
+        return ('0' + (byte & 0xFF).toString(16)).slice(-2);
+      }).join('');
+    }
+
+    async function getWasmCode(api) {
+      const wasmCode = await api.query.substrate.code();
+
+      if (wasmCode.isEmpty) {
+        throw new Error(`No validation code found for hash ${codeHash.toHex()}`);
+      }
+
+      return wasmCode;
+    }
+
+    async function getGenesisHead(api) {
+      // Get the genesis block hash
+      const genesisHash = await api.rpc.chain.getBlockHash(0);
+
+      // Get the genesis block
+      const genesisBlock = await api.rpc.chain.getBlock(genesisHash);
+      console.log("Genesis block: ", JSON.stringify(genesisBlock));
+
+      // Extract the required fields
+      const parentHash = genesisBlock.block.header.parentHash.toString();
+      const stateRoot = genesisBlock.block.header.stateRoot.toString();
+      const extrinsicsRoot = genesisBlock.block.header.extrinsicsRoot.toString();
+
+      console.log("State root: ", JSON.stringify(stateRoot));
+      // Construct the genesis head according to your requirements
+      const genesisHead = parentHash + '00' + stateRoot.replace('0x', '') + extrinsicsRoot.replace('0x', '') + '00';
+
+      return genesisHead;
+    }
+
+    async function main() {
+      const PARACHAIN_ENDPOINT = 'ws://localhost:9945';
+
+      const wsProvider = new WsProvider(PARACHAIN_ENDPOINT);
+      const api = await ApiPromise.create({ provider: wsProvider });
+
+      const paraKind = true;
+
+      try {
+        const wasm = await getWasmCode(api);
+        const hexedWasm = toHexString(wasm);
+
+        const genesisHead = await getGenesisHead(api);
+        console.log(genesisHead);
+
+        // slots.forceLease()
+        // https://polkadot.js.org/docs/kusama/extrinsics#forceleasepara-u32-leaser-accountid32-amount-u128-period_begin-u32-period_count-u32
+        // api.tx.slots.forceLease(para: u32, leaser: AccountId32, amount: u128, period_begin: u32, period_count: u32)
+
+      } catch (error) {
+        console.error('A call has failed: ', error.message);
+        throw error;
+      }
+    }
+
+    main().catch(console.error);
+
+
+
+    main().catch((error) => {
+        console.error('Fatal error:', error);
+        process.exit(1);
+    });
