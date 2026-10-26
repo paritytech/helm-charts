@@ -10,6 +10,16 @@ image:
   # -- Image tag
   tag: latest
 
+# -- Image used by the reward-claim CronJobs to run `polkadot-js-api`.
+polkadotJsCli:
+  image:
+    # -- Image repository
+    repository: paritytech/polkadotjs-cli
+    # -- Image pull policy
+    pullPolicy: IfNotPresent
+    # -- Image tag
+    tag: 57ce7bb5-20261026
+
 # -- Reference to one or more secrets to be used when pulling images.
 # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
