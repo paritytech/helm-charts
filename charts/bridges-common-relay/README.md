@@ -18,7 +18,7 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 
 # Parity Bridges Common helm chart
 
-![Version: 1.2.1](https://img.shields.io/badge/Version-1.2.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 1.3.0](https://img.shields.io/badge/Version-1.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 This helm chart installs [Parity Bridges Common](https://github.com/paritytech/parity-bridges-common) relayer.
 
@@ -54,6 +54,10 @@ helm install bridges-common-relay parity/bridges-common-relay
 | params | list | `[]` |  |
 | podAnnotations | object | `{}` | Annotations to add to the Pod |
 | podSecurityContext | object | `{}` | SecurityContext holds pod-level security attributes and common container settings. ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/ |
+| polkadotJsCli | object | `{"image":{"pullPolicy":"IfNotPresent","repository":"paritytech/polkadotjs-cli","tag":"57ce7bb5-20261026"}}` | Image used by the reward-claim CronJobs to run `polkadot-js-api`. |
+| polkadotJsCli.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| polkadotJsCli.image.repository | string | `"paritytech/polkadotjs-cli"` | Image repository |
+| polkadotJsCli.image.tag | string | `"57ce7bb5-20261026"` | Image tag |
 | prometheus | object | `{"enabled":false,"port":9615}` | Expose metrics via Prometheus format in /metrics endpoint. |
 | prometheus.enabled | bool | `false` | Expose Prometheus metrics |
 | prometheus.port | int | `9615` | The port for exposed Prometheus metrics |

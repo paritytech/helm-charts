@@ -50,8 +50,8 @@ spec:
           {{- end}}
           containers:
             - name: bridges-common-relay-{{ $val.name | lower }}-{{ $reward_owner | lower }}
-              image: paritytech/polkadotjs-cli:latest
-              imagePullPolicy: IfNotPresent
+              image: {{ $.Values.polkadotJsCli.image.repository }}:{{ $.Values.polkadotJsCli.image.tag }}
+              imagePullPolicy: {{ $.Values.polkadotJsCli.image.pullPolicy }}
               env:
                 - name: RPC_URL
                   value: {{ $val.rpc_url | quote }}
