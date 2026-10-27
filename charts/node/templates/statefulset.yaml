@@ -31,6 +31,7 @@ spec:
     {{- if eq .Values.node.updateStrategy.type "RollingUpdate" }}
     rollingUpdate:
       maxUnavailable: {{ .Values.node.updateStrategy.maxUnavailable  | default 1 }}
+      partition: {{ .Values.node.updateStrategy.partition | default 0 }}
     {{- end }}
    {{- end }}
   template:
