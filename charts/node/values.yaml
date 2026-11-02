@@ -377,6 +377,12 @@ node:
   #   scheme: "sr25519"
   #   seed: "//Alice"
   #   extraDerivation: //babe
+  # `seed` can also be a list with one seed per pod; pod N uses the Nth seed:
+  # - type: "aura"
+  #   scheme: "sr25519"
+  #   seed:
+  #     - "//Alice"
+  #     - "//Bob"
 
   # -- Inject keys from already existing Kubernetes secrets
   existingSecrets:

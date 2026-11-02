@@ -8,5 +8,14 @@ metadata:
 data:
   type: {{ .type | b64enc }}
   scheme: {{ .scheme | b64enc }}
+{{- if kindIs "slice" .seed }}
+  {{- if lt (len .seed) ($.Values.node.replicas | int) }}
+  {{- fail (printf "ERROR: '.Values.node.keys' type '%s' has %d seeds, but node.replicas is %d. Provide one seed per pod." .type (len .seed) ($.Values.node.replicas | int)) }}
+  {{- end }}
+  {{- range $index, $seed := .seed }}
+  seed-{{ $index }}: {{ $seed | b64enc }}
+  {{- end }}
+{{- else }}
   seed: {{ .seed | b64enc }}
+{{- end }}
 {{- end }}

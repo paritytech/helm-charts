@@ -344,6 +344,16 @@ spec:
                  echo "Error: File /var/run/secrets/{{ .type }}/type does not exist"
                  exit 1
               fi
+              {{- if kindIs "slice" .seed }}
+              SEED_FILE="/var/run/secrets/{{ .type }}/seed-${HOSTNAME##*-}"
+              {{- else }}
+              SEED_FILE="/var/run/secrets/{{ .type }}/seed"
+              {{- end }}
+              # --suri treats a missing file as a literal URI, so fail instead of inserting a wrong key
+              if [ ! -f "${SEED_FILE}" ]; then
+                 echo "Error: File ${SEED_FILE} does not exist"
+                 exit 1
+              fi
               {{ $.Values.node.command }} key insert \
               --keystore-path /keystore \
               --key-type $(cat /var/run/secrets/{{ .type }}/type) \
@@ -352,9 +362,9 @@ spec:
               --chain {{ $.Values.node.customChainspecPath }} \
               {{- end }}
               {{- if .extraDerivation }}
-              --suri "$(cat /var/run/secrets/{{ .type }}/seed){{ .extraDerivation }}" \
+              --suri "$(cat ${SEED_FILE}){{ .extraDerivation }}" \
               {{- else }}
-              --suri /var/run/secrets/{{ .type }}/seed \
+              --suri "${SEED_FILE}" \
               {{- end }}
               && echo "Inserted key {{ .type }} into Keystore" \
               || echo "Failed to insert key {{ .type}} into Keystore."
