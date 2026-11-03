@@ -1,0 +1,38 @@
+node:
+  image:
+    # -- Image repository
+    repository: parity/polkadot
+    # -- Image tag
+    tag: 1.5.0
+  node:
+    # -- Embedded chain specification to use (eg: polkadot, kusama, paseo, rococo, westend)
+    chain: polkadot
+    # -- Command to run within the container
+    command: "polkadot"
+    chainData:
+      chainSnapshot:
+        # -- Enable restoring the chain datababase from a snapshot using  [rclone](https://rclone.org/)
+        enabled: true
+        # -- Restoration method. One of: gcs, s3, http-single-tar, http-single-tar-lz4, http-filelist
+        method: http-filelist
+        # --  The URL to download the chain database snapshot
+        url: https://snapshots.polkadot.io/polkadot-paritydb-prune
+      # -- Database backend engine to use
+      database: paritydb
+      # -- State-pruning to set
+      pruning: 256 # or archive
+      # -- Size of the chain data volume
+      volumeSize:
+    chainKeystore:
+      mountInMemory:
+        # -- Enable mounting keystore in memory keystore using an emptyDir volume
+        enabled: false
+
+    # -- Flags to add to the Polkadot binary
+    flags:
+    # -- Keys to set on the node.
+    keys:
+    # -- Inject keys from already existing Kubernetes secrets
+    existingSecrets:
+    # -- Inject secrets via Hashicorp Vault annotations
+    vault:
