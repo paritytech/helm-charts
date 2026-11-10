@@ -103,6 +103,12 @@ additionalPodSpec: {}
 secrets: {}
 # admin: <base64-encoded>
 
+# -- Creates the same secret resource from plain text values
+# Can be set alongside `secrets`; both render into one Secret, and a duplicate
+# key resolves to the value given here.
+secretsStringData: {}
+# admin: <plain-text>
+
 # https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 # privateRegistry:
 #  dockerconfigjson: <base64-encoded>

@@ -70,6 +70,7 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 | replicaCount | int | `1` | Number of replicas for the pod |
 | resources | object | `{}` | Resource limits & requests |
 | secrets | object | `{}` | Creates a secret resource The value must be base64 encoded |
+| secretsStringData | object | `{}` | Creates the same secret resource from plain text values Can be set alongside `secrets`; both render into one Secret, and a duplicate key resolves to the value given here. |
 | service | object | `{"annotations":{},"clusterIP":"","ports":[],"sessionAffinity":"","type":"ClusterIP"}` | Creates a service resource |
 | service.annotations | object | `{}` | Annotations to add to the Service resource |
 | service.clusterIP | string | `""` | Headless service |
