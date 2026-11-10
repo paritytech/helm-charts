@@ -70,6 +70,7 @@ This is intended behaviour. Make sure to run `git add -A` once again to stage ch
 | replicaCount | int | `1` | Number of replicas for the pod |
 | resources | object | `{}` | Resource limits & requests |
 | secrets | object | `{}` | Creates a secret resource The value must be base64 encoded |
+| secretsStringData | object | `{}` | Creates the same secret resource from plain text values Use this when the value arrives already decrypted, for example a `ref+vault://` reference resolved by vals, which cannot be fed to the base64 `secrets` above. Both keys may be set together; they render into one Secret. A key present in both wins here, because Kubernetes applies stringData after data. |
 | service | object | `{"annotations":{},"clusterIP":"","ports":[],"sessionAffinity":"","type":"ClusterIP"}` | Creates a service resource |
 | service.annotations | object | `{}` | Annotations to add to the Service resource |
 | service.clusterIP | string | `""` | Headless service |
